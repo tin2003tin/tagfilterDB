@@ -50,48 +50,7 @@ TagFilterDB Project Components
    - Result Management:
      Manages and formats query results for easy consumption by other components or end-users.
      Supports pagination, sorting, and grouping of results.
-5. TransactionManager
-   - Atomic Operations:
-     Ensures that database operations are atomic, meaning that they are completed fully or not at all.
-     Provides mechanisms to roll back incomplete operations in case of errors.
-   - Concurrency Control:
-     Manages access to data when multiple operations or users are interacting with the database simultaneously.
-     Implements locking and isolation levels to maintain data integrity.
-   - Transaction Logs:
-     Maintains logs of all transactions, which can be used for recovery in case of a system failure.
-     Supports auditing and tracking of changes for security and compliance.
-   - Commit and Rollback:
-     Provides interfaces to commit or rollback transactions, ensuring data consistency.
-     Useful in scenarios where multiple related changes need to be applied together.
-6. IndexManager
-   - Index Creation and Management:
-     Allows for the creation of indexes on various fields in the database to speed up query performance.
-     Supports different types of indexes, such as B-trees, hash indexes, or spatial indexes.
-   - Index Maintenance:
-     Automatically updates indexes as data is inserted, updated, or deleted.
-     Provides tools to rebuild or optimize indexes as needed.
-   - Composite Indexes:
-     Supports the creation of composite indexes that involve multiple fields, improving the efficiency of complex queries.
-     Optimizes multi-criteria searches and filtering.
-   - Index Optimization:
-     Analyzes query patterns to suggest or automatically create indexes that could improve performance.
-     Includes tools to identify and remove unused or redundant indexes.
-7. BackupManager
-
-   - Scheduled Backups:
-     Provides functionality to schedule regular backups of the entire database or specific parts of it.
-     Supports full and incremental backups to save storage and reduce backup time.
-   - Restore Capabilities:
-     Allows the database to be restored to a previous state using backup files.
-     Supports point-in-time recovery, where the database is restored to a specific moment.
-   - Backup Storage:
-     Manages the storage of backup files, including compression and encryption options.
-     Supports storing backups locally, on remote servers, or in cloud storage.
-   - Disaster Recovery:
-     Implements procedures and tools to quickly recover the database in case of catastrophic failure.
-     Ensures minimal downtime and data loss during recovery operations.
-
-8. FileManager (Integrated with BufferManager, LogManager, Monitoring)
+5. FileManager (Integrated with BufferManager, LogManager, Monitoring)
    - File Management:
      Handles the creation, reading, writing, and deletion of files within the database system.
      Supports efficient file I/O operations to ensure high performance and data integrity.
