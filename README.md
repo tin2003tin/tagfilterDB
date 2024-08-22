@@ -23,14 +23,20 @@ Provides techniques for tree traversal, such as depth-first and breadth-first, f
 
 ### 2: DataManager
 
-**Dynamic Collection:** 
-Manages dynamic collections of various data kinds and schemas, like 'Student' with fields like 'id', 'name', and 'age'.
+**Dynamic Collection:**  
+Handles diverse data types and schemas, including custom-defined schemas.
 
-**Encode/Decode:** 
-Allows for efficient data storage and retrieval.
+**Tag Filtering:**  
+Supports advanced tagging and filtering based on custom tags for optimized data retrieval and analysis.
 
-**Visualization:** 
-Tools help visualize data management operations for monitoring and analysis.
+**Encode/Decode:**  
+Efficiently encodes and decodes data for storage and retrieval.
+
+**Visualization:**  
+Provides tools to visualize data management operations for improved monitoring and analysis.
+
+**Custom Schema Design:**  
+Allows designing data schemas using a specialized language and compiler for tailored data structures and operations.
 
 ### 3. QueryEngine.
 
