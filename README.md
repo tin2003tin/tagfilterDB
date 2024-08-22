@@ -1,55 +1,80 @@
-TagFilterDB Project Components
+# TagFilterDB Project
 
-1. R-tree
-   - R-tree Data Structure:
-     A spatial data structure used to index multi-dimensional information.
-     Supports various types of nodes (more to be added in the future).
-   - Node Support:
-     Various types of nodes are supported for different data types or structures.
-     Future enhancements planned for more node types.
-   - Utility for Visualization:
-     Tools or methods to visually represent the R-tree structure.
-     Helps in debugging and understanding the layout of the tree.
-   - Tree Traversal:
-     Functions to traverse the tree in various ways (e.g., depth-first, breadth-first).
-     Used for search operations, data retrieval, and analysis.
-2. DataManager
-   - Dynamic Collection of Types:
-     Ability to dynamically collect and manage various data types (e.g., Student with int id, string name, int age).
-     Flexibility to handle different data schemas.
-   - Encode/Decode Functions:
-     Functions to encode data structures for file storage.
-     Decode functions to read and reconstruct data from files.
-     Ensures efficient storage and retrieval of data.
-   - Utility for Visualization:
-     Tools or methods to visualize the data being managed.
-     Useful for monitoring data collection and manipulation.
-4. QueryEngine
-   - Query Processing:
-     Supports efficient querying of data stored in the R-tree and DataManager.
-     Implements search algorithms optimized for spatial and non-spatial data.
-   - Filter Mechanisms:
-     Allows for filtering data based on various criteria, such as range, keywords, or custom conditions.
-     Integrates with DataManager and R-tree for seamless filtering of complex data types.
-   - Optimization:
-     Includes query optimization techniques to improve performance, such as indexing and caching.
-     Reduces the time complexity of frequently run queries.
-   - Result Management:
-     Manages and formats query results for easy consumption by other components or end-users.
-     Supports pagination, sorting, and grouping of results.
-5. FileManager (Integrated with BufferManager, LogManager, Monitoring)
-   - File Management:
-     Handles the creation, reading, writing, and deletion of files within the database system.
-     Supports efficient file I/O operations to ensure high performance and data integrity.
-   - BufferManager Integration:
-     Manages in-memory buffers for frequently accessed data, reducing the need for direct file I/O.
-     Ensures data consistency between the buffer and the actual files on disk.
-   - LogManager Integration:
-     Maintains detailed logs of file operations, aiding in recovery and debugging processes.
-     Supports both write-ahead logging (WAL) and other logging strategies to ensure data durability.
-   - Monitoring Integration:
-     Provides real-time monitoring of file I/O operations, buffer usage, and log status.
-     Generates alerts and reports on the health and performance of the file management system.
-   - File Security:
-     Implements encryption and access control for files to protect sensitive data.
-     Ensures that only authorized processes or users can access or modify files.
+<img src="https://github.com/user-attachments/assets/c88d24be-3342-44a1-851d-6aea4f4e0459" width="500" />
+
+## Overview
+
+TagFilterDB is a advanced database system. It designed for efficient tagging and filtering of multidimensional data, uses dynamic data management and powerful querying capabilities to handle complicated datasets. This database is designed to optimize both spatial and non-spatial searches, and it supports a broad range of data types and structures, TagFilterDB provides complete data management and impressive performance for a variety of analytical applications by including R*-tree structure visualization tools and interface with file management components.
+
+
+## Components
+
+### 1: R*-Tree
+
+**Data Structure:**  
+An R-tree is employed to efficiently index and manage multidimensional data.
+
+**Node Support:** 
+Supports many node types for diverse data architectures. Future upgrades will provide more node kinds.
+
+**Visualization:** 
+Tools are provided to visualize the R-tree structure for easier troubleshooting and comprehension.
+
+**Traversal:**  
+Provides techniques for tree traversal, such as depth-first and breadth-first, for search and data retrieval.
+
+### 2: DataManager
+
+**Dynamic Collection:**  
+Handles diverse data types and schemas, including custom-defined schemas.
+
+**Tag Filtering:**  
+Facilitates advanced tagging and filtering based on custom tags for optimized data retrieval and analysis.
+
+**Encode/Decode:**  
+Efficiently encodes and decodes data for storage and retrieval.
+
+**Visualization:**  
+Provides tools to visualize data management operations for improved monitoring and analysis.
+
+**Custom Schema Design:**  
+Enables the creation of data schemas using a specialized language and compiler for tailored data handling.
+
+### 3. QueryEngine
+
+**Query Processing:**  
+Efficiently processes searches for various data types using optimized techniques.
+
+**Tag Filtering:**  
+Supports advanced tagging and filtering based on custom criteria and tags, integrating seamlessly with the R-tree and DataManager.
+
+**Optimization:**  
+Employs techniques like indexing and caching to enhance query performance.
+
+**Result Management:**  
+Manages and formats query results with support for pagination, sorting, and grouping.
+
+### 4. FileManager (Integrated with BufferManager, LogManager, Monitoring)
+
+**File Management:**  
+Handles file operations, including creation, reading, writing, and deletion, ensuring performance and data integrity.
+
+**BufferManager Integration:**  
+Manages in-memory buffers to reduce direct file I/O and maintain data consistency.
+
+**LogManager Integration:**  
+Maintains detailed logs of file operations, supporting recovery and debugging with write-ahead logging (WAL).
+
+**Monitoring Integration:**  
+Provides real-time monitoring of file I/O, buffer usage, and log status, with alerts and reports on system health.
+
+**File Security:**  
+Implements encryption and access control to protect sensitive data and ensure authorized access.
+
+
+## Contact
+
+For questions or support, please contact [tinsiwid@gmail.com].
+
+## Reference
+r-star-tree - https://github.com/virtuald/r-star-tree/blob/master/RStarTree.h#L290
