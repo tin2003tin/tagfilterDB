@@ -7,7 +7,7 @@ TagFilterDB is a advanced database system. It designed for efficient tagging and
 
 ## Components
 
-### 1. R-Tree
+### 1: R-Tree
 
 **Data Structure:**  
 The R-tree is a spatial indexing structure used to efficiently manage multidimensional data.
@@ -19,7 +19,7 @@ The R-tree is a spatial indexing structure used to efficiently manage multidimen
 **Traversal:**  
 Provides techniques for tree traversal, such as depth-first and breadth-first, for search and data retrieval.
 
-## 2: DataManager
+### 2: DataManager
 
 **Dynamic Collection:** Manages dynamic collections of various data kinds and schemas, like 'Student' with fields like 'id', 'name', and 'age'.
 
