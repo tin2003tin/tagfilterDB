@@ -19,24 +19,25 @@ The R-tree is a spatial indexing structure used to efficiently manage multidimen
 **Traversal:**  
 Provides techniques for tree traversal, such as depth-first and breadth-first, for search and data retrieval.
 
-### 2. DataManager
+## 2: DataManager
 
-**Dynamic Collection:**  
-Manages dynamic collections of various data types and schemas, such as `Student` with fields like `id`, `name`, and `age`.
+**Dynamic Collection:** Manages dynamic collections of various data kinds and schemas, like 'Student' with fields like 'id', 'name', and 'age'.
 
-**Encode/Decode:**  
-Functions for encoding and decoding data for efficient file storage and retrieval.
+**Encode/Decode:** Allows for efficient data storage and retrieval.
 
-**Visualization:**  
-Tools for visualizing data management activities, useful for monitoring and analysis.
+**Visualization:** Tools help visualize data management operations for monitoring and analysis.
 
-### 3. QueryEngine
+### 3. QueryEngine.
 
-**Query Processing:**  
-Supports efficient querying with optimized algorithms for both spatial and non-spatial data.
+**Question Processing:**  
+Allows for efficient searching of both geographical and non-spatial data using optimized methods.
 
 **Filtering:**  
-Provides filtering mechanisms based on criteria like range and keywords, integrating with R-tree and DataManager.
+Filters data based on range and keywords, and integrates with R-tree and DataManager.
+
+**Optimization:** Implements query optimization methods like indexing and caching to improve speed.
+
+**Result Management:** Formats and organizes query results, including pagination, sorting, and grouping.
 
 **Optimization:**  
 Includes query optimization techniques such as indexing and caching to enhance performance.
@@ -61,18 +62,9 @@ Provides real-time monitoring of file I/O, buffer usage, and log status, with al
 **File Security:**  
 Implements encryption and access control to protect sensitive data and ensure authorized access.
 
-## Getting Started
-
-To get started with TagFilterDB, clone the repository and follow the build instructions provided in the [Build Instructions](BUILD.md) document.
-
-## Contributing
-
-Contributions are welcome! Please see the [Contributing Guidelines](CONTRIBUTING.md) for more information.
-
-## License
-
-TagFilterDB is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
 For questions or support, please contact [your-email@example.com](mailto:your-email@example.com).
+
+## Reference
