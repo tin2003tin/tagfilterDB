@@ -24,19 +24,6 @@ TagFilterDB Project Components
    - Utility for Visualization:
      Tools or methods to visualize the data being managed.
      Useful for monitoring data collection and manipulation.
-3. StringManager
-   - Constructor:
-     Initializes and allocates memory for strings.
-     Supports various initialization methods.
-   - Move Operations:
-     Supports move semantics to efficiently transfer string ownership.
-     Optimizes memory usage by avoiding unnecessary copies.
-   - Pointer Storage:
-     Manages pointers for strings, ensuring proper memory management.
-     Includes methods for accessing, modifying, and deallocating string data.
-   - Utility Functions:
-     A set of helper functions for string manipulation (e.g., concatenation, substring).
-     Enhances string handling capabilities within the database.
 4. QueryEngine
    - Query Processing:
      Supports efficient querying of data stored in the R-tree and DataManager.
