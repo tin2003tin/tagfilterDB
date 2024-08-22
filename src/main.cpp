@@ -3,6 +3,9 @@
 
 int main()
 {
-    tagfilterdb::Status s = tagfilterdb::Status::NotFound("Where are you go");
-    std::cout << s.ToString();
+    tagfilterdb::Status s = tagfilterdb::Status::NotFound("");
+    // std::cout << s.ToString();
+    std::cout
+        << s.ok()
+        << std::endl;
 }
