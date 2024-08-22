@@ -1,4 +1,5 @@
 #include <iostream>
+#include "tagfilterdb/status.hpp"
 #include "gtest/gtest.h"
 #include "tagfilter/status.hpp"
 
