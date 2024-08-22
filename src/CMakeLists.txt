@@ -7,5 +7,6 @@ target_include_directories(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        ${all_SRCS}
+        main.cpp
+        status.cpp
 )
