@@ -1,6 +1,8 @@
 #include <iostream>
+#include "tagfilterdb/status.hpp"
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+int main()
+{
+    tagfilterdb::Status s = tagfilterdb::Status::NotFound("Where are you go");
+    std::cout << s.ToString();
 }
