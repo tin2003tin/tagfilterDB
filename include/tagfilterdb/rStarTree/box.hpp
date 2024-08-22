@@ -11,6 +11,17 @@
 #include "tagfilterdb/export.hpp"
 #include "tagfilterdb/status.hpp"
 
+// TODO: Implement move assignment operator to complement the move constructor
+// TODO: Add range checks and error handling for methods that may operate on invalid ranges
+// TODO: Optimize the area, intersection, and union methods for performance, especially with large dimensions
+// TODO: Add unit tests to verify the correctness of all methods, including edge cases and invalid inputs
+// TODO: Document all methods thoroughly, including examples of usage and explanations of parameters and return values
+// TODO: Implement a method to serialize and deserialize the Box object for file I/O or network transfer
+// TODO: Add a method to verify if the box is valid (i.e., bounds are properly defined)
+// TODO: Refactor to avoid redundant computations in methods like `overlap` and `intersection`
+// TODO: Include boundary checks for methods that modify the box, like `expand`, `scale`, and `translate`
+// TODO: Implement a method to generate a random box within a given range for testing purposes
+
 namespace tagfilterdb
 {
     template <std::size_t dimensions>
@@ -56,6 +67,18 @@ namespace tagfilterdb
 
         // Destructor
         ~Box() = default;
+
+        Box<dimensions> &operator=(const Box<dimensions> &other)
+        {
+            if (this != &other)
+            {
+                for (std::size_t i = 0; i < dimensions; ++i)
+                {
+                    axis_[i] = other.axis_[i];
+                }
+            }
+            return *this;
+        }
 
         // Set Method
         Status set(int axis, int s, int e)
