@@ -4,12 +4,12 @@
 
 ## Overview
 
-TagFilterDB is a advanced database system. It designed for efficient tagging and filtering of multidimensional data, uses dynamic data management and powerful querying capabilities to handle complicated datasets. This database is designed to optimize both spatial and non-spatial searches, and it supports a broad range of data types and structures, TagFilterDB provides complete data management and impressive performance for a variety of analytical applications by including R-tree structure visualization tools and interface with file management components.
+TagFilterDB is a advanced database system. It designed for efficient tagging and filtering of multidimensional data, uses dynamic data management and powerful querying capabilities to handle complicated datasets. This database is designed to optimize both spatial and non-spatial searches, and it supports a broad range of data types and structures, TagFilterDB provides complete data management and impressive performance for a variety of analytical applications by including R*-tree structure visualization tools and interface with file management components.
 
 
 ## Components
 
-### 1: R-Tree
+### 1: R*-Tree
 
 **Data Structure:**  
 An R-tree is employed to efficiently index and manage multidimensional data.
