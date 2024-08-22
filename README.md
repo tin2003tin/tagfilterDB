@@ -12,20 +12,25 @@ TagFilterDB is a advanced database system. It designed for efficient tagging and
 **Data Structure:**  
 The R-tree is a spatial indexing structure used to efficiently manage multidimensional data.
 
-**Node Support:** Supports many node types for diverse data architectures. Future upgrades will provide more node kinds.
+**Node Support:** 
+Supports many node types for diverse data architectures. Future upgrades will provide more node kinds.
 
-**Visualization:** Tools are provided to visualize the R-tree structure for easier troubleshooting and comprehension.
+**Visualization:** 
+Tools are provided to visualize the R-tree structure for easier troubleshooting and comprehension.
 
 **Traversal:**  
 Provides techniques for tree traversal, such as depth-first and breadth-first, for search and data retrieval.
 
 ### 2: DataManager
 
-**Dynamic Collection:** Manages dynamic collections of various data kinds and schemas, like 'Student' with fields like 'id', 'name', and 'age'.
+**Dynamic Collection:** 
+Manages dynamic collections of various data kinds and schemas, like 'Student' with fields like 'id', 'name', and 'age'.
 
-**Encode/Decode:** Allows for efficient data storage and retrieval.
+**Encode/Decode:** 
+Allows for efficient data storage and retrieval.
 
-**Visualization:** Tools help visualize data management operations for monitoring and analysis.
+**Visualization:** 
+Tools help visualize data management operations for monitoring and analysis.
 
 ### 3. QueryEngine.
 
@@ -35,9 +40,11 @@ Allows for efficient searching of both geographical and non-spatial data using o
 **Filtering:**  
 Filters data based on range and keywords, and integrates with R-tree and DataManager.
 
-**Optimization:** Implements query optimization methods like indexing and caching to improve speed.
+**Optimization:** 
+Implements query optimization methods like indexing and caching to improve speed.
 
-**Result Management:** Formats and organizes query results, including pagination, sorting, and grouping.
+**Result Management:** 
+Formats and organizes query results, including pagination, sorting, and grouping.
 
 **Optimization:**  
 Includes query optimization techniques such as indexing and caching to enhance performance.
