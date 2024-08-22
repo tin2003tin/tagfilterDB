@@ -1,55 +1,79 @@
-TagFilterDB Project Components
+# TagFilterDB Project
 
-1. R-tree
-   - R-tree Data Structure:
-     A spatial data structure used to index multi-dimensional information.
-     Supports various types of nodes (more to be added in the future).
-   - Node Support:
-     Various types of nodes are supported for different data types or structures.
-     Future enhancements planned for more node types.
-   - Utility for Visualization:
-     Tools or methods to visually represent the R-tree structure.
-     Helps in debugging and understanding the layout of the tree.
-   - Tree Traversal:
-     Functions to traverse the tree in various ways (e.g., depth-first, breadth-first).
-     Used for search operations, data retrieval, and analysis.
-2. DataManager
-   - Dynamic Collection of Types:
-     Ability to dynamically collect and manage various data types (e.g., Student with int id, string name, int age).
-     Flexibility to handle different data schemas.
-   - Encode/Decode Functions:
-     Functions to encode data structures for file storage.
-     Decode functions to read and reconstruct data from files.
-     Ensures efficient storage and retrieval of data.
-   - Utility for Visualization:
-     Tools or methods to visualize the data being managed.
-     Useful for monitoring data collection and manipulation.
-4. QueryEngine
-   - Query Processing:
-     Supports efficient querying of data stored in the R-tree and DataManager.
-     Implements search algorithms optimized for spatial and non-spatial data.
-   - Filter Mechanisms:
-     Allows for filtering data based on various criteria, such as range, keywords, or custom conditions.
-     Integrates with DataManager and R-tree for seamless filtering of complex data types.
-   - Optimization:
-     Includes query optimization techniques to improve performance, such as indexing and caching.
-     Reduces the time complexity of frequently run queries.
-   - Result Management:
-     Manages and formats query results for easy consumption by other components or end-users.
-     Supports pagination, sorting, and grouping of results.
-5. FileManager (Integrated with BufferManager, LogManager, Monitoring)
-   - File Management:
-     Handles the creation, reading, writing, and deletion of files within the database system.
-     Supports efficient file I/O operations to ensure high performance and data integrity.
-   - BufferManager Integration:
-     Manages in-memory buffers for frequently accessed data, reducing the need for direct file I/O.
-     Ensures data consistency between the buffer and the actual files on disk.
-   - LogManager Integration:
-     Maintains detailed logs of file operations, aiding in recovery and debugging processes.
-     Supports both write-ahead logging (WAL) and other logging strategies to ensure data durability.
-   - Monitoring Integration:
-     Provides real-time monitoring of file I/O operations, buffer usage, and log status.
-     Generates alerts and reports on the health and performance of the file management system.
-   - File Security:
-     Implements encryption and access control for files to protect sensitive data.
-     Ensures that only authorized processes or users can access or modify files.
+## Overview
+
+TagFilterDB is a comprehensive database system designed to manage and query multi-dimensional data efficiently. Below is an overview of the core components of the TagFilterDB project.
+
+## Components
+
+### 1. R-tree
+
+**Data Structure:**  
+The R-tree is a spatial indexing structure for efficiently managing multi-dimensional data.
+
+**Node Support:**  
+Handles various node types for different data structures. Future updates will introduce additional node types.
+
+**Visualization:**  
+Includes tools for visualizing the R-tree structure to aid in debugging and understanding.
+
+**Traversal:**  
+Provides methods for tree traversal, including depth-first and breadth-first, for search and data retrieval.
+
+### 2. DataManager
+
+**Dynamic Collection:**  
+Manages dynamic collections of various data types and schemas, such as `Student` with fields like `id`, `name`, and `age`.
+
+**Encode/Decode:**  
+Functions for encoding and decoding data for efficient file storage and retrieval.
+
+**Visualization:**  
+Tools for visualizing data management activities, useful for monitoring and analysis.
+
+### 3. QueryEngine
+
+**Query Processing:**  
+Supports efficient querying with optimized algorithms for both spatial and non-spatial data.
+
+**Filtering:**  
+Provides filtering mechanisms based on criteria like range and keywords, integrating with R-tree and DataManager.
+
+**Optimization:**  
+Includes query optimization techniques such as indexing and caching to enhance performance.
+
+**Result Management:**  
+Manages and formats query results with support for pagination, sorting, and grouping.
+
+### 4. FileManager (Integrated with BufferManager, LogManager, Monitoring)
+
+**File Management:**  
+Handles file operations, including creation, reading, writing, and deletion, ensuring performance and data integrity.
+
+**BufferManager Integration:**  
+Manages in-memory buffers to reduce direct file I/O and maintain data consistency.
+
+**LogManager Integration:**  
+Maintains detailed logs of file operations, supporting recovery and debugging with write-ahead logging (WAL).
+
+**Monitoring Integration:**  
+Provides real-time monitoring of file I/O, buffer usage, and log status, with alerts and reports on system health.
+
+**File Security:**  
+Implements encryption and access control to protect sensitive data and ensure authorized access.
+
+## Getting Started
+
+To get started with TagFilterDB, clone the repository and follow the build instructions provided in the [Build Instructions](BUILD.md) document.
+
+## Contributing
+
+Contributions are welcome! Please see the [Contributing Guidelines](CONTRIBUTING.md) for more information.
+
+## License
+
+TagFilterDB is licensed under the [MIT License](LICENSE).
+
+## Contact
+
+For questions or support, please contact [your-email@example.com](mailto:your-email@example.com).
