@@ -10,6 +10,7 @@ file(GLOB all_SRCS
         )
         
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+set(CXX_STANDARD 20)
 
 add_subdirectory(libs)
 add_subdirectory(src)
