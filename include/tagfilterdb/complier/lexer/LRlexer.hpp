@@ -36,7 +36,7 @@ namespace tin_compiler
         std::unordered_set<std::string> terminals;
 
         std::string readWord();
-        std::string readNumber();
+        
         bool isSymbol(char c);
         bool isStringSymbol(char c);
         bool isTerminal(const std::string &word);

@@ -29,21 +29,20 @@
 
 namespace tagfilterdb
 {
-    template <
-        typename LeafType,
-        std::size_t dimensions,
-        std::size_t min_child,
-        std::size_t max_child>
+#define RSTARTREE_TEMPLATE template <class DATATYPE, class RANGETYPE, int DIMS, int MAXCHILD, int MINCHILD>
+#define RSTARTREE_QUAL RStarTree<DATATYPE, ELEMTYPE, NUMDIMS, ELEMTYPEREAL, TMAXNODES, TMINNODES>
+
+    template <class DATATYPE, class RANGETYPE, int DIMS, int MAXCHILD = 8, int MINCHILD = MAXCHILD / 2>
     class TAGFILTERDB_EXPORT RStarTree
     {
-        using BoundingBox = Box<dimensions>;
+        using BBox = BROUNDINGBOX_QUAL;
 
     private:
         // Base class for all nodes in the R*-Tree
         class Node
         {
         public:
-            BoundingBox bound;
+            BBox bound;
             virtual ~Node() = default;
         };
 
@@ -51,9 +50,9 @@ namespace tagfilterdb
         class Leaf : public Node
         {
         public:
-            LeafType leaf;
+            DATATYPE leaf;
 
-            Leaf(const BoundingBox &boundingBox, const LeafType &data)
+            Leaf(const BBox &boundingBox, const DATATYPE &data)
             {
                 this->bound = boundingBox;
                 this->leaf = data;

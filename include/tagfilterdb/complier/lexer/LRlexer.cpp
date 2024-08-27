@@ -33,16 +33,11 @@ namespace tin_compiler
                     ++position;
                 }
             }
-            else if (isalpha(current_char))
+            else if (isalpha(current_char) || isdigit(current_char))
             {
                 std::string word = readWord();
                 tin_compiler::Token::Type type = isTerminal(word) ? tin_compiler::Token::KEYWORD : tin_compiler::Token::IDENTIFIER;
                 tokens.push_back(Token(type, word));
-            }
-            else if (isdigit(current_char))
-            {
-                std::string number = readNumber();
-                tokens.push_back(Token(tin_compiler::Token::IDENTIFIER, number));
             }
             else if (isspace(current_char))
             {
@@ -63,7 +58,7 @@ namespace tin_compiler
             }
             else
             {
-                std::cerr << "Unexpected character: " << current_char << std::endl;
+                tokens.back().value += current_char;
                 ++position;
             }
         }
@@ -77,17 +72,7 @@ namespace tin_compiler
     std::string LRLexer::readWord()
     {
         size_t start = position;
-        while (position < input.length() && isalnum(input[position]))
-        {
-            ++position;
-        }
-        return input.substr(start, position - start);
-    }
-
-    std::string LRLexer::readNumber()
-    {
-        size_t start = position;
-        while (position < input.length() && isdigit(input[position]))
+        while (position < input.length() && (isalnum(input[position]) || input[position] == '_' || isdigit(input[position])))
         {
             ++position;
         }

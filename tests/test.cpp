@@ -2,15 +2,17 @@
 
 #include "tagfilterdb/complier/LRcomplier.hpp"
 #include "tagfilterdb/rStarTree/box.hpp"
+#include "tagfilterdb/code.hpp"
 
 #include "gtest/gtest.h"
 
 namespace DBTesting
 {
-    TEST(TEST_R_STAR_TREE, BOX)
+    TEST(TEST_R_STAR_TREE, BROUNDINGBOX)
     {
-        tagfilterdb::Box<2> box1({{1, 10}, {1, 10}});
-        tagfilterdb::Box<2> box2({{2, 5}, {2, 5}});
+        using testBB = tagfilterdb::BoundingBox<2, double>;
+        testBB box1({{1, 10}, {1, 10}});
+        testBB box2({{2, 5}, {2, 5}});
 
         ASSERT_EQ(box1.toString(), "[(1, 10), (1, 10)]");
         ASSERT_EQ(box2.toString(), "[(2, 5), (2, 5)]");
@@ -18,7 +20,7 @@ namespace DBTesting
         ASSERT_EQ(box1.area(), 81);
         ASSERT_EQ(box2.area(), 9);
         ASSERT_EQ(box1.overlap(box2), 9);
-        tagfilterdb::Box<2> u = tagfilterdb::Box<2>::Universe();
+        testBB u = testBB::Universe();
         ASSERT_EQ(box1.overlap(u), 81);
         ASSERT_EQ(box2.overlap(u), 9);
     }
@@ -61,6 +63,22 @@ namespace DBTesting
         catch (const std::exception &e)
         {
             ASSERT_EQ(1, 0);
+        }
+    }
+    TEST(TEST_CODE, ENCODE32)
+    {
+        std::string s;
+        for (uint32_t v = 0; v < 100000; v++)
+        {
+            tagfilterdb::AppendEncode32(&s, v);
+        }
+
+        const char *p = s.data();
+        for (uint32_t v = 0; v < 100000; v++)
+        {
+            uint32_t actual = tagfilterdb::Decode32(p);
+            ASSERT_EQ(v, actual);
+            p += sizeof(uint32_t);
         }
     }
 }

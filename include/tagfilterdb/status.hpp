@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "tagfilterdb/export.hpp"
+#include <tuple>
 
 // TODO: Optimize memory management to reduce allocations and deallocations for Status objects
 // TODO: Implement a function to retrieve the error message without needing to use ToString()
@@ -22,6 +23,7 @@
 
 namespace tagfilterdb
 {
+
     class TAGFILTERDB_EXPORT Status
     {
     public:
@@ -109,6 +111,10 @@ namespace tagfilterdb
                 case kIOError:
                     type = "IO error: ";
                     break;
+                case kOutOfRange:
+                    type = "Out of range: ";
+                    break;
+
                 default:
                     std::snprintf(tmp, sizeof(tmp),
                                   "Unknown code(%d): ", static_cast<int>(code()));
@@ -168,6 +174,20 @@ namespace tagfilterdb
         }
     };
 
+    template <typename T>
+    class OperationResult
+    {
+    public:
+        // Constructors
+        OperationResult(const T &value, Status status)
+            : value(value), status(status) {}
+
+        OperationResult(T &&value, Status status)
+            : value(std::move(value)), status(status) {}
+        T value;
+
+        Status status;
+    };
 }
 
 #endif
