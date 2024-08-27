@@ -1,0 +1,20 @@
+\hypertarget{code_8hpp}{}\doxysection{include/tagfilterdb/code.hpp File Reference}
+\label{code_8hpp}\index{include/tagfilterdb/code.hpp@{include/tagfilterdb/code.hpp}}
+{\ttfamily \#include $<$cstdint$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+Include dependency graph for code.\+hpp\+:
+% FIG 0
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{namespacetagfilterdb_afaf7a6f347c05ece6745b34a5be50735}{tagfilterdb\+::\+Encode32}} (char $\ast$p\+\_\+dst, uint32\+\_\+t a\+\_\+v)
+\begin{DoxyCompactList}\small\item\em Encodes a 32-\/bit integer into a 4-\/byte sequence in little-\/endian format. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{namespacetagfilterdb_aa917d2565da649f2c638714d8e805a7e}{tagfilterdb\+::\+Decode32}} (const char $\ast$p)
+\begin{DoxyCompactList}\small\item\em Decodes a 4-\/byte sequence from little-\/endian format into a 32-\/bit integer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetagfilterdb_aae6ad7e0720c20f89aab931488114618}{tagfilterdb\+::\+Append\+Encode32}} (std\+::string $\ast$p\+\_\+dst, uint32\+\_\+t a\+\_\+v)
+\begin{DoxyCompactList}\small\item\em Appends a 32-\/bit integer encoded in little-\/endian format to a string. \end{DoxyCompactList}\end{DoxyCompactItemize}

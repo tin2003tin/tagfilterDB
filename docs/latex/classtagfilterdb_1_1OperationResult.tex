@@ -1,0 +1,104 @@
+\hypertarget{classtagfilterdb_1_1OperationResult}{}\doxysection{tagfilterdb\+::Operation\+Result$<$ RETURNTYPE $>$ Class Template Reference}
+\label{classtagfilterdb_1_1OperationResult}\index{tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}}
+
+
+Template class for representing the result of an operation, including a return value and status.  
+
+
+
+
+{\ttfamily \#include $<$status.\+hpp$>$}
+
+
+
+Collaboration diagram for tagfilterdb\+::Operation\+Result$<$ RETURNTYPE $>$\+:
+% FIG 0
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1OperationResult_a7e52142f9c8e2a9770d6022ab78ec005}{Operation\+Result}} (const RETURNTYPE \&r\+\_\+value, \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} a\+\_\+status)
+\begin{DoxyCompactList}\small\item\em Constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}}} with a lvalue reference. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1OperationResult_a0fdec4ad7ae3ba45e6ce61db7f57a782}{Operation\+Result}} (RETURNTYPE \&\&r\+\_\+value, \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} a\+\_\+status)
+\begin{DoxyCompactList}\small\item\em Constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}}} with a rvalue reference. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+RETURNTYPE \mbox{\hyperlink{classtagfilterdb_1_1OperationResult_a3a8c4fee778bf961c7cbc9a0c0558ebd}{m\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em The return value of the operation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \mbox{\hyperlink{classtagfilterdb_1_1OperationResult_aad642fc8afc923ef781573c9e71ca5f3}{m\+\_\+status}}
+\begin{DoxyCompactList}\small\item\em The status of the operation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename RETURNTYPE$>$\newline
+class tagfilterdb\+::\+Operation\+Result$<$ RETURNTYPE $>$}
+
+Template class for representing the result of an operation, including a return value and status. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtagfilterdb_1_1OperationResult_a7e52142f9c8e2a9770d6022ab78ec005}\label{classtagfilterdb_1_1OperationResult_a7e52142f9c8e2a9770d6022ab78ec005}} 
+\index{tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}!OperationResult@{OperationResult}}
+\index{OperationResult@{OperationResult}!tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}}
+\doxysubsubsection{\texorpdfstring{OperationResult()}{OperationResult()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename RETURNTYPE $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{tagfilterdb\+::\+Operation\+Result}}$<$ RETURNTYPE $>$\+::\mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}} (\begin{DoxyParamCaption}\item[{const RETURNTYPE \&}]{r\+\_\+value,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}]{a\+\_\+status }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}}} with a lvalue reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+value} & The return value. \\
+\hline
+{\em a\+\_\+status} & The status of the operation. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classtagfilterdb_1_1OperationResult_a0fdec4ad7ae3ba45e6ce61db7f57a782}\label{classtagfilterdb_1_1OperationResult_a0fdec4ad7ae3ba45e6ce61db7f57a782}} 
+\index{tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}!OperationResult@{OperationResult}}
+\index{OperationResult@{OperationResult}!tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}}
+\doxysubsubsection{\texorpdfstring{OperationResult()}{OperationResult()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename RETURNTYPE $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{tagfilterdb\+::\+Operation\+Result}}$<$ RETURNTYPE $>$\+::\mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}} (\begin{DoxyParamCaption}\item[{RETURNTYPE \&\&}]{r\+\_\+value,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}]{a\+\_\+status }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{Operation\+Result}}} with a rvalue reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+value} & The return value (moved). \\
+\hline
+{\em a\+\_\+status} & The status of the operation. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classtagfilterdb_1_1OperationResult_a3a8c4fee778bf961c7cbc9a0c0558ebd}\label{classtagfilterdb_1_1OperationResult_a3a8c4fee778bf961c7cbc9a0c0558ebd}} 
+\index{tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}!m\_data@{m\_data}}
+\index{m\_data@{m\_data}!tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}}
+\doxysubsubsection{\texorpdfstring{m\_data}{m\_data}}
+{\footnotesize\ttfamily template$<$typename RETURNTYPE $>$ \\
+RETURNTYPE \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{tagfilterdb\+::\+Operation\+Result}}$<$ RETURNTYPE $>$\+::m\+\_\+data}
+
+
+
+The return value of the operation. 
+
+\mbox{\Hypertarget{classtagfilterdb_1_1OperationResult_aad642fc8afc923ef781573c9e71ca5f3}\label{classtagfilterdb_1_1OperationResult_aad642fc8afc923ef781573c9e71ca5f3}} 
+\index{tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}!m\_status@{m\_status}}
+\index{m\_status@{m\_status}!tagfilterdb::OperationResult$<$ RETURNTYPE $>$@{tagfilterdb::OperationResult$<$ RETURNTYPE $>$}}
+\doxysubsubsection{\texorpdfstring{m\_status}{m\_status}}
+{\footnotesize\ttfamily template$<$typename RETURNTYPE $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \mbox{\hyperlink{classtagfilterdb_1_1OperationResult}{tagfilterdb\+::\+Operation\+Result}}$<$ RETURNTYPE $>$\+::m\+\_\+status}
+
+
+
+The status of the operation. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/\mbox{\hyperlink{status_8hpp}{status.\+hpp}}\end{DoxyCompactItemize}

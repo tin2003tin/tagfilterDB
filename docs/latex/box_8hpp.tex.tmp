@@ -1,0 +1,35 @@
+\hypertarget{box_8hpp}{}\doxysection{include/tagfilterdb/r\+Star\+Tree/box.hpp File Reference}
+\label{box_8hpp}\index{include/tagfilterdb/rStarTree/box.hpp@{include/tagfilterdb/rStarTree/box.hpp}}
+{\ttfamily \#include $<$array$>$}\newline
+{\ttfamily \#include $<$limits$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}tagfilterdb/export.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}tagfilterdb/status.\+hpp\char`\"{}}\newline
+Include dependency graph for box.\+hpp\+:
+% FIG 0
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box$<$ DIMS, RANGETYPE $>$}}
+\begin{DoxyCompactList}\small\item\em A template class for representing a multi-\/dimensional bounding box. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{box_8hpp_a12bb4a4f3a80079a5f1e50bfd88a6bd8}{BROUNDINGBOX\+\_\+\+QUAL}}~Bounding\+Box$<$DIMS, RANGETYPE$>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{box_8hpp_a12bb4a4f3a80079a5f1e50bfd88a6bd8}\label{box_8hpp_a12bb4a4f3a80079a5f1e50bfd88a6bd8}} 
+\index{box.hpp@{box.hpp}!BROUNDINGBOX\_QUAL@{BROUNDINGBOX\_QUAL}}
+\index{BROUNDINGBOX\_QUAL@{BROUNDINGBOX\_QUAL}!box.hpp@{box.hpp}}
+\doxysubsubsection{\texorpdfstring{BROUNDINGBOX\_QUAL}{BROUNDINGBOX\_QUAL}}
+{\footnotesize\ttfamily \#define BROUNDINGBOX\+\_\+\+QUAL~Bounding\+Box$<$DIMS, RANGETYPE$>$}
+

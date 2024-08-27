@@ -1,0 +1,9 @@
+var searchData=
+[
+  ['ok_82',['ok',['../classtagfilterdb_1_1Status.html#aa524bd0e977544ba1a326bc051ad5bbd',1,'tagfilterdb::Status']]],
+  ['ok_83',['OK',['../classtagfilterdb_1_1Status.html#aa1405633c748dbc249b2bf7f87a93ea2',1,'tagfilterdb::Status']]],
+  ['operationresult_84',['OperationResult',['../classtagfilterdb_1_1OperationResult.html#a7e52142f9c8e2a9770d6022ab78ec005',1,'tagfilterdb::OperationResult::OperationResult(const RETURNTYPE &amp;r_value, Status a_status)'],['../classtagfilterdb_1_1OperationResult.html#a0fdec4ad7ae3ba45e6ce61db7f57a782',1,'tagfilterdb::OperationResult::OperationResult(RETURNTYPE &amp;&amp;r_value, Status a_status)']]],
+  ['operator_3d_85',['operator=',['../classtagfilterdb_1_1Status.html#a237a0c80416686ef3b7b4c45c952c578',1,'tagfilterdb::Status::operator=(Status &amp;&amp;other) noexcept'],['../classtagfilterdb_1_1Status.html#ae312327db9c86f3ffa9794af79628869',1,'tagfilterdb::Status::operator=(const Status &amp;other)'],['../classtagfilterdb_1_1BoundingBox.html#a23a63a0c69bc04103aad560853678941',1,'tagfilterdb::BoundingBox::operator=(BROUNDINGBOX_QUAL &amp;&amp;other) noexcept'],['../classtagfilterdb_1_1BoundingBox.html#a60e0ce20bdce5cabeca624ff3f8e536f',1,'tagfilterdb::BoundingBox::operator=(const BROUNDINGBOX_QUAL &amp;other)']]],
+  ['operator_3d_3d_86',['operator==',['../classtagfilterdb_1_1Status.html#a04281918fbb81415a1cb85a1eb07ee56',1,'tagfilterdb::Status::operator==(const Status &amp;other) const'],['../classtagfilterdb_1_1Status.html#ae2447097d963c4ebe88e42a3dc88104d',1,'tagfilterdb::Status::operator==(Err err) const'],['../classtagfilterdb_1_1BoundingBox.html#a7249f1064d6e8e4f7f0eaabd36432087',1,'tagfilterdb::BoundingBox::operator==(const BROUNDINGBOX_QUAL &amp;other)']]],
+  ['overlap_87',['overlap',['../classtagfilterdb_1_1BoundingBox.html#ac7ebfde27c10f97689ceb539dcc7f485',1,'tagfilterdb::BoundingBox']]]
+];
