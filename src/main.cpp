@@ -1,20 +1,18 @@
 #include <iostream>
-#include "tagfilterdb/rStarTree/temp.hpp"
-
-class MyClass
-{
-public:
-    int index = 0;
-    MyClass(int i) : index(i) {}
-};
+#include "tagfilterdb/rStarTree/box.hpp"
+#include "tagfilterdb/status.hpp"
+#include <vector>
 
 int main()
 {
-    RTree<MyClass *, double, 3> tree;
-    double min[3] = {0., 0., 0.};
-    double max[3] = {1., 1., 1.};
-    MyClass *mc1 = new MyClass(10);
-    MyClass *mc2 = new MyClass(20);
-    tree.Insert(min, max, mc1);
-    tree.Insert(min, max, mc2);
+    using Box2D = tagfilterdb::BoundingBox<2, double>;
+    Box2D box;
+    box.setAxis(0, {1, 10});
+    box.setAxis(1, Box2D::EDGE(1, 2));
+    auto status = box.setAxis(2, {3, 3});
+    if (status.IsError())
+    {
+        std::cout << status.ToString() << std::endl;
+    }
+    std::cout << box.toString() << std::endl;
 }

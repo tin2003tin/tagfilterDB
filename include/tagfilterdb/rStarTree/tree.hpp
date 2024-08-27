@@ -5,160 +5,118 @@
 #include "tagfilterdb/export.hpp"
 #include "tagfilterdb/status.hpp"
 
+#include <iostream>
 #include <vector>
 #include <cassert>
-
-// TODO: Remove a node
-// TODO: Search a range
-// TODO: Search a certain value
-// TODO: Search a neighbor
-// TODO: Search all paths (for checking all tags)
-// TODO: Display breadth-first search
-// TODO: Balance the tree after insertions and deletions
-// TODO: Implement node splitting logic when maximum capacity is exceeded
-// TODO: Optimize insertions to minimize overlap and area enlargement
-// TODO: Reinsert nodes during splits to optimize tree structure
-// TODO: Optimize search performance for high-dimensional data
-// TODO: Implement bulk loading of data into the R* tree
-// TODO: Extend support for non-rectangular shapes (if applicable)
-// TODO: Implement persistent storage for saving and loading the tree from disk
-// TODO: Add concurrency control for thread-safe operations
-// TODO: Visualize the R* tree structure for debugging and analysis purposes
-// TODO: Implement an iterator for traversing the R* tree
-// TODO: Implement a const iterator for read-only access
 
 namespace tagfilterdb
 {
 #define RSTARTREE_TEMPLATE template <class DATATYPE, class RANGETYPE, int DIMS, int MAXCHILD, int MINCHILD>
-#define RSTARTREE_QUAL RStarTree<DATATYPE, ELEMTYPE, NUMDIMS, ELEMTYPEREAL, TMAXNODES, TMINNODES>
+#define RSTARTREE_QUAL RStarTree<DATATYPE, RANGETYPE, DIMS, MAXCHILD, MINCHILD>
 
-    template <class DATATYPE, class RANGETYPE, int DIMS, int MAXCHILD = 8, int MINCHILD = MAXCHILD / 2>
+    RSTARTREE_TEMPLATE
     class TAGFILTERDB_EXPORT RStarTree
     {
-        using BBox = BROUNDINGBOX_QUAL;
+    public:
+        RStarTree();
+        RStarTree(const RStarTree &other);
+        virtual ~RStarTree();
 
-    private:
-        // Base class for all nodes in the R*-Tree
-        class Node
+    protected:
+        using BBox = BoundingBox<DIMS, RANGETYPE>;
+
+        struct Node;
+        struct Branch
         {
-        public:
-            BBox bound;
-            virtual ~Node() = default;
+            BBox m_box;
+            Node *m_child = nullptr;
+            DATATYPE m_data;
+        };
+        struct Node
+        {
+            bool IsInternalNode() const { return (m_level > 0); } // Internal node check
+            bool IsLeaf() const { return (m_level == 0); }        // Leaf node check
+
+            int m_cout = 0;            ///< Count of children
+            int m_level = -1;          ///< Level in the tree, 0 for leaf
+            Branch m_branch[MAXCHILD]; ///< Array of branches (children or data)
+        };
+        struct ListNode
+        {
+            ListNode *m_next = nullptr; ///< Next in linked list
+            Node *m_node = nullptr;     ///< Pointer to node
         };
 
-        // Leaf node class containing the bounding box and the actual data entry
-        class Leaf : public Node
-        {
-        public:
-            DATATYPE leaf;
+        Node *m_root = nullptr;
+        RANGETYPE m_unitSphereVolume;
 
-            Leaf(const BBox &boundingBox, const DATATYPE &data)
-            {
-                this->bound = boundingBox;
-                this->leaf = data;
-            }
-        };
+        void Insert(const BBox &bbox, const DATATYPE &data);
+        void InsertBox(const Branch &branch, Node **root, int level);
+        bool RecursiveInsertBox(const Branch &branch, Node *node, Node **newNode, int level);
 
-        class InterNode : public Node
-        {
-        public:
-            std::vector<BoundingBox> bounds; // Bounding boxes of child nodes
-            std::vector<Node *> children;    // Pointers to child nodes
-            bool hasLeaves;                  // Indicates if this node contains leaves
-
-            InterNode() : hasLeaves(false) {}
-
-            void addChild(Node *child)
-            {
-                children.push_back(child);
-                bounds.push_back(child->bound);
-                this->bound = this->bound.unionBox(child->bound);
-            }
-
-            ~InterNode()
-            {
-                for (auto child : children)
-                {
-                    delete child;
-                }
-            }
-        };
+        void InitNode(Node *node);
+        BBox NodeCover(Node *node) const;
 
     public:
-        // Default constructor
-        RStarTree() : root_(nullptr), size_(0)
-        {
-            assert(1 <= min_child && min_child <= max_child / 2);
-        }
-
-        // Method to insert a bounding box and associated data into the R*-Tree
-        Status insert(const BoundingBox &bound, const LeafType &data)
-        {
-            Leaf *newLeaf = new Leaf(bound, data);
-
-            if (!root_)
-            {
-                InterNode *newRoot = new InterNode();
-                newRoot->hasLeaves = true;
-                newRoot->addChild(newLeaf);
-                root_ = newRoot;
-            }
-            else
-            {
-                insertInternal(newLeaf, root_);
-            }
-
-            size_++;
-            return Status::OK();
-        }
-
-    private:
-        // Recursive insert helper function
-        void insertInternal(Leaf *leaf, InterNode *node)
-        {
-            node->bound = node->bound.unionBox(leaf->bound);
-
-            if (node->hasLeaves)
-            {
-                node->addChild(leaf);
-            }
-            else
-            {
-                InterNode *childNode = properSubtree(node, leaf->bound);
-                insertInternal(leaf, childNode);
-            }
-            if (node->children.size() > max_child)
-            {
-                // splitNode
-            }
-        }
-
-        // Choose the best subtree for insertion
-        InterNode *properSubtree(InterNode *node, const BoundingBox &bound)
-        {
-            // Select the child whose bounding box requires the least enlargement
-            InterNode *bestNode = nullptr;
-            double minEnlargement = std::numeric_limits<double>::max();
-
-            for (size_t i = 0; i < node->children.size(); ++i)
-            {
-                BoundingBox tempBound = node->bounds[i].unionBox(bound);
-                double enlargement = tempBound.area() - node->bounds[i].area();
-
-                if (enlargement < minEnlargement)
-                {
-                    minEnlargement = enlargement;
-                    bestNode = dynamic_cast<InterNode *>(node->children[i]);
-                }
-            }
-
-            return bestNode;
-        }
-
-    private:
-        InterNode *root_;
-        std::size_t size_;
+        std::vector<BBox> ListTree() const;
     };
+
+    RSTARTREE_TEMPLATE
+    RSTARTREE_QUAL::RStarTree()
+    {
+        assert(MAXCHILD > 0 && MINCHILD > 0);
+        assert(MAXCHILD > MINCHILD);
+
+        const float UNIT_SPHERE_VOLUMES[] = {
+            0.000000f, 2.000000f, 3.141593f, // Dimension  0,1,2
+            4.188790f, 4.934802f, 5.263789f, // Dimension  3,4,5
+            5.167713f, 4.724766f, 4.058712f, // Dimension  6,7,8
+            3.298509f, 2.550164f, 1.884104f, // Dimension  9,10,11
+            1.335263f, 0.910629f, 0.599265f, // Dimension  12,13,14
+            0.381443f, 0.235331f, 0.140981f, // Dimension  15,16,17
+            0.082146f, 0.046622f, 0.025807f, // Dimension  18,19,20
+        };
+
+        // Initialize root node
+        m_root = new Node;
+        InitNode(m_root);
+        m_root->m_level = 0; // Root level set to 0 (leaf level)
+        m_unitSphereVolume = static_cast<RANGETYPE>(UNIT_SPHERE_VOLUMES[DIMS]);
+    }
+
+    RSTARTREE_TEMPLATE
+    void RSTARTREE_QUAL::InitNode(Node *node)
+    {
+        node. = 0;
+        node->l = -1;
+    }
+
+    RSTARTREE_TEMPLATE
+    void RSTARTREE_QUAL::Insert(const BBox &bbox, const DATATYPE &data)
+    {
+        Subtree branch;
+        branch.data = data;
+        branch.box = bbox;
+        branch.child = nullptr;
+
+        InsertBox(branch, &m_root, 0);
+    }
+
+    RSTARTREE_TEMPLATE
+    bool RSTARTREE_QUAL::RecursiveInsertBox(const Branch &branch, Node *node, Node **newNode, int level)
+    {
+    }
+
+    RSTARTREE_TEMPLATE
+    void RSTARTREE_QUAL::InsertBox(const Branch &branch, Node **root, int level)
+    {
+        assert(a_node && a_newNode);
+        assert(a_level >= 0 && a_level <= (*root)->l);
+
+        Node *node;
+        if ()
+    }
+
 }
 
 #endif // TAGFILTERDB_R_STAR_TREE_HPP_

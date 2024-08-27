@@ -7,7 +7,6 @@
 #include <cassert>
 
 #include "tagfilterdb/export.hpp"
-#include <tuple>
 
 // TODO: Optimize memory management to reduce allocations and deallocations for Status objects
 // TODO: Implement a function to retrieve the error message without needing to use ToString()
@@ -27,166 +26,185 @@ namespace tagfilterdb
     class TAGFILTERDB_EXPORT Status
     {
     public:
-        Status() noexcept : state_(nullptr) {}
-        ~Status() { delete[] state_; }
-        Status(const Status &rhs)
+        // Enum for error
+        enum Err
         {
-            state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+            e_Ok = 0,
+            e_NotFound = 1,
+            e_Corruption = 2,
+            e_NotSupported = 3,
+            e_OutOfRange = 4,
+            e_InvalidArgument = 5,
+            e_IOError = 6,
+            e_Timeout = 7,
+            e_PermissionDenied = 8,
+            e_NetworkError = 9
+        };
+
+        // Constructors
+        Status() noexcept : m_state(nullptr) {}
+
+        ~Status() { delete[] m_state; }
+
+        Status(const Status &other)
+        {
+            m_state = (other.m_state == nullptr) ? nullptr : CopyState(other.m_state);
         }
-        Status &operator=(Status &&rhs) noexcept
+
+        Status &operator=(Status &&other) noexcept
         {
-            std::swap(state_, rhs.state_);
-            return *this;
-        }
-        Status &operator=(const Status &rhs)
-        {
-            if (state_ != rhs.state_)
+            if (this != &other)
             {
-                delete[] state_;
-                state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+                delete[] m_state;
+                m_state = other.m_state;
+                other.m_state = nullptr;
             }
             return *this;
         }
-        Status(Status &&rhs) noexcept : state_(rhs.state_) { rhs.state_ = nullptr; }
 
+        Status &operator=(const Status &other)
+        {
+            if (this != &other)
+            {
+                delete[] m_state;
+                m_state = (other.m_state == nullptr) ? nullptr : CopyState(other.m_state);
+            }
+            return *this;
+        }
+
+        bool operator==(const Status &other) const
+        {
+            return ErrorMatch() == other.ErrorMatch();
+        }
+
+        bool operator==(Err err) const
+        {
+            return ErrorMatch() == err;
+        }
+
+        Status(Status &&other) noexcept : m_state(other.m_state)
+        {
+            other.m_state = nullptr;
+        }
+
+        // Static factory methods
         static Status OK() { return Status(); }
-        static Status NotFound(const std::string &msg, const std::string &msg2 = "")
+
+        static Status Error(Err e_err, const std::string &r_msg1 = "", const std::string &r_msg2 = "")
         {
-            return Status(kNotFound, msg, msg2);
-        }
-        static Status Corruption(const std::string &msg, const std::string &msg2 = "")
-        {
-            return Status(kCorruption, msg, msg2);
-        }
-        static Status NotSupported(const std::string &msg, const std::string &msg2 = "")
-        {
-            return Status(kNotSupported, msg, msg2);
-        }
-        static Status OutOfRange(const std::string &msg, const std::string &msg2 = "")
-        {
-            return Status(kOutOfRange, msg, msg2);
+            return Status(e_err, r_msg1, r_msg2);
         }
 
-        static Status InvalidArgument(const std::string &msg, const std::string &msg2 = "")
-        {
-            return Status(kInvalidArgument, msg, msg2);
-        }
-        static Status IOError(const std::string &msg, const std::string &msg2 = "")
-        {
-            return Status(kIOError, msg, msg2);
-        }
+        bool ok() const { return (m_state == nullptr); }
 
-        bool ok() const { return (state_ == nullptr); }
-
-        bool IsError() const { return code() > 0; }
+        bool IsError() const { return ErrorMatch() > e_Ok; }
 
         std::string ToString() const
         {
-
-            if (state_ == nullptr)
+            if (m_state == nullptr)
             {
                 return "OK";
             }
             else
             {
-                char tmp[30];
+                char t_tmp[30];
                 const char *type;
-                switch (code())
+                switch (ErrorMatch())
                 {
-                case kOk:
+                case e_Ok:
                     type = "OK";
                     break;
-                case kNotFound:
+                case e_NotFound:
                     type = "NotFound: ";
                     break;
-                case kCorruption:
+                case e_Corruption:
                     type = "Corruption: ";
                     break;
-                case kNotSupported:
+                case e_NotSupported:
                     type = "Not implemented: ";
                     break;
-                case kInvalidArgument:
+                case e_InvalidArgument:
                     type = "Invalid argument: ";
                     break;
-                case kIOError:
+                case e_IOError:
                     type = "IO error: ";
                     break;
-                case kOutOfRange:
+                case e_OutOfRange:
                     type = "Out of range: ";
                     break;
-
+                case e_Timeout:
+                    type = "Timeout: ";
+                    break;
+                case e_PermissionDenied:
+                    type = "Permission denied: ";
+                    break;
+                case e_NetworkError:
+                    type = "Network error: ";
+                    break;
                 default:
-                    std::snprintf(tmp, sizeof(tmp),
-                                  "Unknown code(%d): ", static_cast<int>(code()));
-                    type = tmp;
+                    std::snprintf(t_tmp, sizeof(t_tmp),
+                                  "Unknown code(%d): ", static_cast<int>(ErrorMatch()));
+                    type = t_tmp;
                     break;
                 }
-                std::string result(type);
+                std::string t_result(type);
                 uint32_t length;
-                std::memcpy(&length, state_, sizeof(length));
-                result.append(state_ + 5, length);
-                return result;
+                std::memcpy(&length, m_state, sizeof(length));
+                t_result.append(m_state + 5, length);
+                return t_result;
             }
         }
 
     private:
-        enum Code
+        const char *m_state;
+
+        Status(Err e_err, const std::string &r_msg1, const std::string &r_msg2)
         {
-            kOk = 0,
-            kNotFound = 1,
-            kCorruption = 2,
-            kNotSupported = 3,
-            kOutOfRange = 4,
-            kInvalidArgument = 5,
-            kIOError = 6
-        };
-        Code code() const
-        {
-            return (state_ == nullptr) ? kOk : static_cast<Code>(state_[4]);
-        }
-        const char *state_;
-        Status(Code code, const std::string &msg, const std::string &msg2)
-        {
-            assert(code != kOk);
-            const uint32_t len1 = static_cast<uint32_t>(msg.size());
-            const uint32_t len2 = static_cast<uint32_t>(msg2.size());
+            assert(e_err != e_Ok);
+            const uint32_t len1 = static_cast<uint32_t>(r_msg1.size());
+            const uint32_t len2 = static_cast<uint32_t>(r_msg2.size());
             const uint32_t size = len1 + (len2 ? (2 + len2) : 0);
-            char *result = new char[size + 5];
-            std::memcpy(result, &size, sizeof(size));
-            result[4] = static_cast<char>(code);
-            std::memcpy(result + 5, msg.data(), len1);
+            char *p_result = new char[size + 5];
+            std::memcpy(p_result, &size, sizeof(size));
+            p_result[4] = static_cast<char>(e_err);
+            std::memcpy(p_result + 5, r_msg1.data(), len1);
             if (len2)
             {
-                result[5 + len1] = ':';
-                result[6 + len1] = ' ';
-                std::memcpy(result + 7 + len1, msg2.data(), len2);
+                p_result[5 + len1] = ':';
+                p_result[6 + len1] = ' ';
+                std::memcpy(p_result + 7 + len1, r_msg2.data(), len2);
             }
-            state_ = result;
+            m_state = p_result;
         }
 
-        const char *CopyState(const char *state)
+        const char *CopyState(const char *p_state)
         {
             uint32_t size;
-            std::memcpy(&size, state, sizeof(size));
-            char *result = new char[size + 5];
-            std::memcpy(result, state, size + 5);
-            return result;
+            std::memcpy(&size, p_state, sizeof(size));
+            char *p_result = new char[size + 5];
+            std::memcpy(p_result, p_state, size + 5);
+            return p_result;
+        }
+
+        Err ErrorMatch() const
+        {
+            return (m_state == nullptr) ? e_Ok : static_cast<Err>(m_state[4]);
         }
     };
 
-    template <typename T>
+    template <typename RETURNTYPE>
     class OperationResult
     {
     public:
         // Constructors
-        OperationResult(const T &value, Status status)
-            : value(value), status(status) {}
+        OperationResult(const RETURNTYPE &r_value, Status a_status)
+            : m_data(r_value), m_status(a_status) {}
 
-        OperationResult(T &&value, Status status)
-            : value(std::move(value)), status(status) {}
-        T value;
+        OperationResult(RETURNTYPE &&r_value, Status a_status)
+            : m_data(std::move(r_value)), m_status(a_status) {}
 
-        Status status;
+        RETURNTYPE m_data;
+        Status m_status;
     };
 }
 

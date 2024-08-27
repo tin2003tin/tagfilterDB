@@ -6,29 +6,29 @@
 
 namespace tagfilterdb
 {
-    inline void Encode32(char *dst, uint32_t v)
+    inline void Encode32(char *p_dst, uint32_t a_v)
     {
-        uint8_t *const buffer = (uint8_t *)(dst);
+        uint8_t *const p_buffer = (uint8_t *)(p_dst);
 
-        buffer[0] = (uint8_t)(v);
-        buffer[1] = (uint8_t)(v >> 8);
-        buffer[2] = (uint8_t)(v >> 16);
-        buffer[3] = (uint8_t)(v >> 24);
+        p_buffer[0] = (uint8_t)(a_v);
+        p_buffer[1] = (uint8_t)(a_v >> 8);
+        p_buffer[2] = (uint8_t)(a_v >> 16);
+        p_buffer[3] = (uint8_t)(a_v >> 24);
     }
     inline uint32_t Decode32(const char *p)
     {
-        const uint8_t *const buffer = (const uint8_t *)(p);
+        const uint8_t *const p_buffer = (const uint8_t *)(p);
 
-        return ((uint32_t)buffer[0]) |
-               ((uint32_t)(buffer[1]) << 8) |
-               ((uint32_t)(buffer[2]) << 16) |
-               ((uint32_t)(buffer[3]) << 24);
+        return ((uint32_t)p_buffer[0]) |
+               ((uint32_t)(p_buffer[1]) << 8) |
+               ((uint32_t)(p_buffer[2]) << 16) |
+               ((uint32_t)(p_buffer[3]) << 24);
     }
-    void AppendEncode32(std::string *dst, uint32_t v)
+    void AppendEncode32(std::string *p_dst, uint32_t a_v)
     {
-        char buf[sizeof(v)];
-        Encode32(buf, v);
-        dst->append(buf, sizeof(buf));
+        char t_buf[sizeof(a_v)];
+        Encode32(t_buf, a_v);
+        p_dst->append(t_buf, sizeof(t_buf));
     }
 }
 

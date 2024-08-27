@@ -40,34 +40,34 @@ namespace tagfilterdb
         /// Note 1 < 10 and 1 < 5 the frist value should less than second Value
         BoundingBox()
         {
-            for (int i = 0; i < DIMS; i++)
+            for (std::size_t i_axis = 0; i_axis < DIMS; i_axis++)
             {
-                setAxis(i, (RANGETYPE)0, (RANGETYPE)0);
+                setAxis(i_axis, (RANGETYPE)0, (RANGETYPE)0);
             }
         }
 
         /// Parameterized Constructor
         /// Constructs a Box using a vector of coordinate pairs.
         /// Box<2> box({{1,10},{1,5}});
-        BoundingBox(std::vector<EDGE> vec)
+        BoundingBox(std::vector<EDGE> a_vec)
         {
-            for (int i = 0; i < DIMS; i++)
+            for (std::size_t i_axis = 0; i_axis < DIMS; i_axis++)
             {
-                setAxis(i, vec[i].first, vec[i].second);
+                setAxis(i_axis, a_vec[i_axis].first, a_vec[i_axis].second);
             }
         }
 
         /// Move Constructor
-        BoundingBox(BROUNDINGBOX_QUAL &&other) noexcept : axis_(std::move(other.axis_)) {}
+        BoundingBox(BROUNDINGBOX_QUAL &&other) noexcept : m_axis(std::move(other.m_axis)) {}
 
         /// Copy Constructor
-        BoundingBox(const BROUNDINGBOX_QUAL &other) : axis_(other.axis_) {}
+        BoundingBox(const BROUNDINGBOX_QUAL &other) : m_axis(other.m_axis) {}
 
         /// Equality Operator
-        bool operator==(const BROUNDINGBOX_QUAL &bb)
+        bool operator==(const BROUNDINGBOX_QUAL &other)
         {
-            for (std::size_t axis = 0; axis < DIMS; axis++)
-                if (axis_[axis].first != bb.axis_[axis].first || axis_[axis].second != bb.axis_[axis].second)
+            for (std::size_t i_axis = 0; i_axis < DIMS; i_axis++)
+                if (m_axis[i_axis].first != other.m_axis[i_axis].first || m_axis[i_axis].second != other.m_axis[i_axis].second)
                     return false;
 
             return true;
@@ -77,7 +77,7 @@ namespace tagfilterdb
         {
             if (this != &other)
             {
-                axis_ = std::move(other.axis_);
+                m_axis = std::move(other.m_axis);
             }
             return *this;
         }
@@ -86,60 +86,57 @@ namespace tagfilterdb
         {
             if (this != &other)
             {
-                for (std::size_t i = 0; i < DIMS; ++i)
+                for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
                 {
-                    axis_[i] = other.axis_[i];
+                    m_axis[i_axis] = other.m_axis[i_axis];
                 }
             }
             return *this;
         }
 
         // Set Method
-        Status setAxis(int axis, RANGETYPE s, RANGETYPE e)
+        Status setAxis(int a_axis, RANGETYPE a_start, RANGETYPE a_end)
         {
-            if (axis < 0 || static_cast<std::size_t>(axis) >= DIMS)
+            if (a_axis < 0 || static_cast<std::size_t>(a_axis) >= DIMS)
             {
-                return Status::OutOfRange("Axis is out of bounds");
+                return Status::Error(Status::e_OutOfRange, "Axis is out of bounds");
             }
-            if (s > e)
+            if (a_start > a_end)
             {
-                return Status::OutOfRange("Start value should less than End value");
+                return Status::Error(Status::e_OutOfRange, "Start value should be less than End value");
             }
-            axis_[axis] = std::make_pair(s, e);
+            m_axis[a_axis] = std::make_pair(a_start, a_end);
             return Status::OK();
         }
 
-        Status setAxis(int axis, EDGE e)
+        Status setAxis(int a_axis, EDGE a_edge)
         {
-            if (axis < 0 || static_cast<std::size_t>(axis) >= DIMS)
+            if (a_axis < 0 || static_cast<std::size_t>(a_axis) >= DIMS)
             {
-                return Status::OutOfRange("Axis is out of bounds");
+                return Status::Error(Status::e_OutOfRange, "Axis is out of bounds");
             }
-            // if (s > e)
-            // {
-            //     return Status::OutOfRange("Start value should less than End value");
-            // }
-            axis_[axis] = e;
+
+            m_axis[a_axis] = a_edge;
             return Status::OK();
         }
 
         // Get Method
-        OperationResult<EDGE> get(int axis) const
+        OperationResult<EDGE> get(int a_axis) const
         {
-            if (axis < 0 || static_cast<std::size_t>(axis) >= DIMS)
+            if (a_axis < 0 || (int)(a_axis) >= DIMS)
             {
-                return OperationResult<EDGE>({}, Status::OutOfRange("Axis is out of bounds"));
+                return OperationResult<EDGE>({}, Status::Error(Status::e_OutOfRange, "Axis is out of bounds"));
             }
-            return OperationResult<EDGE>(axis_[axis], Status::OK());
+            return OperationResult<EDGE>(m_axis[a_axis], Status::OK());
         }
 
         // Contains Point Method
         // Returns true if the point is within all dimensions' bounds, false otherwise.
-        bool containsPoint(const std::array<RANGETYPE, DIMS> &point) const
+        bool containsPoint(const std::array<RANGETYPE, DIMS> &r_point) const
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                if (point[axis] < axis_[axis].first || point[axis] > axis_[axis].second)
+                if (r_point[i_axis] < m_axis[i_axis].first || r_point[i_axis] > m_axis[i_axis].second)
                     return false;
             }
             return true;
@@ -149,10 +146,10 @@ namespace tagfilterdb
         // Resets the box's bounds to default values.
         void reset()
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                axis_[axis].first = std::numeric_limits<RANGETYPE>::lowest();
-                axis_[axis].second = std::numeric_limits<RANGETYPE>::max();
+                m_axis[i_axis].first = std::numeric_limits<RANGETYPE>::lowest();
+                m_axis[i_axis].second = std::numeric_limits<RANGETYPE>::max();
             }
         }
 
@@ -160,12 +157,12 @@ namespace tagfilterdb
         // Computes the center point of the box for each dimension.
         std::array<RANGETYPE, DIMS> center() const
         {
-            std::array<RANGETYPE, DIMS> centers;
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            std::array<RANGETYPE, DIMS> t_centers;
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                centers[axis] = (axis_[axis].first + axis_[axis].second) / static_cast<RANGETYPE>(2.0);
+                t_centers[i_axis] = (m_axis[i_axis].first + m_axis[i_axis].second) / static_cast<RANGETYPE>(2.0);
             }
-            return centers;
+            return t_centers;
         }
 
         // Edge Area Method
@@ -173,8 +170,8 @@ namespace tagfilterdb
         RANGETYPE edgeArea() const
         {
             RANGETYPE distance = 0;
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
-                distance += axis_[axis].second - axis_[axis].first;
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
+                distance += m_axis[i_axis].second - m_axis[i_axis].first;
 
             return distance;
         }
@@ -184,19 +181,19 @@ namespace tagfilterdb
         RANGETYPE area() const
         {
             RANGETYPE area = static_cast<RANGETYPE>(1.0);
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                area *= (axis_[axis].second - axis_[axis].first);
+                area *= (m_axis[i_axis].second - m_axis[i_axis].first);
             }
             return area;
         }
 
         // Encloses Method
         // Checks if the current box completely encloses another box.
-        bool encloses(const BROUNDINGBOX_QUAL &bb) const
+        bool encloses(const BROUNDINGBOX_QUAL &other) const
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
-                if (bb.axis_[axis].first < axis_[axis].first || bb.axis_[axis].second > axis_[axis].second)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
+                if (other.m_axis[i_axis].first < m_axis[i_axis].first || other.m_axis[i_axis].second > m_axis[i_axis].second)
                     return false;
 
             return true;
@@ -204,11 +201,11 @@ namespace tagfilterdb
 
         // Is Overlap Method
         // Checks if the current box overlaps with another box.
-        bool isOverlap(const BROUNDINGBOX_QUAL &bb) const
+        bool isOverlap(const BROUNDINGBOX_QUAL &other) const
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                if (!(axis_[axis].first < bb.axis_[axis].second) || !(bb.axis_[axis].first < axis_[axis].second))
+                if (!(m_axis[i_axis].first < other.m_axis[i_axis].second) || !(other.m_axis[i_axis].first < m_axis[i_axis].second))
                     return false;
             }
 
@@ -217,33 +214,33 @@ namespace tagfilterdb
 
         // Overlap Method
         // Computes the area of the overlapping region between the current box and another box.
-        RANGETYPE overlap(const BROUNDINGBOX_QUAL &bb) const
+        RANGETYPE overlap(const BROUNDINGBOX_QUAL &other) const
         {
             RANGETYPE area = static_cast<RANGETYPE>(1.0);
-            for (std::size_t axis = 0; area && axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; area && i_axis < DIMS; ++i_axis)
             {
-                const RANGETYPE x1 = axis_[axis].first;
-                const RANGETYPE x2 = axis_[axis].second;
-                const RANGETYPE y1 = bb.axis_[axis].first;
-                const RANGETYPE y2 = bb.axis_[axis].second;
+                const RANGETYPE t_x1 = m_axis[i_axis].first;
+                const RANGETYPE t_x2 = m_axis[i_axis].second;
+                const RANGETYPE t_y1 = other.m_axis[i_axis].first;
+                const RANGETYPE t_y2 = other.m_axis[i_axis].second;
 
-                if (x1 < y1)
+                if (t_x1 < t_y1)
                 {
-                    if (y1 < x2)
+                    if (t_y1 < t_x2)
                     {
-                        if (y2 < x2)
-                            area *= (y2 - y1);
+                        if (t_y2 < t_x2)
+                            area *= (t_y2 - t_y1);
                         else
-                            area *= (x2 - y1);
+                            area *= (t_x2 - t_y1);
                         continue;
                     }
                 }
-                else if (x1 < y2)
+                else if (t_x1 < t_y2)
                 {
-                    if (x2 < y2)
-                        area *= (x2 - x1);
+                    if (t_x2 < t_y2)
+                        area *= (t_x2 - t_x1);
                     else
-                        area *= (y2 - x1);
+                        area *= (t_y2 - t_x1);
                     continue;
                 }
 
@@ -255,15 +252,15 @@ namespace tagfilterdb
 
         // Distance From Center Method
         // Computes the squared distance between the centers of the current box and another box.
-        RANGETYPE distanceFromCenter(const BROUNDINGBOX_QUAL &bb) const
+        RANGETYPE distanceFromCenter(const BROUNDINGBOX_QUAL &other) const
         {
             RANGETYPE distance = static_cast<RANGETYPE>(0.0);
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                RANGETYPE center1 = (axis_[axis].first + axis_[axis].second) / static_cast<RANGETYPE>(2.0);
-                RANGETYPE center2 = (bb.axis_[axis].first + bb.axis_[axis].second) / static_cast<RANGETYPE>(2.0);
-                RANGETYPE diff = center1 - center2;
-                distance += diff * diff;
+                RANGETYPE t_center1 = (m_axis[i_axis].first + m_axis[i_axis].second) / static_cast<RANGETYPE>(2.0);
+                RANGETYPE t_center2 = (other.m_axis[i_axis].first + other.m_axis[i_axis].second) / static_cast<RANGETYPE>(2.0);
+                RANGETYPE t_diff = t_center1 - t_center2;
+                distance += t_diff * t_diff;
             }
 
             return distance;
@@ -271,102 +268,102 @@ namespace tagfilterdb
 
         // Expand Method
         // Expands the bounds of the box by a specified margin in all dimensions.
-        void expand(RANGETYPE margin)
+        void expand(RANGETYPE a_margin)
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                axis_[axis].first -= margin;
-                axis_[axis].second += margin;
+                m_axis[i_axis].first -= a_margin;
+                m_axis[i_axis].second += a_margin;
             }
         }
 
         // Scale Method
         // Scales the box's dimensions by a specified factor.
-        void scale(RANGETYPE factor)
+        void scale(RANGETYPE a_factor)
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                RANGETYPE center = (axis_[axis].first + axis_[axis].second) / static_cast<RANGETYPE>(2.0);
-                RANGETYPE width = axis_[axis].second - axis_[axis].first;
-                RANGETYPE halfWidth = width * factor / static_cast<RANGETYPE>(2.0);
-                axis_[axis].first = center - halfWidth;
-                axis_[axis].second = center + halfWidth;
+                RANGETYPE t_center = (m_axis[i_axis].first + m_axis[i_axis].second) / static_cast<RANGETYPE>(2.0);
+                RANGETYPE t_width = m_axis[i_axis].second - m_axis[i_axis].first;
+                RANGETYPE t_halfWidth = t_width * a_factor / static_cast<RANGETYPE>(2.0);
+                m_axis[i_axis].first = t_center - t_halfWidth;
+                m_axis[i_axis].second = t_center + t_halfWidth;
             }
         }
         // Translate Method
         // Translates (moves) the box by a specified delta vector in all dimensions.
-        void translate(const std::array<RANGETYPE, DIMS> &delta)
+        void translate(const std::array<RANGETYPE, DIMS> &r_delta)
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                axis_[axis].first += delta[axis];
-                axis_[axis].second += delta[axis];
+                m_axis[i_axis].first += r_delta[i_axis];
+                m_axis[i_axis].second += r_delta[i_axis];
             }
         }
 
         // Resize Method
         // Resizes the box to fit new dimensions while keeping the center point unchanged.
-        void resize(const std::array<RANGETYPE, DIMS> &newDimensions)
+        void resize(const std::array<RANGETYPE, DIMS> &r_newDimensions)
         {
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                RANGETYPE center = (axis_[axis].first + axis_[axis].second) / static_cast<RANGETYPE>(2.0);
-                RANGETYPE halfWidth = (newDimensions[axis] - axis_[axis].first) / static_cast<RANGETYPE>(2.0);
-                axis_[axis].first = center - halfWidth;
-                axis_[axis].second = center + halfWidth;
+                RANGETYPE t_center = (m_axis[i_axis].first + m_axis[i_axis].second) / static_cast<RANGETYPE>(2.0);
+                RANGETYPE t_halfWidth = (r_newDimensions[i_axis] - m_axis[i_axis].first) / static_cast<RANGETYPE>(2.0);
+                m_axis[i_axis].first = t_center - t_halfWidth;
+                m_axis[i_axis].second = t_center + t_halfWidth;
             }
         }
 
         // Intersection Method
         // Computes the intersection (overlapping region) between the current box and another box.
-        BROUNDINGBOX_QUAL intersection(const BROUNDINGBOX_QUAL &bb) const
+        BROUNDINGBOX_QUAL intersection(const BROUNDINGBOX_QUAL &other) const
         {
-            BROUNDINGBOX_QUAL intersect;
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            BROUNDINGBOX_QUAL t_intersect;
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                intersect.axis_[axis].first = std::max(axis_[axis].first, bb.axis_[axis].first);
-                intersect.axis_[axis].second = std::min(axis_[axis].second, bb.axis_[axis].second);
+                t_intersect.m_axis[i_axis].first = std::max(m_axis[i_axis].first, other.m_axis[i_axis].first);
+                t_intersect.m_axis[i_axis].second = std::min(m_axis[i_axis].second, other.m_axis[i_axis].second);
             }
-            return intersect;
+            return t_intersect;
         }
 
         // Union Box Method
         // Computes the union (bounding box) of the current box and another box.
-        BROUNDINGBOX_QUAL unionBox(const BROUNDINGBOX_QUAL &bb) const
+        BROUNDINGBOX_QUAL unionBox(const BROUNDINGBOX_QUAL &other) const
         {
-            BROUNDINGBOX_QUAL unionBox;
-            for (std::size_t axis = 0; axis < DIMS; ++axis)
+            BROUNDINGBOX_QUAL t_unionBox;
+            for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
             {
-                unionBox.axis_[axis].first = std::min(axis_[axis].first, bb.axis_[axis].first);
-                unionBox.axis_[axis].second = std::max(axis_[axis].second, bb.axis_[axis].second);
+                t_unionBox.m_axis[i_axis].first = std::min(m_axis[i_axis].first, other.m_axis[i_axis].first);
+                t_unionBox.m_axis[i_axis].second = std::max(m_axis[i_axis].second, other.m_axis[i_axis].second);
             }
-            return unionBox;
+            return t_unionBox;
         }
 
         // Universe Method
         // Returns a Box representing the entire universe (default bounds).
         static BROUNDINGBOX_QUAL Universe()
         {
-            BROUNDINGBOX_QUAL bounds;
-            bounds.reset();
-            return bounds;
+            BROUNDINGBOX_QUAL t_bounds;
+            t_bounds.reset();
+            return t_bounds;
         }
 
         // Bounding Box Method
         // Computes the bounding box that contains all given points.
-        static BROUNDINGBOX_QUAL boundingBox(const std::vector<std::array<RANGETYPE, DIMS>> &points)
+        static BROUNDINGBOX_QUAL boundingBox(const std::vector<std::array<RANGETYPE, DIMS>> &r_points)
         {
-            BROUNDINGBOX_QUAL bbox;
-            bbox.axis_[0].first = bbox.axis_[0].second = points[0][0];
-            for (const auto &point : points)
+            BROUNDINGBOX_QUAL t_bbox;
+            t_bbox.m_axis[0].first = t_bbox.m_axis[0].second = r_points[0][0];
+            for (const auto &r_point : r_points)
             {
-                for (std::size_t axis = 0; axis < DIMS; ++axis)
+                for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis)
                 {
-                    bbox.axis_[axis].first = std::min(bbox.axis_[axis].first, point[axis]);
-                    bbox.axis_[axis].second = std::max(bbox.axis_[axis].second, point[axis]);
+                    t_bbox.m_axis[i_axis].first = std::min(t_bbox.m_axis[i_axis].first, r_point[i_axis]);
+                    t_bbox.m_axis[i_axis].second = std::max(t_bbox.m_axis[i_axis].second, r_point[i_axis]);
                 }
             }
-            return bbox;
+            return t_bbox;
         }
 
         // toString Method
@@ -379,7 +376,7 @@ namespace tagfilterdb
             {
                 if (i > 0)
                     oss << ", ";
-                oss << "(" << axis_[i].first << ", " << axis_[i].second << ")";
+                oss << "(" << m_axis[i].first << ", " << m_axis[i].second << ")";
             }
             oss << "]";
             return oss.str();
@@ -387,7 +384,7 @@ namespace tagfilterdb
 
     private:
         /// Array storing the bounds for each dimension.
-        EDGE axis_[DIMS];
+        EDGE m_axis[DIMS];
     };
 }
 

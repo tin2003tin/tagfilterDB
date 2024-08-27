@@ -9,9 +9,9 @@ namespace tagfilterdb
 {
     enum CompressionType
     {
-        kNoCompression = 0x0,
-        kSnappyCompression = 0x1,
-        kZstdCompression = 0x2,
+        e_NoCompression = 0x0,
+        e_SnappyCompression = 0x1,
+        e_ZstdCompression = 0x2,
     };
 
     struct TAGFILTERDB_EXPORT Options

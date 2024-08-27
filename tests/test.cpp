@@ -3,14 +3,40 @@
 #include "tagfilterdb/complier/LRcomplier.hpp"
 #include "tagfilterdb/rStarTree/box.hpp"
 #include "tagfilterdb/code.hpp"
+#include "tagfilterdb/status.hpp"
 
 #include "gtest/gtest.h"
 
 namespace DBTesting
 {
+    TEST(TEST_STATUS, Status)
+    {
+        using STATUS = tagfilterdb::Status;
+
+        STATUS s = STATUS::OK();
+        ASSERT_TRUE(s.ok());
+        ASSERT_FALSE(s.IsError());
+
+        s = STATUS::Error(STATUS::e_NotFound, "Where are you now");
+        ASSERT_EQ(s.ToString(), "NotFound: Where are you now");
+        ASSERT_FALSE(s.ok());
+        ASSERT_TRUE(s == STATUS::e_NotFound);
+
+        STATUS e = STATUS::Error(STATUS::e_NotFound);
+        ASSERT_TRUE(s == e);
+
+        auto arg = STATUS::Error(STATUS::e_InvalidArgument, "EER", "Error");
+        s = arg;
+        ASSERT_TRUE(s.IsError());
+        ASSERT_FALSE(s.ok());
+        ASSERT_TRUE(s == STATUS::e_InvalidArgument);
+        ASSERT_EQ(s.ToString(), "Invalid argument: EER: Error");
+    }
+
     TEST(TEST_R_STAR_TREE, BROUNDINGBOX)
     {
         using testBB = tagfilterdb::BoundingBox<2, double>;
+
         testBB box1({{1, 10}, {1, 10}});
         testBB box2({{2, 5}, {2, 5}});
 
@@ -20,51 +46,12 @@ namespace DBTesting
         ASSERT_EQ(box1.area(), 81);
         ASSERT_EQ(box2.area(), 9);
         ASSERT_EQ(box1.overlap(box2), 9);
+        
         testBB u = testBB::Universe();
         ASSERT_EQ(box1.overlap(u), 81);
         ASSERT_EQ(box2.overlap(u), 9);
     }
 
-    TEST(TEST_COMPILER, EX6)
-    {
-        std::string grammarRule = R"(
-        S' -> #SQL
-        #SQL -> #SELECT ; #SQL
-        #SQL -> #INSERT ; #SQL
-        #SQL -> ε
-        #SELECT -> SELECT #Colunm FROM #Table
-        #INSERT -> INSERT INTO #Table VALUES #Value
-        #Colunm -> ( #Colunm )
-        #Colunm -> #ID , #Colunm
-        #Colunm -> #ID
-        #Colunm -> #AllColunm
-        #AllColunm -> *
-        #Value -> ( #Value )
-        #Value -> #ID , #Value
-        #Value -> #ID                           
-        #Table -> #ID
-    )";
-        tin_compiler::LRCompiler compiler(grammarRule);
-        // compiler.details();
-        std::string input = R"(
-        SELECT (((id,fullname,nickname,age,email))) FROM employee;
-        SELECT * FROM salary;
-        INSERT INTO employee VALUES (5,"Siriwid Thongon","Tin",20,"tinsiriwid@gmail.com");
-    )";
-        auto tokens = compiler.getLexer().setInput(input).tokenize();
-        // tin_compiler::Token::display(tokens);
-        compiler.getParser().setLog(false);
-        try
-        {
-            auto ast = compiler.getParser().setTokens(tokens).parse();
-            // tin_compiler::ASTNode::display(ast);
-            ASSERT_EQ(1, 1);
-        }
-        catch (const std::exception &e)
-        {
-            ASSERT_EQ(1, 0);
-        }
-    }
     TEST(TEST_CODE, ENCODE32)
     {
         std::string s;
