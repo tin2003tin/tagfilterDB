@@ -2,6 +2,7 @@
 #define TAGFILTERDB_R_STAR_TREE_BOX_HPP_
 
 #include <array>
+#include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -206,10 +207,11 @@ template <int DIMS, class RANGETYPE> TAGFILTERDB_EXPORT class BoundingBox {
     ///
     /// Sets each dimension's bounds to the lowest and highest possible values
     /// for the coordinate type.
-    void reset() {
+    void reset(RANGETYPE min = 0,
+               RANGETYPE max = std::numeric_limits<int>::max()) {
         for (std::size_t i_axis = 0; i_axis < DIMS; ++i_axis) {
-            m_axis[i_axis].first = std::numeric_limits<RANGETYPE>::lowest();
-            m_axis[i_axis].second = std::numeric_limits<RANGETYPE>::max();
+            m_axis[i_axis].first = min;
+            m_axis[i_axis].second = max;
         }
     }
 
@@ -477,9 +479,11 @@ template <int DIMS, class RANGETYPE> TAGFILTERDB_EXPORT class BoundingBox {
     /// dimensions.
     ///
     /// @return A bounding box with default bounds representing the universe.
-    static BROUNDINGBOX_QUAL Universe() {
+    static BROUNDINGBOX_QUAL
+    Universe(RANGETYPE min = 0,
+             RANGETYPE max = std::numeric_limits<int>::max()) {
         BROUNDINGBOX_QUAL t_bounds;
-        t_bounds.reset();
+        t_bounds.reset(min, max);
         return t_bounds;
     }
 
