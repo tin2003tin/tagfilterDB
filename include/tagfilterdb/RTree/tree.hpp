@@ -1,8 +1,8 @@
 #ifndef TAGFILTERDB_R_STAR_TREE_HPP_
 #define TAGFILTERDB_R_STAR_TREE_HPP_
 
+#include "tagfilterdb/RTree/box.hpp"
 #include "tagfilterdb/export.hpp"
-#include "tagfilterdb/rStarTree/box.hpp"
 #include "tagfilterdb/status.hpp"
 
 #include <cassert>
@@ -13,15 +13,26 @@
 
 namespace tagfilterdb {
 
-#define RSTARTREE_TEMPLATE                                                     \
-    template <class DATATYPE, class RANGETYPE, int DIMS,                       \
+#define RTree_TEMPLATE                                                         \
+    template <class DATATYPE, class RANGETYPE, std::size_t DIMS,               \
               std::size_t TMAXCHILD, std::size_t TMINCHILD>
-#define RSTARTREE_QUAL                                                         \
-    RStarTree<DATATYPE, RANGETYPE, DIMS, TMAXCHILD, TMINCHILD>
+#define RTree_QUAL RTree<DATATYPE, RANGETYPE, DIMS, TMAXCHILD, TMINCHILD>
 
-template <class DATATYPE, class RANGETYPE, int DIMS, std::size_t TMAXCHILD = 8,
-          std::size_t TMINCHILD = TMAXCHILD / 2>
-class RStarTree {
+struct TAGFILTERDB_EXPORT TreeOptions {
+
+    const static int DEFAULT_TMAXCHILD = 8;
+    const static int DEFAULT_TMIN_CHILD = DEFAULT_TMAXCHILD / 2;
+    const static int DEFAULT_DIMANSIONS = 1;
+    using DEFAULT_RANGETYPE = double;
+};
+
+template <class DATATYPE,
+          class RANGETYPE = typename TreeOptions::DEFAULT_RANGETYPE,
+          std::size_t DIMS = TreeOptions::DEFAULT_DIMANSIONS,
+          std::size_t TMAXCHILD = TreeOptions::DEFAULT_TMAXCHILD,
+          std::size_t TMINCHILD = TreeOptions::DEFAULT_TMIN_CHILD>
+
+class RTree {
     static_assert(std::numeric_limits<RANGETYPE>::is_iec559,
                   "'ELEMTYPEREAL' accepts floating-point types only");
     using BND = BoundingBox<DIMS, RANGETYPE>;
@@ -75,8 +86,8 @@ class RStarTree {
     };
 
   public:
-    RStarTree();
-    ~RStarTree();
+    RTree();
+    ~RTree();
     Status Insert(BND r_box, const DATATYPE &r_data);
     void Print() {
         BND t_b;
@@ -132,19 +143,16 @@ class RStarTree {
     }
 };
 
-RSTARTREE_TEMPLATE
-RSTARTREE_QUAL::RStarTree() {
+RTree_TEMPLATE RTree_QUAL::RTree() {
     assert(MINCHILD > 0);
     assert(MAXCHILD > MINCHILD);
 
     m_root = new Node(0, 0);
 }
 
-RSTARTREE_TEMPLATE
-RSTARTREE_QUAL::~RStarTree() { RecursiveDeleteNode(m_root); }
+RTree_TEMPLATE RTree_QUAL::~RTree() { RecursiveDeleteNode(m_root); }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::RecursiveDeleteNode(Node *p_node) {
+RTree_TEMPLATE void RTree_QUAL::RecursiveDeleteNode(Node *p_node) {
     if (p_node == nullptr) {
         return;
     }
@@ -154,8 +162,7 @@ void RSTARTREE_QUAL::RecursiveDeleteNode(Node *p_node) {
     delete p_node;
 }
 
-RSTARTREE_TEMPLATE
-Status RSTARTREE_QUAL::Insert(BND a_box, const DATATYPE &r_data) {
+RTree_TEMPLATE Status RTree_QUAL::Insert(BND a_box, const DATATYPE &r_data) {
     Branch branch;
     branch.m_data = r_data;
     branch.m_child = nullptr;
@@ -166,9 +173,8 @@ Status RSTARTREE_QUAL::Insert(BND a_box, const DATATYPE &r_data) {
     return Status::OK();
 }
 
-RSTARTREE_TEMPLATE
-bool RSTARTREE_QUAL::InsertBox(const Branch &r_newBranch, Node **p_root,
-                               int a_level) {
+RTree_TEMPLATE bool RTree_QUAL::InsertBox(const Branch &r_newBranch,
+                                          Node **p_root, int a_level) {
     assert(p_root);
     assert(a_level >= 0 && a_level <= (*p_root)->m_level);
     Node *t_node;
@@ -191,9 +197,10 @@ bool RSTARTREE_QUAL::InsertBox(const Branch &r_newBranch, Node **p_root,
     return false;
 }
 
-RSTARTREE_TEMPLATE
-bool RSTARTREE_QUAL::RecursivelyInsertBox(const Branch &r_newItem, Node *p_root,
-                                          Node **p_newNode, int a_level) {
+RTree_TEMPLATE bool RTree_QUAL::RecursivelyInsertBox(const Branch &r_newItem,
+                                                     Node *p_root,
+                                                     Node **p_newNode,
+                                                     int a_level) {
     assert(p_root && p_newNode);
     assert(a_level >= 0 && a_level <= (*p_root).m_level);
 
@@ -223,8 +230,8 @@ bool RSTARTREE_QUAL::RecursivelyInsertBox(const Branch &r_newItem, Node *p_root,
     return false;
 }
 
-RSTARTREE_TEMPLATE
-int RSTARTREE_QUAL::SelectBestBranch(const BND &r_box, Node *p_node) {
+RTree_TEMPLATE int RTree_QUAL::SelectBestBranch(const BND &r_box,
+                                                Node *p_node) {
     assert(p_node);
     bool firstTime = true;
     RANGETYPE increase;
@@ -251,9 +258,8 @@ int RSTARTREE_QUAL::SelectBestBranch(const BND &r_box, Node *p_node) {
     return best;
 }
 
-RSTARTREE_TEMPLATE
-bool RSTARTREE_QUAL::AddBranch(const Branch &r_newItem, Node *p_node,
-                               Node **p_newNode) {
+RTree_TEMPLATE bool RTree_QUAL::AddBranch(const Branch &r_newItem, Node *p_node,
+                                          Node **p_newNode) {
     assert(p_node);
     if (p_node->m_count < MAXCHILD) {
         p_node->m_branch[p_node->m_count] = r_newItem;
@@ -266,8 +272,7 @@ bool RSTARTREE_QUAL::AddBranch(const Branch &r_newItem, Node *p_node,
     return false;
 }
 
-RSTARTREE_TEMPLATE
-typename RSTARTREE_QUAL::BND RSTARTREE_QUAL::NodeCover(Node *p_node) {
+RTree_TEMPLATE typename RTree_QUAL::BND RTree_QUAL::NodeCover(Node *p_node) {
     assert(p_node);
 
     BND t_unionBox = p_node->m_branch[0].m_box;
@@ -277,9 +282,8 @@ typename RSTARTREE_QUAL::BND RSTARTREE_QUAL::NodeCover(Node *p_node) {
     return t_unionBox;
 }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::SplitNode(Node *p_node, const Branch &r_newItem,
-                               Node **p_newNode) {
+RTree_TEMPLATE void RTree_QUAL::SplitNode(Node *p_node, const Branch &r_newItem,
+                                          Node **p_newNode) {
     assert(p_node);
 
     PartitionVars t_localVars;
@@ -296,9 +300,9 @@ void RSTARTREE_QUAL::SplitNode(Node *p_node, const Branch &r_newItem,
     assert((p_node->m_count + (*p_newNode)->m_count) == p_loclVars->m_total);
 }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::GetBranches(Node *p_node, const Branch &r_branch,
-                                 PartitionVars *p_parVars) {
+RTree_TEMPLATE void RTree_QUAL::GetBranches(Node *p_node,
+                                            const Branch &r_branch,
+                                            PartitionVars *p_parVars) {
     assert(p_node);
     assert(p_node->m_count == MAXCHILD);
 
@@ -315,8 +319,8 @@ void RSTARTREE_QUAL::GetBranches(Node *p_node, const Branch &r_branch,
     }
     p_parVars->m_coverSplitArea = p_parVars->m_coverSplit.area();
 }
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::ChoosePartition(PartitionVars *p_parVars, int a_minFill) {
+RTree_TEMPLATE void RTree_QUAL::ChoosePartition(PartitionVars *p_parVars,
+                                                int a_minFill) {
     assert(p_parVars);
     bool firstTime;
     RANGETYPE biggestDiff;
@@ -381,9 +385,8 @@ void RSTARTREE_QUAL::ChoosePartition(PartitionVars *p_parVars, int a_minFill) {
            (p_parVars->m_count[1] >= p_parVars->m_minFill));
 }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::InitParVars(PartitionVars *p_parVars, int a_maxBoxes,
-                                 int a_minFill) {
+RTree_TEMPLATE void RTree_QUAL::InitParVars(PartitionVars *p_parVars,
+                                            int a_maxBoxes, int a_minFill) {
     assert(p_parVars);
     p_parVars->m_count[0] = p_parVars->m_count[1] = 0;
     p_parVars->m_area[0] = p_parVars->m_area[1] = (RANGETYPE)0;
@@ -393,8 +396,7 @@ void RSTARTREE_QUAL::InitParVars(PartitionVars *p_parVars, int a_maxBoxes,
         p_parVars->m_partition[i_par] = PartitionVars::NOT_TAKEN;
     }
 }
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::PickSeeds(PartitionVars *p_parVars) {
+RTree_TEMPLATE void RTree_QUAL::PickSeeds(PartitionVars *p_parVars) {
     bool firstTime = true;
     int seed0 = 0, seed1 = 0;
     RANGETYPE worst, waste;
@@ -420,9 +422,8 @@ void RSTARTREE_QUAL::PickSeeds(PartitionVars *p_parVars) {
     Classify(seed1, 1, p_parVars);
 }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::Classify(int a_index, int a_group,
-                              PartitionVars *p_parVars) {
+RTree_TEMPLATE void RTree_QUAL::Classify(int a_index, int a_group,
+                                         PartitionVars *p_parVars) {
     assert(p_parVars);
     assert(PartitionVars::NOT_TAKEN == p_parVars->m_partition[a_index]);
 
@@ -439,9 +440,8 @@ void RSTARTREE_QUAL::Classify(int a_index, int a_group,
     p_parVars->m_count[a_group]++;
 }
 
-RSTARTREE_TEMPLATE
-void RSTARTREE_QUAL::LoadNodes(Node *p_nodeA, Node *p_nodeB,
-                               PartitionVars *p_parVars) {
+RTree_TEMPLATE void RTree_QUAL::LoadNodes(Node *p_nodeA, Node *p_nodeB,
+                                          PartitionVars *p_parVars) {
     assert(p_nodeA && p_nodeB && p_parVars);
     for (std::size_t i_par = 0; i_par < p_parVars->m_total; i_par++) {
 

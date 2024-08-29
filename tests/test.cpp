@@ -1,8 +1,8 @@
 #include <iostream>
 
+#include "tagfilterdb/RTree/box.hpp"
+#include "tagfilterdb/RTree/tree.hpp"
 #include "tagfilterdb/code.hpp"
-#include "tagfilterdb/rStarTree/box.hpp"
-#include "tagfilterdb/rStarTree/tree.hpp"
 #include "tagfilterdb/status.hpp"
 
 #include <algorithm>
@@ -67,15 +67,15 @@ TEST(TEST_CODE, ENCODE32) {
 }
 
 bool BranchComparator(
-    const tagfilterdb::RStarTree<std::string, double, 2, 3, 1>::Branch &b,
-    const tagfilterdb::RStarTree<std::string, double, 2, 3, 1>::Branch &other) {
+    const tagfilterdb::RTree<std::string, double, 2, 3, 1>::Branch &b,
+    const tagfilterdb::RTree<std::string, double, 2, 3, 1>::Branch &other) {
     if (b.m_box.area() == other.m_box.area()) {
         return b.m_data < other.m_data;
     }
     return b.m_box.area() > other.m_box.area();
 }
 
-using Tree2D = tagfilterdb::RStarTree<std::string, double, 2, 3, 1>;
+using Tree2D = tagfilterdb::RTree<std::string, double, 2, 3, 1>;
 using Box2D = tagfilterdb::BoundingBox<2, double>;
 
 class CallBack {
