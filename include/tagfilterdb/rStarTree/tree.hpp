@@ -35,6 +35,8 @@ class RStarTree {
         BND m_box;
         Node *m_child;
         DATATYPE m_data;
+
+        Branch() { m_child = nullptr; }
     };
 
   protected:
@@ -74,6 +76,7 @@ class RStarTree {
 
   public:
     RStarTree();
+    ~RStarTree();
     Status Insert(BND r_box, const DATATYPE &r_data);
     void Print() {
         BND t_b;
@@ -85,6 +88,7 @@ class RStarTree {
     }
 
   private:
+    void RecursiveDeleteNode(Node *node);
     bool InsertBox(const Branch &r_newItem, Node **p_root, int a_level);
     bool RecursivelyInsertBox(const Branch &r_newItem, Node *p_node,
                               Node **p_newNode, int a_level);
@@ -134,6 +138,20 @@ RSTARTREE_QUAL::RStarTree() {
     assert(MAXCHILD > MINCHILD);
 
     m_root = new Node(0, 0);
+}
+
+RSTARTREE_TEMPLATE
+RSTARTREE_QUAL::~RStarTree() { RecursiveDeleteNode(m_root); }
+
+RSTARTREE_TEMPLATE
+void RSTARTREE_QUAL::RecursiveDeleteNode(Node *p_node) {
+    if (p_node == nullptr) {
+        return;
+    }
+    for (auto &e : p_node->m_branch) {
+        RecursiveDeleteNode(e.m_child);
+    }
+    delete p_node;
 }
 
 RSTARTREE_TEMPLATE
