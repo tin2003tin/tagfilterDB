@@ -1,57 +1,63 @@
-#include "tagfilterdb/RTree/box.hpp"
-#include "tagfilterdb/RTree/tree.hpp"
+#include "tagfilterdb/spatialIndex/spatialIndex.hpp"
 #include "tagfilterdb/status.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 
-using Box2D = tagfilterdb::BoundingBox<2, double>;
-using Tree2D = tagfilterdb::RTree<std::string, double, 2, 3, 1>;
+using Sp2D = tagfilterdb::SpatialIndex<std::string, 2>;
+using Box2D = tagfilterdb::BoundingBox<2>;
 
-bool BranchComparator(const Tree2D::Branch &b, const Tree2D::Branch &other) {
-    if (b.m_box.area() == other.m_box.area()) {
-        return b.m_data < other.m_data;
-    }
-    return b.m_box.area() > other.m_box.area();
-}
-
-class CallBack {
+class CallBack : public tagfilterdb::ISIndexCallback<Sp2D> {
   public:
-    std::vector<Tree2D::Branch> item;
-    bool func(const Tree2D::Branch &value) {
-        item.push_back(value);
+    std::vector<CallBackValue> items;
+
+    bool process(const CallBackValue &r_item) override {
+        items.push_back(r_item);
         return true;
     }
-    void print() {
-        std::sort(item.begin(), item.end(), BranchComparator);
-        for (auto &i : item) {
-            LOGIT(i.m_data);
+
+    void sort() {
+        std::sort(items.begin(), items.end(),
+                  [this](const CallBackValue &b, const CallBackValue &other) {
+                      return SubNodeComparator(b, other);
+                  });
+    }
+
+    bool SubNodeComparator(const CallBackValue &b, const CallBackValue &other) {
+        if (b.m_box.area() == other.m_box.area()) {
+            return b.m_data < other.m_data;
         }
+        return b.m_box.area() > other.m_box.area();
     }
 };
 
 int main() {
-    Tree2D tree;
+    Sp2D sp;
+    sp.Insert(Box2D::Universe(), "Chula");
+    sp.Insert(Box2D({{0, 16}, {0, 12}}), "Engineer_facalty");
+    sp.Insert(Box2D({{11, 16}, {5, 8}}), "Building1");
+    sp.Insert(Box2D({{5, 11}, {5, 8}}), "Building2");
+    sp.Insert(Box2D({{2, 11}, {0, 4}}), "Building3");
+    sp.Insert(Box2D({{0, 5}, {9, 12}}), "Building4");
+    sp.Insert(Box2D({{0, 5}, {5, 8}}), "Building100");
+    sp.Insert(Box2D({{2, 3}, {11, 12}}), "Sky Cafe");
+    sp.Insert(Box2D({{9, 10}, {1, 2}}), "Cafe Amazon");
+    sp.Insert(Box2D({{0, 2}, {0, 4}}), "Icanteen");
+    sp.Insert(Box2D({{17, 18}, {0, 12}}), "Road");
 
-    tree.Insert(Box2D::Universe(), "Chula");
-    tree.Insert(Box2D({{0, 16}, {0, 12}}), "Engineer_facalty");
-    tree.Insert(Box2D({{11, 16}, {5, 8}}), "Building1");
-    tree.Insert(Box2D({{5, 11}, {5, 8}}), "Building2");
-    tree.Insert(Box2D({{2, 11}, {0, 4}}), "Building3");
-    tree.Insert(Box2D({{0, 5}, {9, 12}}), "Building4");
-    tree.Insert(Box2D({{0, 5}, {5, 8}}), "Building100");
-    tree.Insert(Box2D({{2, 3}, {11, 12}}), "Sky cafe");
-    tree.Insert(Box2D({{9, 10}, {1, 2}}), "Cafe Amazon");
-    tree.Insert(Box2D({{0, 2}, {0, 4}}), "Icanteen");
-    tree.Insert(Box2D({{17, 18}, {0, 12}}), "Road");
-    tree.Print();
-    LOGIT("======FIND_SKYCAFE_AREA========")
-    Box2D skyCafeArea({{2, 3}, {11, 12}});
-    CallBack skyCafeCallback;
-    tree.SearchTag(skyCafeArea, std::bind(&CallBack::func, &skyCafeCallback,
-                                          std::placeholders::_1));
+    sp.Print();
 
-    skyCafeCallback.print();
+    CallBack callback;
+    Box2D targetArea({{2, 3}, {11, 12}});
+    sp.SearchTag(targetArea, &callback);
+
+    callback.sort();
+    LOG_INFO("Search Area: ", targetArea.toString())
+    for (const auto &items : callback.items) {
+        LOG_DEBUG(items.m_data)
+    }
+
     return 0;
 }
