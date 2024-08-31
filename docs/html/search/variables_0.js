@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['m_5fdata_99',['m_data',['../classtagfilterdb_1_1OperationResult.html#a3a8c4fee778bf961c7cbc9a0c0558ebd',1,'tagfilterdb::OperationResult']]],
-  ['m_5fstatus_100',['m_status',['../classtagfilterdb_1_1OperationResult.html#aad642fc8afc923ef781573c9e71ca5f3',1,'tagfilterdb::OperationResult']]]
+  ['default_5fmax_5fchild_98',['DEFAULT_MAX_CHILD',['../structtagfilterdb_1_1SpatialIndexOptions.html#adb0e48ce75b520b0adc8c27b53bb7816',1,'tagfilterdb::SpatialIndexOptions']]],
+  ['default_5fmin_5fchild_99',['DEFAULT_MIN_CHILD',['../structtagfilterdb_1_1SpatialIndexOptions.html#aeb4668b82fb1d3cbb6d52066e11d00f7',1,'tagfilterdb::SpatialIndexOptions']]]
 ];

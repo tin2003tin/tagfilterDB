@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['boundingbox_56',['BoundingBox',['../classtagfilterdb_1_1BoundingBox.html',1,'tagfilterdb']]]
+  ['group_60',['Group',['../structtagfilterdb_1_1SpatialIndex_1_1Group.html',1,'tagfilterdb::SpatialIndex']]],
+  ['groupassign_61',['GroupAssign',['../structtagfilterdb_1_1SpatialIndex_1_1GroupAssign.html',1,'tagfilterdb::SpatialIndex']]]
 ];

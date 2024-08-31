@@ -1,0 +1,10 @@
+digraph "tagfilterdb::SpatialIndex&lt; DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType &gt;::SubNode"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="tagfilterdb::SpatialIndex\l\< DataType, Dimensions,\l MaxChildren, MinChildren,\l RangeType, AreaType \>::SubNode",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Represents a sub-node in the spatial index."];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_child" ,fontname="Helvetica"];
+  Node2 [label="tagfilterdb::SpatialIndex\l\< DataType, Dimensions,\l MaxChildren, MinChildren,\l RangeType, AreaType \>::Node",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtagfilterdb_1_1SpatialIndex_1_1Node.html",tooltip="Represents a node in the spatial index tree."];
+}

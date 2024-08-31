@@ -7,7 +7,7 @@ digraph "include/tagfilterdb" {
   subgraph clusterdir_74b29409f5a94a11f5d111afd6134e0e {
     graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_74b29409f5a94a11f5d111afd6134e0e.html"];
     dir_74b29409f5a94a11f5d111afd6134e0e [shape=plaintext label="tagfilterdb"];
-  dir_3f469ae140a94d535d1c51109c218d96 [shape=box label="rStarTree" fillcolor="white" style="filled" URL="dir_3f469ae140a94d535d1c51109c218d96.html"];
+  dir_ad8af79cd5fdf3732bfff3a1653f32dd [shape=box label="spatialIndex" fillcolor="white" style="filled" URL="dir_ad8af79cd5fdf3732bfff3a1653f32dd.html"];
   }
   }
 }

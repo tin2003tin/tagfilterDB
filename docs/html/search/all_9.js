@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['readme_2emd_41',['README.md',['../README_8md.html',1,'']]],
-  ['reset_42',['reset',['../classtagfilterdb_1_1BoundingBox.html#a12b60dd58e10c948b5853456750d7b6a',1,'tagfilterdb::BoundingBox']]],
-  ['resize_43',['resize',['../classtagfilterdb_1_1BoundingBox.html#a362e513d643a6d49fe027c65cf889564',1,'tagfilterdb::BoundingBox']]]
+  ['print_44',['Print',['../classtagfilterdb_1_1SpatialIndex.html#a7d430f67c2a0b25ef1d47fb3c6dd7f32',1,'tagfilterdb::SpatialIndex']]],
+  ['process_45',['process',['../classtagfilterdb_1_1ISIndexCallback.html#a703d6a6f54064f69cccb5b06e463a07b',1,'tagfilterdb::ISIndexCallback']]]
 ];

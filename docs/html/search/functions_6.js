@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['intersection_79',['intersection',['../classtagfilterdb_1_1BoundingBox.html#ae53cad0302920d44e229b172812d5b95',1,'tagfilterdb::BoundingBox']]],
-  ['iserror_80',['IsError',['../classtagfilterdb_1_1Status.html#a5252c1d4f8bbd74a3ace85504e952006',1,'tagfilterdb::Status']]],
-  ['isoverlap_81',['isOverlap',['../classtagfilterdb_1_1BoundingBox.html#a6c8250d0ec83e03081c646324f6941d2',1,'tagfilterdb::BoundingBox']]]
+  ['ok_83',['ok',['../classtagfilterdb_1_1Status.html#aa524bd0e977544ba1a326bc051ad5bbd',1,'tagfilterdb::Status']]],
+  ['ok_84',['OK',['../classtagfilterdb_1_1Status.html#aa1405633c748dbc249b2bf7f87a93ea2',1,'tagfilterdb::Status']]],
+  ['operationresult_85',['OperationResult',['../classtagfilterdb_1_1OperationResult.html#a7e52142f9c8e2a9770d6022ab78ec005',1,'tagfilterdb::OperationResult::OperationResult(const RETURNTYPE &amp;r_value, Status a_status)'],['../classtagfilterdb_1_1OperationResult.html#a0fdec4ad7ae3ba45e6ce61db7f57a782',1,'tagfilterdb::OperationResult::OperationResult(RETURNTYPE &amp;&amp;r_value, Status a_status)']]],
+  ['operator_3d_86',['operator=',['../classtagfilterdb_1_1Status.html#a237a0c80416686ef3b7b4c45c952c578',1,'tagfilterdb::Status::operator=(Status &amp;&amp;other) noexcept'],['../classtagfilterdb_1_1Status.html#ae312327db9c86f3ffa9794af79628869',1,'tagfilterdb::Status::operator=(const Status &amp;other)']]],
+  ['operator_3d_3d_87',['operator==',['../classtagfilterdb_1_1Status.html#a04281918fbb81415a1cb85a1eb07ee56',1,'tagfilterdb::Status::operator==(const Status &amp;other) const'],['../classtagfilterdb_1_1Status.html#ae2447097d963c4ebe88e42a3dc88104d',1,'tagfilterdb::Status::operator==(Err err) const']]]
 ];

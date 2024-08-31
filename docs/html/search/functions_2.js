@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['center_68',['center',['../classtagfilterdb_1_1BoundingBox.html#a89f95a2be3cdd9cc95f6a46a8db30def',1,'tagfilterdb::BoundingBox']]],
-  ['containspoint_69',['containsPoint',['../classtagfilterdb_1_1BoundingBox.html#ab9e78c86f990ea0ffe94f9559a53687b',1,'tagfilterdb::BoundingBox']]]
+  ['encode32_76',['Encode32',['../namespacetagfilterdb.html#afaf7a6f347c05ece6745b34a5be50735',1,'tagfilterdb']]],
+  ['error_77',['Error',['../classtagfilterdb_1_1Status.html#a96884dc762b8e94512e48ea5a9485592',1,'tagfilterdb::Status']]]
 ];

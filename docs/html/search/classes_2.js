@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['status_58',['Status',['../classtagfilterdb_1_1Status.html',1,'tagfilterdb']]]
+  ['node_63',['Node',['../structtagfilterdb_1_1SpatialIndex_1_1Node.html',1,'tagfilterdb::SpatialIndex']]]
 ];

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['tostring_93',['ToString',['../classtagfilterdb_1_1Status.html#a3017b3515960608ad2101a193f7d877a',1,'tagfilterdb::Status']]],
-  ['tostring_94',['toString',['../classtagfilterdb_1_1BoundingBox.html#ae34c6d4d8870eb937bb3b85774760778',1,'tagfilterdb::BoundingBox']]],
-  ['translate_95',['translate',['../classtagfilterdb_1_1BoundingBox.html#a35b9e91ea2d4c2eb99191517b0debdda',1,'tagfilterdb::BoundingBox']]]
+  ['_7espatialindex_96',['~SpatialIndex',['../classtagfilterdb_1_1SpatialIndex.html#a297d2d76228c09ca9362e8530ac81090',1,'tagfilterdb::SpatialIndex']]],
+  ['_7estatus_97',['~Status',['../classtagfilterdb_1_1Status.html#a9acb16eca2350e3c87b8874060260732',1,'tagfilterdb::Status']]]
 ];

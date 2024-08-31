@@ -1,0 +1,10 @@
+digraph "tagfilterdb::SpatialIndex&lt; DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType &gt;::GroupAssign"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="tagfilterdb::SpatialIndex\l\< DataType, Dimensions,\l MaxChildren, MinChildren,\l RangeType, AreaType \>::GroupAssign",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Assignment of nodes to groups during splitting."];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_groups" ];
+  Node2 [label="tagfilterdb::SpatialIndex\l\< DataType, Dimensions,\l MaxChildren, MinChildren,\l RangeType, AreaType \>::Group",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtagfilterdb_1_1SpatialIndex_1_1Group.html",tooltip="Represents a group of nodes used during node splitting."];
+}

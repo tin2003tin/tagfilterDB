@@ -1,21 +1,5 @@
 var searchData=
 [
-  ['e_5fcorruption_11',['e_Corruption',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea7dcac4ad4e66924cc7cf6c509a2441c3',1,'tagfilterdb::Status']]],
-  ['e_5finvalidargument_12',['e_InvalidArgument',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea05400f4ceca606c978fb916f512a9693',1,'tagfilterdb::Status']]],
-  ['e_5fioerror_13',['e_IOError',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea94788dc34f73e3533a21ab2373de7586',1,'tagfilterdb::Status']]],
-  ['e_5fnetworkerror_14',['e_NetworkError',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea50ff586ee5bfc4a84b4130c68077c068',1,'tagfilterdb::Status']]],
-  ['e_5fnotfound_15',['e_NotFound',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea75f468dc1af1325b6513f978d37a8b4d',1,'tagfilterdb::Status']]],
-  ['e_5fnotsupported_16',['e_NotSupported',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea78bcb53fd4d95257ac10cef328498700',1,'tagfilterdb::Status']]],
-  ['e_5fok_17',['e_Ok',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea788240786ceb914864e59ba2a3e82e83',1,'tagfilterdb::Status']]],
-  ['e_5foutofrange_18',['e_OutOfRange',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea85169991384da6b00675e77862912da0',1,'tagfilterdb::Status']]],
-  ['e_5fpermissiondenied_19',['e_PermissionDenied',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29eab729370a14ab15be0c6e8ac3ebd057b6',1,'tagfilterdb::Status']]],
-  ['e_5ftimeout_20',['e_Timeout',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29ea396ae1638a14ad6bfa9f0bd1cac1764e',1,'tagfilterdb::Status']]],
-  ['edge_21',['EDGE',['../classtagfilterdb_1_1BoundingBox.html#af5fda0830802b0363abb0a7ea1c5167d',1,'tagfilterdb::BoundingBox']]],
-  ['edgearea_22',['edgeArea',['../classtagfilterdb_1_1BoundingBox.html#af9a46933dbe96d8799a7268c24de295c',1,'tagfilterdb::BoundingBox']]],
-  ['edgelength_23',['edgeLength',['../classtagfilterdb_1_1BoundingBox.html#aba324ec1446c356b39b99a6ab6816fdb',1,'tagfilterdb::BoundingBox']]],
-  ['encloses_24',['encloses',['../classtagfilterdb_1_1BoundingBox.html#a03e2547c6dc9d7c3d71e3cd8aa39ffbe',1,'tagfilterdb::BoundingBox']]],
-  ['encode32_25',['Encode32',['../namespacetagfilterdb.html#afaf7a6f347c05ece6745b34a5be50735',1,'tagfilterdb']]],
-  ['err_26',['Err',['../classtagfilterdb_1_1Status.html#a2f57db43352da365979c7fe0d64eb29e',1,'tagfilterdb::Status']]],
-  ['error_27',['Error',['../classtagfilterdb_1_1Status.html#a96884dc762b8e94512e48ea5a9485592',1,'tagfilterdb::Status']]],
-  ['expand_28',['expand',['../classtagfilterdb_1_1BoundingBox.html#a074584fdf6548caeaa3cb5f40a6c862a',1,'tagfilterdb::BoundingBox']]]
+  ['group_21',['Group',['../structtagfilterdb_1_1SpatialIndex_1_1Group.html',1,'tagfilterdb::SpatialIndex']]],
+  ['groupassign_22',['GroupAssign',['../structtagfilterdb_1_1SpatialIndex_1_1GroupAssign.html#a7feb8396bd5e0947b2002e91be58b160',1,'tagfilterdb::SpatialIndex::GroupAssign::GroupAssign()'],['../structtagfilterdb_1_1SpatialIndex_1_1GroupAssign.html',1,'tagfilterdb::SpatialIndex&lt; DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType &gt;::GroupAssign']]]
 ];

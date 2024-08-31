@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operationresult_57',['OperationResult',['../classtagfilterdb_1_1OperationResult.html',1,'tagfilterdb']]]
+  ['isindexcallback_62',['ISIndexCallback',['../classtagfilterdb_1_1ISIndexCallback.html',1,'tagfilterdb']]]
 ];

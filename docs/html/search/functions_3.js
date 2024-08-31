@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['decode32_70',['Decode32',['../namespacetagfilterdb.html#aa917d2565da649f2c638714d8e805a7e',1,'tagfilterdb']]],
-  ['distancefromcenter_71',['distanceFromCenter',['../classtagfilterdb_1_1BoundingBox.html#ab6afb85488532898bc18bbb78a667cb7',1,'tagfilterdb::BoundingBox']]]
+  ['groupassign_78',['GroupAssign',['../structtagfilterdb_1_1SpatialIndex_1_1GroupAssign.html#a7feb8396bd5e0947b2002e91be58b160',1,'tagfilterdb::SpatialIndex::GroupAssign']]]
 ];
