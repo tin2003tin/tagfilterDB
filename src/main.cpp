@@ -31,6 +31,11 @@ class CallBack : public tagfilterdb::ISIndexCallback<Sp2D> {
         }
         return b.m_box.area() > other.m_box.area();
     }
+    void print() {
+        for (const auto &items : items) {
+            LOG_DEBUG(items.m_data)
+        }
+    }
 };
 
 int main() {
@@ -50,14 +55,12 @@ int main() {
     sp.Print();
 
     CallBack callback;
-    Box2D targetArea({{2, 3}, {11, 12}});
+    Box2D targetArea({{1, 100}, {5, 12}});
     sp.SearchTag(targetArea, &callback);
 
     callback.sort();
     LOG_INFO("Search Area: ", targetArea.toString())
-    for (const auto &items : callback.items) {
-        LOG_DEBUG(items.m_data)
-    }
+    callback.print();
 
     return 0;
 }

@@ -1,9 +1,4 @@
-#include <iostream>
-
-#include "tagfilterdb/code.hpp"
-#include "tagfilterdb/spatialIndex/broundingbox.hpp"
 #include "tagfilterdb/spatialIndex/spatialIndex.hpp"
-#include "tagfilterdb/status.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -11,89 +6,37 @@
 #include "gtest/gtest.h"
 
 namespace DBTesting {
-TEST(TEST_STATUS, Status) {
-    using STATUS = tagfilterdb::Status;
-
-    STATUS s = STATUS::OK();
-    ASSERT_TRUE(s.ok());
-    ASSERT_FALSE(s.IsError());
-
-    s = STATUS::Error(STATUS::e_NotFound, "Where are you now");
-    ASSERT_EQ(s.ToString(), "NotFound: Where are you now");
-    ASSERT_FALSE(s.ok());
-    ASSERT_TRUE(s == STATUS::e_NotFound);
-
-    STATUS e = STATUS::Error(STATUS::e_NotFound);
-    ASSERT_TRUE(s == e);
-
-    auto arg = STATUS::Error(STATUS::e_InvalidArgument, "EER", "Error");
-    s = arg;
-    ASSERT_TRUE(s.IsError());
-    ASSERT_FALSE(s.ok());
-    ASSERT_TRUE(s == STATUS::e_InvalidArgument);
-    ASSERT_EQ(s.ToString(), "Invalid argument: EER: Error");
-}
-
-TEST(TEST_BROUNDINGBOX, BROUNDINGBOX) {
-    using testBB = tagfilterdb::BoundingBox<2, double>;
-
-    testBB box1({{1, 10}, {1, 10}});
-    testBB box2({{2, 5}, {2, 5}});
-
-    ASSERT_EQ(box1.toString(), "[(1, 10), (1, 10)]");
-    ASSERT_EQ(box2.toString(), "[(2, 5), (2, 5)]");
-    ASSERT_TRUE(box1.isOverlap(box2));
-    ASSERT_EQ(box1.area(), 81);
-    ASSERT_EQ(box2.area(), 9);
-    ASSERT_EQ(box1.overlap(box2), 9);
-
-    testBB u = testBB::Universe();
-    ASSERT_EQ(box1.overlap(u), 81);
-    ASSERT_EQ(box2.overlap(u), 9);
-}
-
-TEST(TEST_CODE, ENCODE32) {
-    std::string s;
-    for (uint32_t v = 0; v < 100000; v++) {
-        tagfilterdb::AppendEncode32(&s, v);
-    }
-
-    const char *p = s.data();
-    for (uint32_t v = 0; v < 100000; v++) {
-        uint32_t actual = tagfilterdb::Decode32(p);
-        ASSERT_EQ(v, actual);
-        p += sizeof(uint32_t);
-    }
-}
-
-using Sp2D = tagfilterdb::SpatialIndex<std::string, 2>;
-using Box2D = tagfilterdb::BoundingBox<2>;
-
-class CallBack : public tagfilterdb::ISIndexCallback<Sp2D> {
-  public:
-    std::vector<CallBackValue> item;
-
-    bool process(const CallBackValue &value) override {
-        item.push_back(value);
-        return true;
-    }
-
-    void sort() {
-        std::sort(item.begin(), item.end(),
-                  [this](const CallBackValue &b, const CallBackValue &other) {
-                      return SubNodeComparator(b, other);
-                  });
-    }
-
-    bool SubNodeComparator(const CallBackValue &b, const CallBackValue &other) {
-        if (b.m_box.area() == other.m_box.area()) {
-            return b.m_data < other.m_data;
-        }
-        return b.m_box.area() > other.m_box.area();
-    }
-};
-
 TEST(TEST_SPATIALINDEX, SPATIALINDEX) {
+
+    using Sp2D = tagfilterdb::SpatialIndex<std::string, 2>;
+    using Box2D = tagfilterdb::BoundingBox<2>;
+
+    class CallBack : public tagfilterdb::ISIndexCallback<Sp2D> {
+      public:
+        std::vector<CallBackValue> item;
+
+        bool process(const CallBackValue &value) override {
+            item.push_back(value);
+            return true;
+        }
+
+        void sort() {
+            std::sort(
+                item.begin(), item.end(),
+                [this](const CallBackValue &b, const CallBackValue &other) {
+                    return SubNodeComparator(b, other);
+                });
+        }
+
+        bool SubNodeComparator(const CallBackValue &b,
+                               const CallBackValue &other) {
+            if (b.m_box.area() == other.m_box.area()) {
+                return b.m_data < other.m_data;
+            }
+            return b.m_box.area() > other.m_box.area();
+        }
+    };
+
     Sp2D sp;
     sp.Insert(Box2D::Universe(), "Chula");
     sp.Insert(Box2D({{0, 16}, {0, 12}}), "Engineer_facalty");

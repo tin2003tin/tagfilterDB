@@ -34,7 +34,7 @@ inline uint32_t Decode32(const char *p) {
 /// @param p_dst Pointer to the `std::string` object to which the encoded value
 /// will be appended.
 /// @param a_v The 32-bit integer value to encode and append.
-void AppendEncode32(std::string *p_dst, uint32_t a_v) {
+inline void AppendEncode32(std::string *p_dst, uint32_t a_v) {
     char t_buf[sizeof(a_v)];
     Encode32(t_buf, a_v);
     p_dst->append(t_buf, sizeof(t_buf));

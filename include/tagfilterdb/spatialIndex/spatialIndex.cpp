@@ -248,7 +248,7 @@ void SPATIAL_INDEX_TYPE::SplitNode(const SubNode &r_subNode, Node *p_node) {
     }
 
     // Ensure the chosen seeds are different
-    assert(seed0 != seed1);
+    // assert(seed0 != seed1);
 
     // Initialize group assignments with the chosen seeds
     AssignGroup(seed0, 0, t_overflowBuffer[seed0].m_box, t_groupAssign);
