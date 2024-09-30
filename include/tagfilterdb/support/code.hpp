@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-namespace tagfilterdb {
+namespace tagfilterdb::support {
 /// @brief Encodes a 32-bit integer into a 4-byte sequence in little-endian
 /// format.
 /// @param p_dst Pointer to the destination buffer where the encoded value will

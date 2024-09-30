@@ -10,7 +10,7 @@ TEST(TEST_STATUS, Status) {
     using STATUS = tagfilterdb::Status;
 
     STATUS s = STATUS::OK();
-    ASSERT_TRUE(s.ok());
+    ASSERT_TRUE(s.ok());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     ASSERT_FALSE(s.IsError());
 
     s = STATUS::Error(STATUS::e_NotFound, "Where are you now");
