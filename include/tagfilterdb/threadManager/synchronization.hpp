@@ -25,6 +25,7 @@ class Mutex final {
 template <typename Mutex> using UniqueLoc = std::unique_lock<Mutex>;
 
 class SharedMutex final {
+  public:
     SharedMutex() = default;
     SharedMutex(const SharedMutex &) = delete;
     SharedMutex(SharedMutex &&) = delete;
@@ -61,7 +62,7 @@ class OnceFlag final {
 };
 template <typename Callable, typename... Args>
 void call_once(OnceFlag &onceFlag, Callable &&callable, Args &&...args) {
-    std::call_once(onceFlag._impl, std::forward<Callable>(callable),
+    std::call_once(onceFlag.m_impl, std::forward<Callable>(callable),
                    std::forward<Args>(args)...);
 }
 

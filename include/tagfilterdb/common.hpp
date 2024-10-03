@@ -37,6 +37,7 @@
 namespace tagfilterdb {
 template <class T> using Ref = std::shared_ptr<T>;
 template <class T> using Unique = std::unique_ptr<T>;
+template <class T> using Interface = std::unique_ptr<T>;
 using Raw = void *;
 
 } // namespace tagfilterdb

@@ -1,13 +1,14 @@
 #include "commonToken.hpp"
 
-#include "charStream.hpp"
-#include "tokenSource.hpp"
+#include "sourceStream.hpp"
 #include "vocabulary.hpp"
 
 #include "tagfilterdb/support/range.hpp"
 #include "tagfilterdb/support/util.hpp"
 
 using namespace tagfilterdb::compiler;
+
+const SourceStream CommonToken::EMPTY_SOURCE;
 
 CommonToken::CommonToken(size_t type) {
     InitializeInstanceFields();
@@ -21,9 +22,9 @@ CommonToken::CommonToken(SourceStream source, size_t type, size_t channel,
     _channel = channel;
     _start = start;
     _stop = stop;
-    if (_source.first != nullptr) {
-        _line = static_cast<int>(source.first->getLine());
-        _charPositionInLine = source.first->getCharPositionInLine();
+    if (_source.tokenSource != nullptr) {
+        _line = static_cast<int>(source.tokenSource->getLine());
+        _charPositionInLine = source.tokenSource->getCharPositionInLine();
     }
 }
 
@@ -50,7 +51,8 @@ CommonToken::CommonToken(Token *oldToken) {
         _source = (static_cast<CommonToken *>(oldToken))->_source;
     } else {
         _text = oldToken->getText();
-        _source = {oldToken->getTokenSource(), oldToken->getInputStream()};
+        _source = SourceStream(
+            {oldToken->getTokenSource(), oldToken->getInputStream()});
     }
 }
 
@@ -103,11 +105,11 @@ size_t CommonToken::getTokenIndex() const { return _index; }
 
 void CommonToken::setTokenIndex(size_t index) { _index = index; }
 
-TokenSource *CommonToken::getTokenSource() const { return _source.first; }
+TokenSource *CommonToken::getTokenSource() const { return _source.tokenSource; }
 
-CharStream *CommonToken::getInputStream() const { return _source.second; }
+CharStream *CommonToken::getInputStream() const { return _source.charStream; }
 
-std::string CommonToken::toString() const { return toString(nullptr); }
+std::string CommonToken::toString() const { return ""; }
 
 // TODO: (CommonToken) INVALID_INDEX
 void CommonToken::InitializeInstanceFields() {

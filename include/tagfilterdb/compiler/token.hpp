@@ -10,7 +10,7 @@ class Token {
     static constexpr size_t MIN_USER_TOKEN_TYPE = 1;
     static constexpr size_t EOF = IntStream::EOF;
 
-    virtual ~Token();
+    virtual ~Token() = default;
 
     static constexpr size_t DEFAULT_CHANNEL = 0;
     static constexpr size_t HIDDEN_CHANNEL = 1;

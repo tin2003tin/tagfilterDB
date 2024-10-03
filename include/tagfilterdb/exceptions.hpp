@@ -8,9 +8,12 @@ class RuntimeException : public std::exception {
     std::string _message;
 
   public:
-    RuntimeException(const std::string &msg = "");
+    RuntimeException(const std::string &msg = "")
+        : std::exception(), _message(msg) {}
 
-    virtual const char *what() const noexcept override;
+    virtual const char *what() const noexcept override {
+        return _message.c_str();
+    }
 };
 
 class IllegalStateException : public RuntimeException {
@@ -18,7 +21,7 @@ class IllegalStateException : public RuntimeException {
     IllegalStateException(const std::string &msg = "")
         : RuntimeException(msg) {}
     IllegalStateException(IllegalStateException const &) = default;
-    ~IllegalStateException();
+    ~IllegalStateException() {}
     IllegalStateException &operator=(IllegalStateException const &) = default;
 };
 class IllegalArgumentException : public RuntimeException {
@@ -26,7 +29,7 @@ class IllegalArgumentException : public RuntimeException {
     IllegalArgumentException(IllegalArgumentException const &) = default;
     IllegalArgumentException(const std::string &msg = "")
         : RuntimeException(msg) {}
-    ~IllegalArgumentException();
+    ~IllegalArgumentException() {}
     IllegalArgumentException &
     operator=(IllegalArgumentException const &) = default;
 };
@@ -35,7 +38,7 @@ class NullPointerException : public RuntimeException {
   public:
     NullPointerException(const std::string &msg = "") : RuntimeException(msg) {}
     NullPointerException(NullPointerException const &) = default;
-    ~NullPointerException();
+    ~NullPointerException() {}
     NullPointerException &operator=(NullPointerException const &) = default;
 };
 
@@ -44,7 +47,7 @@ class IndexOutOfBoundsException : public RuntimeException {
     IndexOutOfBoundsException(const std::string &msg = "")
         : RuntimeException(msg) {}
     IndexOutOfBoundsException(IndexOutOfBoundsException const &) = default;
-    ~IndexOutOfBoundsException();
+    ~IndexOutOfBoundsException() {}
     IndexOutOfBoundsException &
     operator=(IndexOutOfBoundsException const &) = default;
 };
@@ -55,7 +58,7 @@ class UnsupportedOperationException : public RuntimeException {
         : RuntimeException(msg) {}
     UnsupportedOperationException(UnsupportedOperationException const &) =
         default;
-    ~UnsupportedOperationException();
+    ~UnsupportedOperationException() {}
     UnsupportedOperationException &
     operator=(UnsupportedOperationException const &) = default;
 };
@@ -64,7 +67,7 @@ class EmptyStackException : public RuntimeException {
   public:
     EmptyStackException(const std::string &msg = "") : RuntimeException(msg) {}
     EmptyStackException(EmptyStackException const &) = default;
-    ~EmptyStackException();
+    ~EmptyStackException() {}
     EmptyStackException &operator=(EmptyStackException const &) = default;
 };
 
@@ -75,9 +78,12 @@ class IOException : public std::exception {
     std::string _message;
 
   public:
-    IOException(const std::string &msg = "");
+    IOException(const std::string &msg = "")
+        : std::exception(), _message(msg) {}
 
-    virtual const char *what() const noexcept override;
+    virtual const char *what() const noexcept override {
+        return _message.c_str();
+    }
 };
 
 class CancellationException : public IllegalStateException {
@@ -85,7 +91,7 @@ class CancellationException : public IllegalStateException {
     CancellationException(const std::string &msg = "")
         : IllegalStateException(msg) {}
     CancellationException(CancellationException const &) = default;
-    ~CancellationException();
+    ~CancellationException() {}
     CancellationException &operator=(CancellationException const &) = default;
 };
 
@@ -94,7 +100,7 @@ class ParseCancellationException : public CancellationException {
     ParseCancellationException(const std::string &msg = "")
         : CancellationException(msg) {}
     ParseCancellationException(ParseCancellationException const &) = default;
-    ~ParseCancellationException();
+    ~ParseCancellationException() {}
     ParseCancellationException &
     operator=(ParseCancellationException const &) = default;
 };

@@ -5,7 +5,7 @@
 namespace tagfilterdb::compiler {
 template <typename Symbol> class TokenFactory {
   public:
-    virtual ~TokenFactory() {}
+    virtual ~TokenFactory() = default;
     virtual Unique<Symbol> create(SourceStream source, size_t type,
                                   const std::string &text, size_t channel,
                                   size_t start, size_t stop, size_t line,

@@ -16,6 +16,7 @@ class IntStream {
     virtual void seek(size_t index) = 0;
     virtual size_t size() = 0;
     virtual std::string getSourceName() const = 0;
+    virtual std::string getText(const support::Range &range) = 0;
 };
 } // namespace tagfilterdb::compiler
 

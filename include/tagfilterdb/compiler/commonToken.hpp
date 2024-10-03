@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sourceStream.hpp"
 #include "writableToken.hpp"
 
 namespace tagfilterdb::compiler {
@@ -51,7 +52,7 @@ class CommonToken : public WritableToken {
 
     virtual std::string toString() const override;
 
-    virtual std::string toString(Recognizer *r) const;
+    // virtual std::string toString(Recognizer *r) const;
 
   private:
     void InitializeInstanceFields();

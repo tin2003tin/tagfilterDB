@@ -1,28 +1,32 @@
+#include "tagfilterdb/compiler/atn/ATN.hpp"
+#include "tagfilterdb/compiler/atn/basicState.hpp"
+#include "tagfilterdb/compiler/atn/blockEndState.hpp"
+#include "tagfilterdb/compiler/commontokenFactory.hpp"
+#include "tagfilterdb/compiler/inputStream.hpp"
 #include "tagfilterdb/logging.hpp"
-#include "tagfilterdb/support/rangeSet.hpp"
 
-using namespace tagfilterdb::support;
+using namespace tagfilterdb;
 
 int main() {
-    RangeSet r;
-    r.add(1, 3);
-    r.add(2, 10);
-    r.add(15, 20);
-    r.add(100);
-    LOG_DEBUG("r: ", r.toString())
-    RangeSet temp;
-    temp.add(1, 5);
-    temp.add(10);
-    temp.add(18, 25);
-    LOG_DEBUG("temp: ", temp.toString())
-    LOG_DEBUG((r.And(temp)).toString())
-    LOG_DEBUG(r.contains((size_t)10))
-    LOG_DEBUG(r.contains((size_t)200))
-    LOG_DEBUG(r.empty());
-    LOG_DEBUG(r.getMaxElement(), " ", r.getMinElement())
-    r.remove((size_t)5);
-    LOG_DEBUG(r.toString())
-    LOG_DEBUG((r.Or(temp)).toString())
-    // compliment dont work
-    // subtract dont work
+    std::ifstream fileStream("example.txt");
+    if (!fileStream.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
+    InputStream input(fileStream);
+
+    LOG_DEBUG(input.toString())
+
+    CommonTokenFactory cf;
+
+    Unique<CommonToken> token =
+        cf.create(SourceStream(), 0, input.toString(), 0, 0, 10, 0, 0);
+
+    LOG_DEBUG(token->getText())
+
+    atn::ATN atn;
+
+    atn.addState(new BasicState());
+    atn.addState(new BlockEndState());
+    LOG_DEBUG(atn.toString())
 }

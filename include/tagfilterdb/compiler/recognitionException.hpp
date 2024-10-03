@@ -9,6 +9,7 @@ class RecognitionException : public RuntimeException {
     Recognizer *_recognier;
     IntStream *_input;
     ParserRuleContext *_ctx;
+
     Token *_offendingToken;
     size_t _offendingState;
 
@@ -28,6 +29,14 @@ class RecognitionException : public RuntimeException {
   protected:
     void setOffendingState(size_t offendingState);
 
-    // TODO: (RecognitionException) misc::IntervalSet getExpectedTokens() const;
+  public:
+    support::RangeSet getExpectedTokens() const;
+    virtual RuleContext *getCtx() const;
+    virtual IntStream *getInputStream() const;
+    virtual Token *getOffendingToken() const;
+    virtual Recognizer *getReconginer() const;
+
+  private:
+    void InitializeInstanceFields();
 };
 } // namespace tagfilterdb::compiler

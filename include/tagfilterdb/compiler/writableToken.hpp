@@ -5,7 +5,7 @@
 namespace tagfilterdb::compiler {
 class WritableToken : public Token {
   public:
-    virtual ~WritableToken();
+    virtual ~WritableToken() = default;
     virtual void setText(const std::string &text) = 0;
     virtual void setType(size_t ttype) = 0;
     virtual void setLine(size_t line) = 0;
