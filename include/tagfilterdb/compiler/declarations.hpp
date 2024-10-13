@@ -12,9 +12,12 @@ class CharStream;
 class Recognizer;
 class RuleContext;
 class ParserRuleContext;
+class Lexer;
 class Parser;
 class Vocabulary;
 class SourceStream;
+class ErrorListener;
+class LexerNoViableAltException;
 
 template <typename Symbol> class TokenFactory;
 
@@ -40,6 +43,12 @@ class StarBlockStartState;
 class StarLoopEntryState;
 class StarLoopbackState;
 class TokensStartState;
+class ATNSimulator;
+class ArrayPredictionContext;
+class SingletonPredictionContext;
+class PredictionContextCache;
+class PredictionContextMergeCache;
+
 } // namespace atn
 
 } // namespace compiler

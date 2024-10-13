@@ -22,7 +22,7 @@ class Mutex final {
     std::mutex m_impl;
 };
 
-template <typename Mutex> using UniqueLoc = std::unique_lock<Mutex>;
+template <typename Mutex> using UniqueLock = std::unique_lock<Mutex>;
 
 class SharedMutex final {
   public:
