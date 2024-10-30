@@ -1,0 +1,35 @@
+\hypertarget{spatialIndex_8hpp}{}\doxysection{include/tagfilterdb/spatial\+Index/spatial\+Index.hpp File Reference}
+\label{spatialIndex_8hpp}\index{include/tagfilterdb/spatialIndex/spatialIndex.hpp@{include/tagfilterdb/spatialIndex/spatialIndex.hpp}}
+{\ttfamily \#include \char`\"{}tagfilterdb/export.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}tagfilterdb/spatial\+Index/broundingbox.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}tagfilterdb/status.\+hpp\char`\"{}}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$array$>$}\newline
+{\ttfamily \#include $<$cassert$>$}\newline
+{\ttfamily \#include $<$limits$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}tagfilterdb/spatial\+Index/spatial\+Index.\+cpp\char`\"{}}\newline
+Include dependency graph for spatial\+Index.\+hpp\+:
+% FIG 0
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions}{tagfilterdb\+::\+Spatial\+Index\+Options}}
+\begin{DoxyCompactList}\small\item\em Configuration options for the spatial index. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{tagfilterdb\+::\+ISIndex\+Callback$<$ SIndex $>$}}
+\begin{DoxyCompactList}\small\item\em Interface for callback functions used in spatial index operations. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$}}
+\begin{DoxyCompactList}\small\item\em A spatial index for querying and inserting multidimensional data. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Node}}
+\begin{DoxyCompactList}\small\item\em Represents a node in the spatial index tree. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Sub\+Node}}
+\begin{DoxyCompactList}\small\item\em Represents a sub-\/node in the spatial index. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Group}}
+\begin{DoxyCompactList}\small\item\em Represents a group of nodes used during node splitting. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign}{tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Group\+Assign}}
+\begin{DoxyCompactList}\small\item\em Assignment of nodes to groups during splitting. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}
+\end{DoxyCompactItemize}

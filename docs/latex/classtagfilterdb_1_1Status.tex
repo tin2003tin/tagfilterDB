@@ -1,0 +1,326 @@
+\hypertarget{classtagfilterdb_1_1Status}{}\doxysection{tagfilterdb\+::Status Class Reference}
+\label{classtagfilterdb_1_1Status}\index{tagfilterdb::Status@{tagfilterdb::Status}}
+
+
+Class representing the status of an operation, including success or various error states.  
+
+
+
+
+{\ttfamily \#include $<$status.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{Err}} \{ \newline
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea788240786ceb914864e59ba2a3e82e83}{e\+\_\+\+Ok}} = 0
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea75f468dc1af1325b6513f978d37a8b4d}{e\+\_\+\+Not\+Found}} = 1
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea7dcac4ad4e66924cc7cf6c509a2441c3}{e\+\_\+\+Corruption}} = 2
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea78bcb53fd4d95257ac10cef328498700}{e\+\_\+\+Not\+Supported}} = 3
+, \newline
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea85169991384da6b00675e77862912da0}{e\+\_\+\+Out\+Of\+Range}} = 4
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea05400f4ceca606c978fb916f512a9693}{e\+\_\+\+Invalid\+Argument}} = 5
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea94788dc34f73e3533a21ab2373de7586}{e\+\_\+\+IOError}} = 6
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea396ae1638a14ad6bfa9f0bd1cac1764e}{e\+\_\+\+Timeout}} = 7
+, \newline
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29eab729370a14ab15be0c6e8ac3ebd057b6}{e\+\_\+\+Permission\+Denied}} = 8
+, \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea50ff586ee5bfc4a84b4130c68077c068}{e\+\_\+\+Network\+Error}} = 9
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration of potential error codes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status_ad6e1cb051d2cad66f7fbaeaf422aacf7}{Status}} () noexcept
+\begin{DoxyCompactList}\small\item\em Default constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}, initializing to a successful state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a9acb16eca2350e3c87b8874060260732}{$\sim$\+Status}} ()
+\begin{DoxyCompactList}\small\item\em Destructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}, cleaning up allocated memory. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a7b52b2cb8776e1699bfe2c2905ba5f74}{Status}} (const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&other)
+\begin{DoxyCompactList}\small\item\em Copy constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \& \mbox{\hyperlink{classtagfilterdb_1_1Status_a237a0c80416686ef3b7b4c45c952c578}{operator=}} (\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move assignment operator for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \& \mbox{\hyperlink{classtagfilterdb_1_1Status_ae312327db9c86f3ffa9794af79628869}{operator=}} (const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&other)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classtagfilterdb_1_1Status_a04281918fbb81415a1cb85a1eb07ee56}{operator==}} (const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&other) const
+\begin{DoxyCompactList}\small\item\em Equality operator to compare with another {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classtagfilterdb_1_1Status_ae2447097d963c4ebe88e42a3dc88104d}{operator==}} (\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{Err}} err) const
+\begin{DoxyCompactList}\small\item\em Equality operator to compare with a specific error code. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1Status_a13d6a1faa393edf9b793680e7c8dfc50}{Status}} (\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&\&other) noexcept
+\begin{DoxyCompactList}\small\item\em Move constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classtagfilterdb_1_1Status_aa524bd0e977544ba1a326bc051ad5bbd}{ok}} () const
+\begin{DoxyCompactList}\small\item\em Checks if the status represents success. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classtagfilterdb_1_1Status_a5252c1d4f8bbd74a3ace85504e952006}{Is\+Error}} () const
+\begin{DoxyCompactList}\small\item\em Checks if the status represents an error. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classtagfilterdb_1_1Status_a3017b3515960608ad2101a193f7d877a}{To\+String}} () const
+\begin{DoxyCompactList}\small\item\em Converts the status to a human-\/readable string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \mbox{\hyperlink{classtagfilterdb_1_1Status_aa1405633c748dbc249b2bf7f87a93ea2}{OK}} ()
+\begin{DoxyCompactList}\small\item\em Factory method for creating an OK {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \mbox{\hyperlink{classtagfilterdb_1_1Status_a96884dc762b8e94512e48ea5a9485592}{Error}} (\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{Err}} e\+\_\+err, const std\+::string \&r\+\_\+msg1=\char`\"{}\char`\"{}, const std\+::string \&r\+\_\+msg2=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Factory method for creating an error {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing the status of an operation, including success or various error states. 
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!Err@{Err}}
+\index{Err@{Err}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{Err}{Err}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{tagfilterdb\+::\+Status\+::\+Err}}}
+
+
+
+Enumeration of potential error codes. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_Ok@{e\_Ok}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_Ok@{e\_Ok}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea788240786ceb914864e59ba2a3e82e83}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea788240786ceb914864e59ba2a3e82e83}} 
+e\+\_\+\+Ok&Operation was successful. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_NotFound@{e\_NotFound}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_NotFound@{e\_NotFound}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea75f468dc1af1325b6513f978d37a8b4d}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea75f468dc1af1325b6513f978d37a8b4d}} 
+e\+\_\+\+Not\+Found&Resource was not found. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_Corruption@{e\_Corruption}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_Corruption@{e\_Corruption}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea7dcac4ad4e66924cc7cf6c509a2441c3}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea7dcac4ad4e66924cc7cf6c509a2441c3}} 
+e\+\_\+\+Corruption&Data corruption was detected. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_NotSupported@{e\_NotSupported}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_NotSupported@{e\_NotSupported}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea78bcb53fd4d95257ac10cef328498700}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea78bcb53fd4d95257ac10cef328498700}} 
+e\+\_\+\+Not\+Supported&Operation is not supported. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_OutOfRange@{e\_OutOfRange}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_OutOfRange@{e\_OutOfRange}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea85169991384da6b00675e77862912da0}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea85169991384da6b00675e77862912da0}} 
+e\+\_\+\+Out\+Of\+Range&Value is out of allowed range. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_InvalidArgument@{e\_InvalidArgument}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_InvalidArgument@{e\_InvalidArgument}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea05400f4ceca606c978fb916f512a9693}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea05400f4ceca606c978fb916f512a9693}} 
+e\+\_\+\+Invalid\+Argument&Invalid argument was provided. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_IOError@{e\_IOError}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_IOError@{e\_IOError}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea94788dc34f73e3533a21ab2373de7586}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea94788dc34f73e3533a21ab2373de7586}} 
+e\+\_\+\+IOError&I/O error occurred. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_Timeout@{e\_Timeout}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_Timeout@{e\_Timeout}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea396ae1638a14ad6bfa9f0bd1cac1764e}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea396ae1638a14ad6bfa9f0bd1cac1764e}} 
+e\+\_\+\+Timeout&Operation timed out. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_PermissionDenied@{e\_PermissionDenied}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_PermissionDenied@{e\_PermissionDenied}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29eab729370a14ab15be0c6e8ac3ebd057b6}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29eab729370a14ab15be0c6e8ac3ebd057b6}} 
+e\+\_\+\+Permission\+Denied&Permission denied for the operation. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{e\_NetworkError@{e\_NetworkError}!tagfilterdb::Status@{tagfilterdb::Status}}\index{tagfilterdb::Status@{tagfilterdb::Status}!e\_NetworkError@{e\_NetworkError}}}\mbox{\Hypertarget{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea50ff586ee5bfc4a84b4130c68077c068}\label{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29ea50ff586ee5bfc4a84b4130c68077c068}} 
+e\+\_\+\+Network\+Error&Network error occurred. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_ad6e1cb051d2cad66f7fbaeaf422aacf7}\label{classtagfilterdb_1_1Status_ad6e1cb051d2cad66f7fbaeaf422aacf7}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!Status@{Status}}
+\index{Status@{Status}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{Status()}{Status()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily tagfilterdb\+::\+Status\+::\+Status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Default constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}, initializing to a successful state. 
+
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a9acb16eca2350e3c87b8874060260732}\label{classtagfilterdb_1_1Status_a9acb16eca2350e3c87b8874060260732}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!````~Status@{$\sim$Status}}
+\index{````~Status@{$\sim$Status}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{$\sim$Status()}{~Status()}}
+{\footnotesize\ttfamily tagfilterdb\+::\+Status\+::$\sim$\+Status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Destructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}, cleaning up allocated memory. 
+
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a7b52b2cb8776e1699bfe2c2905ba5f74}\label{classtagfilterdb_1_1Status_a7b52b2cb8776e1699bfe2c2905ba5f74}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!Status@{Status}}
+\index{Status@{Status}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{Status()}{Status()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily tagfilterdb\+::\+Status\+::\+Status (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object to copy from. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a13d6a1faa393edf9b793680e7c8dfc50}\label{classtagfilterdb_1_1Status_a13d6a1faa393edf9b793680e7c8dfc50}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!Status@{Status}}
+\index{Status@{Status}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{Status()}{Status()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily tagfilterdb\+::\+Status\+::\+Status (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move constructor for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object to move from. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a96884dc762b8e94512e48ea5a9485592}\label{classtagfilterdb_1_1Status_a96884dc762b8e94512e48ea5a9485592}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!Error@{Error}}
+\index{Error@{Error}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} tagfilterdb\+::\+Status\+::\+Error (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{Err}}}]{e\+\_\+err,  }\item[{const std\+::string \&}]{r\+\_\+msg1 = {\ttfamily \char`\"{}\char`\"{}},  }\item[{const std\+::string \&}]{r\+\_\+msg2 = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Factory method for creating an error {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em e\+\_\+err} & The error code. \\
+\hline
+{\em r\+\_\+msg1} & The primary error message. \\
+\hline
+{\em r\+\_\+msg2} & The secondary error message (optional). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object representing the error. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a5252c1d4f8bbd74a3ace85504e952006}\label{classtagfilterdb_1_1Status_a5252c1d4f8bbd74a3ace85504e952006}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!IsError@{IsError}}
+\index{IsError@{IsError}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{IsError()}{IsError()}}
+{\footnotesize\ttfamily bool tagfilterdb\+::\+Status\+::\+Is\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if the status represents an error. 
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the status indicates an error, otherwise {\ttfamily false}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_aa1405633c748dbc249b2bf7f87a93ea2}\label{classtagfilterdb_1_1Status_aa1405633c748dbc249b2bf7f87a93ea2}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!OK@{OK}}
+\index{OK@{OK}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{OK()}{OK()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} tagfilterdb\+::\+Status\+::\+OK (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Factory method for creating an OK {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+\begin{DoxyReturn}{Returns}
+A {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object representing success. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_aa524bd0e977544ba1a326bc051ad5bbd}\label{classtagfilterdb_1_1Status_aa524bd0e977544ba1a326bc051ad5bbd}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!ok@{ok}}
+\index{ok@{ok}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{ok()}{ok()}}
+{\footnotesize\ttfamily bool tagfilterdb\+::\+Status\+::ok (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if the status represents success. 
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the status is OK, otherwise {\ttfamily false}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_ae312327db9c86f3ffa9794af79628869}\label{classtagfilterdb_1_1Status_ae312327db9c86f3ffa9794af79628869}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!operator=@{operator=}}
+\index{operator=@{operator=}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}\& tagfilterdb\+::\+Status\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy assignment operator for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object to copy from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the current object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a237a0c80416686ef3b7b4c45c952c578}\label{classtagfilterdb_1_1Status_a237a0c80416686ef3b7b4c45c952c578}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!operator=@{operator=}}
+\index{operator=@{operator=}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}\& tagfilterdb\+::\+Status\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move assignment operator for {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object to move from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the current object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a04281918fbb81415a1cb85a1eb07ee56}\label{classtagfilterdb_1_1Status_a04281918fbb81415a1cb85a1eb07ee56}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!operator==@{operator==}}
+\index{operator==@{operator==}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool tagfilterdb\+::\+Status\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Equality operator to compare with another {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1Status}{Status}}} object to compare with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the statuses are equal, otherwise {\ttfamily false}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_ae2447097d963c4ebe88e42a3dc88104d}\label{classtagfilterdb_1_1Status_ae2447097d963c4ebe88e42a3dc88104d}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!operator==@{operator==}}
+\index{operator==@{operator==}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool tagfilterdb\+::\+Status\+::operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1Status_a2f57db43352da365979c7fe0d64eb29e}{Err}}}]{err }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Equality operator to compare with a specific error code. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em err} & The error code to compare with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if the status matches the error code, otherwise {\ttfamily false}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtagfilterdb_1_1Status_a3017b3515960608ad2101a193f7d877a}\label{classtagfilterdb_1_1Status_a3017b3515960608ad2101a193f7d877a}} 
+\index{tagfilterdb::Status@{tagfilterdb::Status}!ToString@{ToString}}
+\index{ToString@{ToString}!tagfilterdb::Status@{tagfilterdb::Status}}
+\doxysubsubsection{\texorpdfstring{ToString()}{ToString()}}
+{\footnotesize\ttfamily std\+::string tagfilterdb\+::\+Status\+::\+To\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Converts the status to a human-\/readable string. 
+
+\begin{DoxyReturn}{Returns}
+A string representing the status. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/\mbox{\hyperlink{status_8hpp}{status.\+hpp}}\end{DoxyCompactItemize}

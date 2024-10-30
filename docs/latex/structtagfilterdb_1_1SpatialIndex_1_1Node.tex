@@ -1,0 +1,112 @@
+\hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node}{}\doxysection{tagfilterdb\+::Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node Struct Reference}
+\label{structtagfilterdb_1_1SpatialIndex_1_1Node}\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+
+
+Represents a node in the spatial index tree.  
+
+
+
+
+{\ttfamily \#include $<$spatial\+Index.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a865264c4cde1d5b66efc35352cba7e6f}{Node}} ()=default
+\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ac24fab3cca6bc7a8d441e152b1b61812}{Node}} (int a\+\_\+csize=0, int a\+\_\+height=-\/1)
+\item 
+bool \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a4f4f29bcd6562a2b677fe6650414c4cb}{is\+Leaf}} () const
+\begin{DoxyCompactList}\small\item\em Check if the node is a leaf. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ad3063a296386bc72444a498644f98e22}{m\+\_\+csize}}
+\begin{DoxyCompactList}\small\item\em Current number of children in the node. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}{m\+\_\+height}}
+\begin{DoxyCompactList}\small\item\em Height of the node in the tree. \end{DoxyCompactList}\item 
+std\+::array$<$ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{Sub\+Node}}, Max\+Children $>$ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ad8e509d09b3f6022f4fb744354e76929}{m\+\_\+sub\+Nodes}}
+\begin{DoxyCompactList}\small\item\em Array of sub-\/nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$class Data\+Type, std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$\newline
+struct tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Node}
+
+Represents a node in the spatial index tree. 
+
+A node contains an array of sub-\/nodes and information about its height and the current number of children. It provides functionality to check if the node is a leaf node. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_a865264c4cde1d5b66efc35352cba7e6f}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_a865264c4cde1d5b66efc35352cba7e6f}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!Node@{Node}}
+\index{Node@{Node}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{Node()}{Node()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_ac24fab3cca6bc7a8d441e152b1b61812}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_ac24fab3cca6bc7a8d441e152b1b61812}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!Node@{Node}}
+\index{Node@{Node}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{Node()}{Node()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::\+Node (\begin{DoxyParamCaption}\item[{int}]{a\+\_\+csize = {\ttfamily 0},  }\item[{int}]{a\+\_\+height = {\ttfamily -\/1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_a4f4f29bcd6562a2b677fe6650414c4cb}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_a4f4f29bcd6562a2b677fe6650414c4cb}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!isLeaf@{isLeaf}}
+\index{isLeaf@{isLeaf}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{isLeaf()}{isLeaf()}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+bool \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::is\+Leaf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if the node is a leaf. 
+
+\begin{DoxyReturn}{Returns}
+True if the node is a leaf (height is 0), false otherwise. 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_ad3063a296386bc72444a498644f98e22}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_ad3063a296386bc72444a498644f98e22}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!m\_csize@{m\_csize}}
+\index{m\_csize@{m\_csize}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{m\_csize}{m\_csize}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+int \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::m\+\_\+csize}
+
+
+
+Current number of children in the node. 
+
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!m\_height@{m\_height}}
+\index{m\_height@{m\_height}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{m\_height}{m\_height}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+int \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::m\+\_\+height}
+
+
+
+Height of the node in the tree. 
+
+\mbox{\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Node_ad8e509d09b3f6022f4fb744354e76929}\label{structtagfilterdb_1_1SpatialIndex_1_1Node_ad8e509d09b3f6022f4fb744354e76929}} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}!m\_subNodes@{m\_subNodes}}
+\index{m\_subNodes@{m\_subNodes}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Node}}
+\doxysubsubsection{\texorpdfstring{m\_subNodes}{m\_subNodes}}
+{\footnotesize\ttfamily template$<$class Data\+Type , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, class Range\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, class Area\+Type  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+std\+::array$<$\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{Sub\+Node}}, Max\+Children$>$ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::Node\+::m\+\_\+sub\+Nodes}
+
+
+
+Array of sub-\/nodes. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/spatial\+Index/\mbox{\hyperlink{spatialIndex_8hpp}{spatial\+Index.\+hpp}}\end{DoxyCompactItemize}
