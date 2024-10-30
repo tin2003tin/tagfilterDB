@@ -1,0 +1,68 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Compiled Dynamic Libraries
+*.dll
+*.so
+*.dylib
+
+# Compiled Static Libraries
+*.lib
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directories
+/build/
+bin/
+obj/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Visual Studio files
+.vscode/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# Code::Blocks files
+*.cbp
+*.layout
+
+# Qt files
+*.pro.user
+*.pro.user.*
+
+# Eclipse files
+.settings/
+*.project
+*.cproject
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# IDE-specific files
+.idea/
+*.userprefs
+*.swp
+*.swo
+
+# Backup files
+*~
+*.bak
+
+# Other system files
+.DS_Store
+Thumbs.db
+cert.pem
+key.pem
