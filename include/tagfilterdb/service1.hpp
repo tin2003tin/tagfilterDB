@@ -5,7 +5,7 @@
 const std::string compilerText = R"(
         S' -> S                            ## start
         S -> INSERT INTO T VALUE V         ## insert
-        S -> SELECT C FROM T W F           ## select
+        S -> SELECT C FROM T F W           ## select
         W -> ε
         W -> WHERE Con                     ## where
         F -> ε
