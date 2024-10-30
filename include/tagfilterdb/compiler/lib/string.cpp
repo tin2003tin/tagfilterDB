@@ -25,7 +25,4 @@ void String::split(const std::string &text, const std::string &delimiter,
     }
     tokens.push_back(text.substr(start, end));
 }
-
-std::vector<std::string> String::split(const std::string &text,
-                                       const std::string &delimiter) {}
 } // namespace tin_compiler

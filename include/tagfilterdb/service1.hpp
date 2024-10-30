@@ -8,7 +8,7 @@ const std::string compilerText = R"(
         S -> SELECT C FROM T F W           ## select
         W -> ε
         W -> WHERE Con                     ## where
-        F -> ε
+    F -> ε
         F -> JOIN T ON Con                 ## join
         Con -> #ID = V                     ## condition
         C -> ( C )                         ## bucket
