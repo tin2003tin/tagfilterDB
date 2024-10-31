@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the project name
-project(LevelDB)
+project(TAGFILTERDB)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -12,6 +12,7 @@ enable_testing()
 
 # Find OpenSSL
 find_package(OpenSSL REQUIRED)
+find_package(PostgreSQL REQUIRED)
 
 # Gather all .cpp files in the util and src directories
 file(GLOB UTIL_SOURCES "util/*.cpp")  # Utility source files
@@ -21,16 +22,18 @@ file(GLOB SRC_SOURCES "src/*.cpp")    # Main source files
 file(GLOB TEST_SOURCES "test/*.cpp")  # Test source files
 
 # Add an executable for the main program and specify its sources
-add_executable(leveldb)
+add_executable(tagfilterdb)
 
-target_sources(leveldb
+target_sources(tagfilterdb
   PRIVATE
     ${UTIL_SOURCES}
     ${SRC_SOURCES}
 )
 
 # Link OpenSSL to the main program
-target_link_libraries(leveldb PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(tagfilterdb PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+target_include_directories(tagfilterdb PRIVATE ${PostgreSQL_INCLUDE_DIRS})
+target_link_libraries(tagfilterdb PRIVATE ${PostgreSQL_LIBRARIES})
 
 # Add an executable for the tests and specify its sources
 add_executable(runTests)
@@ -42,7 +45,7 @@ target_sources(runTests
 )
 
 # Add include directories for headers
-target_include_directories(leveldb PUBLIC 
+target_include_directories(tagfilterdb PUBLIC 
     ${PROJECT_SOURCE_DIR}/include       # Default include folder for headers
     ${PROJECT_SOURCE_DIR}               # Include folder for port headers (if needed)
 )
