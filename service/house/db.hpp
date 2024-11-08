@@ -2,13 +2,13 @@
 
 #include <iostream>
 #include <libpq-fe.h>
+#include "tagfilterdb/logging.hpp"
 
-
-namespace service::banking {
-class BankingDatabase {
+namespace service::house {
+class HouseDatabase {
     PGconn* conn;
     public:
-    BankingDatabase() : conn(nullptr) {}
+    HouseDatabase() : conn(nullptr) {}
     bool Connect(const std::string& conninfo) {
         conn = PQconnectdb(conninfo.c_str()); 
 
@@ -20,11 +20,9 @@ class BankingDatabase {
         std::cout << "Connected to the database successfully!" << std::endl;
         return true;
     }
-   PGresult* GetCustomer(const std::string& name) {
-    std::string query = "SELECT * FROM customer AS c "
-                        "NATURAL JOIN depositor AS d  "
-                        "NATURAL JOIN account AS a   "
-                        "WHERE c.customer_name = '" + name + "';";
+   PGresult* GetHouse(int houseId) {
+ 
+     std::string query = "SELECT * FROM House WHERE houseid = " + std::to_string(houseId);
 
     PGresult* res = PQexec(conn, query.c_str());
 
@@ -37,10 +35,8 @@ class BankingDatabase {
     return res;
     }
 
-    PGresult* GetAllCustomers() {
-    std::string query = "SELECT * FROM customer AS c "
-                        "NATURAL JOIN depositor AS d  "
-                        "NATURAL JOIN account AS a";
+    PGresult* GetRoom(int houseId) {
+     std::string query = "SELECT * FROM Room WHERE houseid = " + std::to_string(houseId);
 
     PGresult* res = PQexec(conn, query.c_str());
 
@@ -51,6 +47,40 @@ class BankingDatabase {
     }
 
     return res;
+    }
+
+    PGresult* AddRoom(int houseId, const std::string& roomName, const std::string& roomType, 
+                  int floorNumber, double area, const std::string& dimensions, bool hasWindow) {
+        std::string insertRoomQuery = 
+            "INSERT INTO Room (RoomId, RoomName, HouseID, RoomType, FloorNumber, Area, Dimensions, HasWindow) "
+            "VALUES ( (SELECT COALESCE(MAX(RoomId), 0) + 1 FROM Room),'" + roomName + "', " + std::to_string(houseId) + ", '" + roomType + "', " +
+            std::to_string(floorNumber) + ", " + std::to_string(area) + ", '" + dimensions + "', " +
+            (hasWindow ? "TRUE" : "FALSE") + ")";
+
+
+        PGresult* res_insert = PQexec(conn, insertRoomQuery.c_str());
+
+        if (PQresultStatus(res_insert) != PGRES_COMMAND_OK) {
+            std::cerr << "Error inserting room: " << PQerrorMessage(conn) << std::endl;
+            PQclear(res_insert);
+            return nullptr;
+        }
+
+        return res_insert;
+    }
+
+    PGresult* DeleteRoom(int roomId) {
+        std::string deleteRoomQuery = "DELETE FROM Room WHERE roomid = " + std::to_string(roomId);
+
+        PGresult* res_delete = PQexec(conn, deleteRoomQuery.c_str());
+
+        if (PQresultStatus(res_delete) != PGRES_COMMAND_OK) {
+            std::cerr << "Error deleting room: " << PQerrorMessage(conn) << std::endl;
+            PQclear(res_delete);
+            return nullptr;
+       }
+      
+        return res_delete; 
     }
 
     bool isConnected() const {
@@ -86,7 +116,7 @@ class BankingDatabase {
         }
     }
 
-     ~BankingDatabase() {
+     ~HouseDatabase() {
         Disconnect();
     }
 };
