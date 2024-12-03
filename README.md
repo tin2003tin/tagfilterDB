@@ -32,6 +32,12 @@ Efficient **metadata management** enables you to track key properties such as:
 - **Cache hit/miss rates** to optimize data retrieval.
 - **Data integrity verification** to ensure reliability across operations.
 
+### 6. **Customizable Compiler Support**
+- **Custom Function** With compiler support, you can define custom functions to adjust how the database stores, retrieves, or filters data.
+- **Compiler Hook** Hooks provide the ability to intercept certain operations, such as data storage, retrieval, and query execution, and modify them based on your requirements.
+- **System Parameter Adjustment** The compiler format allows you to adjust system parameters directly
+
+
 ## Architecture
 
 The **tagfilterdb** architecture consists of several interdependent components, which together deliver high performance, scalability, and reliability:
@@ -52,17 +58,23 @@ The **tagfilterdb** architecture consists of several interdependent components, 
 - The system is built for **multi-client** server-side operations, where multiple clients can concurrently query and update data.
 - Supports RESTful APIs and other interfaces for interacting with the database.
 
+### 5. **Customizable Compiler Support**
+- Custom Functions: Tailor data storage, retrieval, and query operations with user-defined logic.
+- Compiler Hooks: Modify key operations such as indexing or filtering to better suit specific use cases.
+- Adjustable System Parameters: Fine-tune database behavior and performance by customizing internal parameters.
+
 ## Implementation Plan
 
 The development of **tagfilterdb** will follow these steps:
 
 1. **Complete the R-tree Implementation**: Finalize the R-tree data structure and ensure it supports efficient insertions, deletions, and spatial queries.
-2. **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism (e.g., **LRU Cache**, **LFU Cache**) to store frequently accessed data.
+2. **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism (**LRU Cache**) to store frequently accessed data.
 3. **Develop Metadata Management System**: Implement a system for tracking metadata such as record counts, cache usage, and other properties to optimize database performance.
 4. **Design and Implement Server API**: Build a RESTful API for clients to interact with the server, including operations like adding data, querying spatial regions, and filtering based on metadata tags.
-5. **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
-6. **Documentation and Deployment**: Complete the system documentation, including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
-7. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
+5.  **Compiler Integration** Implement support for customizable compiler (**LR Compiler**) functions to allow users to define and optimize database operations and parameters for specific use cases.
+6. **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
+7. **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
+8. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
 
 ## Installation and Setup
 
