@@ -1,0 +1,59 @@
+\doxysection{include/tagfilterdb/cache.h File Reference}
+\hypertarget{cache_8h}{}\label{cache_8h}\index{include/tagfilterdb/cache.h@{include/tagfilterdb/cache.h}}
+
+
+Cache header file for the Level\+DB implementation.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$cassert$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+Include dependency graph for cache.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{tagfilterdb\+::\+Base\+Node}}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig}{tagfilterdb\+::\+LRUConfig}}
+\begin{DoxyCompactList}\small\item\em A configuration class to hold cache-\/related constants. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{tagfilterdb\+::\+LRUCache$<$ Key, Value $>$}}
+\begin{DoxyCompactList}\small\item\em A Least Recently Used (LRU) Cache implementation. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux}{tagfilterdb\+::\+LRUCache$<$ Key, Value $>$\+::\+Cache\+Mux}}
+\begin{DoxyCompactList}\small\item\em A class to handle locking mechanisms for cache access. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{tagfilterdb\+::\+LRUCache$<$ Key, Value $>$\+::\+Bucket\+Node}}
+\begin{DoxyCompactList}\small\item\em A class representing a node in the bucket list. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable}{tagfilterdb\+::\+LRUCache$<$ Key, Value $>$\+::\+Referenceable}}
+\begin{DoxyCompactList}\small\item\em A class that manages reference counting for cache nodes. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{tagfilterdb\+::\+LRUCache$<$ Key, Value $>$\+::\+Bucket\+Value\+Node}}
+\begin{DoxyCompactList}\small\item\em A class representing a value node in the cache. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig}{tagfilterdb\+::\+Share\+LRUConfig}}
+\begin{DoxyCompactList}\small\item\em A configuration class to hold constants related to the shared LRU cache. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{tagfilterdb\+::\+Share\+LRUCache$<$ Key, Value $>$}}
+\begin{DoxyCompactList}\small\item\em A shared LRU cache that divides a total charge across multiple LRU caches. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Cache header file for the Level\+DB implementation. 
+
+This code is based on the cache implementation from the Level\+DB project. The original implementation can be found at\+: \href{https://github.com/google/leveldb}{\texttt{ https\+://github.\+com/google/leveldb}}
+
+Credit\+: Cache implementation by Google (Level\+DB).
+
+\begin{DoxyNote}{Note}
+This code is based on the original work in the {\ttfamily google/leveldb} repository.
+\end{DoxyNote}
+@license Apache License, Version 2.\+0
+
+Copyright 2012 Google Inc.
+
+Licensed under the Apache License, Version 2.\+0 (the "{}\+License"{}); you may not use this file except in compliance with the License. You may obtain a copy of the License at \begin{DoxyVerb}http://www.apache.org/licenses/LICENSE-2.0
+\end{DoxyVerb}
+ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "{}\+AS IS"{} BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 

@@ -1,0 +1,55 @@
+\doxysection{tagfilterdb\+::support\+::Murmur\+Hash Class Reference}
+\hypertarget{classtagfilterdb_1_1support_1_1MurmurHash}{}\label{classtagfilterdb_1_1support_1_1MurmurHash}\index{tagfilterdb::support::MurmurHash@{tagfilterdb::support::MurmurHash}}
+
+
+{\ttfamily \#include $<$murmur\+Hash.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} \mbox{\hyperlink{classtagfilterdb_1_1support_1_1MurmurHash_ac9777ca287c2da31c82b1eab316c4c66}{Hash}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{data}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{n}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{seed}})
+\begin{DoxyCompactList}\small\item\em Computes a hash using a variant of the Murmur hash algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classtagfilterdb_1_1support_1_1MurmurHash_ac9777ca287c2da31c82b1eab316c4c66}\label{classtagfilterdb_1_1support_1_1MurmurHash_ac9777ca287c2da31c82b1eab316c4c66} 
+\index{tagfilterdb::support::MurmurHash@{tagfilterdb::support::MurmurHash}!Hash@{Hash}}
+\index{Hash@{Hash}!tagfilterdb::support::MurmurHash@{tagfilterdb::support::MurmurHash}}
+\doxysubsubsection{\texorpdfstring{Hash()}{Hash()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} tagfilterdb\+::support\+::\+Murmur\+Hash\+::\+Hash (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}}}]{n,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}}}]{seed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes a hash using a variant of the Murmur hash algorithm. 
+
+Computes a hash using the 32-\/bit Murmur hash variant.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the data to hash. \\
+\hline
+{\em n} & The size of the data in bytes. \\
+\hline
+{\em seed} & An initial seed value for the hash function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed 32-\/bit hash value.
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the data to hash. \\
+\hline
+{\em n} & Size of the data in bytes. \\
+\hline
+{\em seed} & Initial seed value for the hash function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed 32-\/bit hash value. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/\mbox{\hyperlink{murmurHash_8h}{murmur\+Hash.\+h}}\end{DoxyCompactItemize}

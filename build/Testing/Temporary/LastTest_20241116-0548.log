@@ -1,0 +1,18 @@
+Start testing: Nov 16 12:52 +07
+----------------------------------------------------------
+1/1 Testing: cache_test
+1/1 Test: cache_test
+Command: "/home/siriwid/new/build/cache_test_test"
+Directory: /home/siriwid/new/build
+"cache_test" start time: Nov 16 12:52 +07
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"cache_test" end time: Nov 16 12:52 +07
+"cache_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 16 12:52 +07

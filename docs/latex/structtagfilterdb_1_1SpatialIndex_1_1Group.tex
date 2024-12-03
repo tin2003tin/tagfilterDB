@@ -1,0 +1,59 @@
+\doxysection{tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Group Struct Reference}
+\hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Group}{}\label{structtagfilterdb_1_1SpatialIndex_1_1Group}\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group}}
+
+
+Represents a group of nodes used during node splitting.  
+
+
+
+
+{\ttfamily \#include $<$spatial\+Index.\+h$>$}
+
+
+
+Collaboration diagram for tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Group\+:
+% FIG 0
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group_a072c571db3d58bf2c6079a28570ff52d}{m\+\_\+box}}
+\begin{DoxyCompactList}\small\item\em Bounding box of the group. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group_aa3e99d07146fbed080602186a0a6d72b}{m\+\_\+count}} = 0
+\begin{DoxyCompactList}\small\item\em Number of nodes in the group. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$\newline
+struct tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Group}
+Represents a group of nodes used during node splitting. 
+
+A group contains a bounding box and a count of nodes. It is used to manage and split nodes during insertions. 
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Group_a072c571db3d58bf2c6079a28570ff52d}\label{structtagfilterdb_1_1SpatialIndex_1_1Group_a072c571db3d58bf2c6079a28570ff52d} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group}!m\_box@{m\_box}}
+\index{m\_box@{m\_box}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group}}
+\doxysubsubsection{\texorpdfstring{m\_box}{m\_box}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+::m\+\_\+box}
+
+
+
+Bounding box of the group. 
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1Group_aa3e99d07146fbed080602186a0a6d72b}\label{structtagfilterdb_1_1SpatialIndex_1_1Group_aa3e99d07146fbed080602186a0a6d72b} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group}!m\_count@{m\_count}}
+\index{m\_count@{m\_count}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::Group}}
+\doxysubsubsection{\texorpdfstring{m\_count}{m\_count}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+::m\+\_\+count = 0}
+
+
+
+Number of nodes in the group. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/spatial\+Index/\mbox{\hyperlink{spatialIndex_8h}{spatial\+Index.\+h}}\end{DoxyCompactItemize}

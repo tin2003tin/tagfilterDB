@@ -1,0 +1,703 @@
+\doxysection{tagfilterdb\+::Bounding\+Box\texorpdfstring{$<$}{<} Dimensions, Range\+Type, Area\+Type \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classtagfilterdb_1_1BoundingBox}{}\label{classtagfilterdb_1_1BoundingBox}\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+
+
+A template class for representing a multi-\/dimensional bounding box.  
+
+
+
+
+{\ttfamily \#include $<$broundingbox.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{using}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} = std\+::pair$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} $>$
+\begin{DoxyCompactList}\small\item\em Alias for a pair representing the minimum and maximum bounds in a dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ad1d6f36b97729c4ba5e7b42962a08e38}{Bounding\+Box}} ()
+\begin{DoxyCompactList}\small\item\em Default Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a02f439613c9e2c1ba02be4af76c40d94}{Bounding\+Box}} (std\+::vector$<$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+vec}})
+\begin{DoxyCompactList}\small\item\em Parameterized Constructor using std\+::vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ab022359ec97a5e664c13d7a1e1013570}{Bounding\+Box}} (std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+arr}})
+\begin{DoxyCompactList}\small\item\em Parameterized Constructor using std\+::array. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a3928e4716c1332df8b3ae0c61c0a7bff}{Bounding\+Box}} (\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Move Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a05b992e7622c1768ae0a4687adaaeb44}{Bounding\+Box}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}})
+\begin{DoxyCompactList}\small\item\em Copy Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \& \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a2621f98bded2f8534efcedf51f4944a0}{operator=}} (\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Move Assignment Operator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \& \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a93c8664a62efbf8cb719a426f536b273}{operator=}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}})
+\begin{DoxyCompactList}\small\item\em Copy Assignment Operator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_afe7649b079502cf50857dd546eb4c497}{operator==}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}})
+\begin{DoxyCompactList}\small\item\em Equality Operator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a594ff6309d38ee2e318666544ca03052}{set\+Axis}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+axis}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+start}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+end}})
+\begin{DoxyCompactList}\small\item\em Sets the bounds of a specific axis. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a375155c1dea6b11c6c4d41cba77e913c}{set\+Axis}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+axis}}, \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+edge}})
+\begin{DoxyCompactList}\small\item\em Sets the bounds for the specified axis using a \{min, max\} pair. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a07723bc1b95233bf85cda5137e2dbb5e}{get}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+axis}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Retrieves the bounds of a specific axis. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e}{min}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+xis}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{max}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+xis}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a24b1bad76fb82cf359794412c7eddac3}{contains\+Point}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{r\+\_\+point}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Checks if a point is within the bounds of the box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ae24573221812e0490f63074c25efc316}{reset}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e}{min}}=0, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{max}}=std\+::numeric\+\_\+limits$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} $>$\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{\+::max}}())
+\begin{DoxyCompactList}\small\item\em Resets the box\textquotesingle{}s bounds to default values. \end{DoxyCompactList}\item 
+std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a74a5630c41f7e0343e3a22930f381830}{center}} () \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the center point of the box. \end{DoxyCompactList}\item 
+std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a40b4b2919255997fe6ea5f5b9fab7061}{edge\+Length}} () \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the edge length for each dimension. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a55afe28803f6a5ceec48656e6ba1aa30}{edge\+Area}} () \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the total edge length of the box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ab6ffa7a94f550183c47e41373ee15fa5}{area}} () \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the area (or volume) of the bounding box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ada4c4fdf14e8521a15a70ecdeed2b66d}{encloses}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Checks if the current box completely encloses another box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a35d4a5a110bc11e4cb433b14ca05ec5a}{is\+Overlap}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Checks if the current box overlaps with another box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a53d732c3c9da2c859267b5a95db62002}{overlap}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}})
+\begin{DoxyCompactList}\small\item\em Computes the area of the overlapping region between the current box and another box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a8987c882a93749ae51790594a446441e}{distance\+From\+Center}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the squared distance between the centers of the current box and another box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a0013c441263c56629c2e0108f879f0e5}{expand}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+margin}})
+\begin{DoxyCompactList}\small\item\em Expands the bounds of the box by a specified margin in all dimensions. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a23c307fa9842addd26bc283b4642afd6}{scale}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+factor}})
+\begin{DoxyCompactList}\small\item\em Scales the box\textquotesingle{}s dimensions by a specified factor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ab0dfb4a97596baa8ac0f4dacc8d19ffb}{translate}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{r\+\_\+delta}})
+\begin{DoxyCompactList}\small\item\em Translates (moves) the box by a specified delta vector in all dimensions. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_aaec33a3e82b8c162297f89b0cb8dda8c}{resize}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{r\+\_\+new\+Dimensions}})
+\begin{DoxyCompactList}\small\item\em Resizes the box to fit new dimensions while keeping the center point unchanged. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a28aa8dc4c17e81ea1fd35e32a7719be8}{intersection}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{self}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}}) \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Computes the intersection (overlapping region) between the current box and another box. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_ad9cdd738edea68a114c7c947c5d3410f}{to\+String}} () \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}}
+\begin{DoxyCompactList}\small\item\em Converts the \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to a string representation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{Union\+Box}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{self}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{other}})
+\begin{DoxyCompactList}\small\item\em Computes the union (bounding box) of the current box and another box. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_af15005a30bda81eb7977e28bcb7b5edc}{Universe}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e}{min}}=0, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{max}}=std\+::numeric\+\_\+limits$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} $>$\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{\+::max}}())
+\begin{DoxyCompactList}\small\item\em Returns a box representing the entire universe (default bounds). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_aa4fbfc6d9e17042824be2e454ff61d97}{bounding\+Box}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::vector$<$ std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ $>$ \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{r\+\_\+points}})
+\begin{DoxyCompactList}\small\item\em Computes the bounding box that contains all given points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} = double$>$\newline
+class tagfilterdb\+::\+Bounding\+Box$<$ Dimensions, Range\+Type, Area\+Type $>$}
+A template class for representing a multi-\/dimensional bounding box. 
+
+The {\ttfamily \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}} class stores the minimum and maximum coordinates for each dimension, defining a hyper-\/rectangle in a multi-\/dimensional space. It provides utility like access, overlap, union, expand, etc
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Dimensions} & The number of dimensions for the bounding box. \\
+\hline
+{\em Range\+Type} & The data type for the coordinates (e.\+g., {\ttfamily int}, {\ttfamily float}, {\ttfamily double}). \\
+\hline
+{\em Area\+Type} & The area data type for the coordinates (e.\+g., {\ttfamily int}, {\ttfamily float}, {\ttfamily double}). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Member Typedef Documentation}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}\label{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!EDGE@{EDGE}}
+\index{EDGE@{EDGE}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{EDGE}{EDGE}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{using}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+EDGE =  std\+::pair$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}$>$}
+
+
+
+Alias for a pair representing the minimum and maximum bounds in a dimension. 
+
+This alias is used to represent an edge of the bounding box in a specific dimension. The first element of the pair is the minimum value, and the second element is the maximum value. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ad1d6f36b97729c4ba5e7b42962a08e38}\label{classtagfilterdb_1_1BoundingBox_ad1d6f36b97729c4ba5e7b42962a08e38} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!BoundingBox@{BoundingBox}}
+\index{BoundingBox@{BoundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{BoundingBox()}{BoundingBox()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default Constructor. 
+
+Initializes a {\ttfamily \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}} with all dimensions set to a default range of \mbox{[}0, 0\mbox{]}. This effectively creates a point at the origin in the multi-\/dimensional space. \Hypertarget{classtagfilterdb_1_1BoundingBox_a02f439613c9e2c1ba02be4af76c40d94}\label{classtagfilterdb_1_1BoundingBox_a02f439613c9e2c1ba02be4af76c40d94} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!BoundingBox@{BoundingBox}}
+\index{BoundingBox@{BoundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{BoundingBox()}{BoundingBox()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Bounding\+Box (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} $>$}]{a\+\_\+vec }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Parameterized Constructor using std\+::vector. 
+
+Constructs a \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} using a vector of coordinate pairs. Each pair represents the minimum and maximum values for a specific axis.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+vec} & A vector of \{min, max\} pairs for each axis. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ab022359ec97a5e664c13d7a1e1013570}\label{classtagfilterdb_1_1BoundingBox_ab022359ec97a5e664c13d7a1e1013570} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!BoundingBox@{BoundingBox}}
+\index{BoundingBox@{BoundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{BoundingBox()}{BoundingBox()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Bounding\+Box (\begin{DoxyParamCaption}\item[{std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$}]{a\+\_\+arr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Parameterized Constructor using std\+::array. 
+
+Constructs a \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} using a std\+::array of coordinate pairs. Each pair represents the minimum and maximum values for a specific axis.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+arr} & An array of \{min, max\} pairs for each axis. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a3928e4716c1332df8b3ae0c61c0a7bff}\label{classtagfilterdb_1_1BoundingBox_a3928e4716c1332df8b3ae0c61c0a7bff} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!BoundingBox@{BoundingBox}}
+\index{BoundingBox@{BoundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{BoundingBox()}{BoundingBox()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Bounding\+Box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move Constructor. 
+
+Constructs a \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} by transferring ownership of the data from another \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} object, leaving the source object in a valid but unspecified state.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to move from. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a05b992e7622c1768ae0a4687adaaeb44}\label{classtagfilterdb_1_1BoundingBox_a05b992e7622c1768ae0a4687adaaeb44} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!BoundingBox@{BoundingBox}}
+\index{BoundingBox@{BoundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{BoundingBox()}{BoundingBox()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Bounding\+Box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy Constructor. 
+
+Constructs a \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} as a copy of another \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}, copying all axis data to create an independent object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to copy from. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ab6ffa7a94f550183c47e41373ee15fa5}\label{classtagfilterdb_1_1BoundingBox_ab6ffa7a94f550183c47e41373ee15fa5} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!area@{area}}
+\index{area@{area}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{area()}{area()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::area (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the area (or volume) of the bounding box. 
+
+Multiplies the lengths of the edges in all dimensions to compute the area (or volume in higher dimensions).
+
+\begin{DoxyReturn}{Returns}
+The area or volume of the bounding box. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_aa4fbfc6d9e17042824be2e454ff61d97}\label{classtagfilterdb_1_1BoundingBox_aa4fbfc6d9e17042824be2e454ff61d97} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!boundingBox@{boundingBox}}
+\index{boundingBox@{boundingBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{boundingBox()}{boundingBox()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::bounding\+Box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::vector$<$ std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ $>$ \&}]{r\+\_\+points }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the bounding box that contains all given points. 
+
+Determines the minimum and maximum bounds across all points and returns the resulting bounding box.
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+points} & A vector of points to compute the bounding box for. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A bounding box that contains all the given points. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a74a5630c41f7e0343e3a22930f381830}\label{classtagfilterdb_1_1BoundingBox_a74a5630c41f7e0343e3a22930f381830} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!center@{center}}
+\index{center@{center}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{center()}{center()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::center (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the center point of the box. 
+
+Calculates the center point for each dimension based on the current bounds.
+
+\begin{DoxyReturn}{Returns}
+An array representing the center point in each dimension. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a24b1bad76fb82cf359794412c7eddac3}\label{classtagfilterdb_1_1BoundingBox_a24b1bad76fb82cf359794412c7eddac3} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!containsPoint@{containsPoint}}
+\index{containsPoint@{containsPoint}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{containsPoint()}{containsPoint()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::contains\+Point (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&}]{r\+\_\+point }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if a point is within the bounds of the box. 
+
+Determines if a point lies within all the dimensions\textquotesingle{} bounds of the box.
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+point} & The point to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the point is within bounds, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a8987c882a93749ae51790594a446441e}\label{classtagfilterdb_1_1BoundingBox_a8987c882a93749ae51790594a446441e} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!distanceFromCenter@{distanceFromCenter}}
+\index{distanceFromCenter@{distanceFromCenter}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{distanceFromCenter()}{distanceFromCenter()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::distance\+From\+Center (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the squared distance between the centers of the current box and another box. 
+
+Calculates the distance between the centers of the two boxes in each dimension, squares the differences, and sums them up.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to compute the distance from the center. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The squared distance between the centers of the two boxes. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a55afe28803f6a5ceec48656e6ba1aa30}\label{classtagfilterdb_1_1BoundingBox_a55afe28803f6a5ceec48656e6ba1aa30} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!edgeArea@{edgeArea}}
+\index{edgeArea@{edgeArea}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{edgeArea()}{edgeArea()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::edge\+Area (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the total edge length of the box. 
+
+Adds up the lengths of each dimension to get the total edge area of the box.
+
+\begin{DoxyReturn}{Returns}
+The total edge length across all dimensions. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a40b4b2919255997fe6ea5f5b9fab7061}\label{classtagfilterdb_1_1BoundingBox_a40b4b2919255997fe6ea5f5b9fab7061} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!edgeLength@{edgeLength}}
+\index{edgeLength@{edgeLength}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{edgeLength()}{edgeLength()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::edge\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the edge length for each dimension. 
+
+Calculates the difference between the maximum and minimum bounds for each dimension.
+
+\begin{DoxyReturn}{Returns}
+An array representing the edge lengths in each dimension. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ada4c4fdf14e8521a15a70ecdeed2b66d}\label{classtagfilterdb_1_1BoundingBox_ada4c4fdf14e8521a15a70ecdeed2b66d} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!encloses@{encloses}}
+\index{encloses@{encloses}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{encloses()}{encloses()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::encloses (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if the current box completely encloses another box. 
+
+Determines if the other box is entirely within the bounds of the current box across all dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to check for enclosure within the current box. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the current box encloses the other box, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a0013c441263c56629c2e0108f879f0e5}\label{classtagfilterdb_1_1BoundingBox_a0013c441263c56629c2e0108f879f0e5} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!expand@{expand}}
+\index{expand@{expand}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{expand()}{expand()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::expand (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{a\+\_\+margin }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expands the bounds of the box by a specified margin in all dimensions. 
+
+Increases the size of the box by subtracting and adding the margin to the minimum and maximum bounds, respectively.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+margin} & The margin to expand the box by. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a07723bc1b95233bf85cda5137e2dbb5e}\label{classtagfilterdb_1_1BoundingBox_a07723bc1b95233bf85cda5137e2dbb5e} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!get@{get}}
+\index{get@{get}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::get (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}}]{a\+\_\+axis }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the bounds of a specific axis. 
+
+Returns the \{min, max\} pair for the specified axis.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+axis} & The axis to retrieve. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An Operation\+Result containing the \{min, max\} pair and status. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a28aa8dc4c17e81ea1fd35e32a7719be8}\label{classtagfilterdb_1_1BoundingBox_a28aa8dc4c17e81ea1fd35e32a7719be8} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!intersection@{intersection}}
+\index{intersection@{intersection}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{intersection()}{intersection()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::intersection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{self,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the intersection (overlapping region) between the current box and another box. 
+
+Determines the bounds of the intersection between the two boxes and returns the resulting bounding box.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to compute the intersection with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new bounding box representing the intersection of the two boxes. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a35d4a5a110bc11e4cb433b14ca05ec5a}\label{classtagfilterdb_1_1BoundingBox_a35d4a5a110bc11e4cb433b14ca05ec5a} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!isOverlap@{isOverlap}}
+\index{isOverlap@{isOverlap}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{isOverlap()}{isOverlap()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::is\+Overlap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if the current box overlaps with another box. 
+
+Determines if there is any intersection between the current box and another box.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to check for overlap with the current box. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the boxes overlap, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}\label{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!max@{max}}
+\index{max@{max}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{max()}{max()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::max (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}}]{a\+\_\+xis }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e}\label{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!min@{min}}
+\index{min@{min}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{min()}{min()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::min (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}}]{a\+\_\+xis }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a2621f98bded2f8534efcedf51f4944a0}\label{classtagfilterdb_1_1BoundingBox_a2621f98bded2f8534efcedf51f4944a0} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \& \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Move Assignment Operator. 
+
+Transfers ownership of the data from another \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to this one, leaving the source object in a valid but unspecified state.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to move from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to this \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a93c8664a62efbf8cb719a426f536b273}\label{classtagfilterdb_1_1BoundingBox_a93c8664a62efbf8cb719a426f536b273} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \& \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy Assignment Operator. 
+
+Copies the data from another \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to this one, creating an independent copy of the other \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to copy from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to this \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_afe7649b079502cf50857dd546eb4c497}\label{classtagfilterdb_1_1BoundingBox_afe7649b079502cf50857dd546eb4c497} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!operator==@{operator==}}
+\index{operator==@{operator==}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Equality Operator. 
+
+Compares two \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} objects to determine if they are equivalent. Returns true if all corresponding axes have the same \{min, max\} values; otherwise, returns false.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to compare with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the Bounding\+Boxes are equal, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a53d732c3c9da2c859267b5a95db62002}\label{classtagfilterdb_1_1BoundingBox_a53d732c3c9da2c859267b5a95db62002} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!overlap@{overlap}}
+\index{overlap@{overlap}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{overlap()}{overlap()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::overlap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the area of the overlapping region between the current box and another box. 
+
+Calculates the intersection area across all dimensions and returns the result.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to compute the overlap area with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The area of the overlapping region, or 0 if there is no overlap. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ae24573221812e0490f63074c25efc316}\label{classtagfilterdb_1_1BoundingBox_ae24573221812e0490f63074c25efc316} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!reset@{reset}}
+\index{reset@{reset}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::reset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{min = {\ttfamily 0},  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{max = {\ttfamily std\+:\+:numeric\+\_\+limits$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}$>$\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{\+::max}}()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Resets the box\textquotesingle{}s bounds to default values. 
+
+Sets each dimension\textquotesingle{}s bounds to the lowest and highest possible values for the coordinate type. \Hypertarget{classtagfilterdb_1_1BoundingBox_aaec33a3e82b8c162297f89b0cb8dda8c}\label{classtagfilterdb_1_1BoundingBox_aaec33a3e82b8c162297f89b0cb8dda8c} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!resize@{resize}}
+\index{resize@{resize}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::resize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&}]{r\+\_\+new\+Dimensions }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Resizes the box to fit new dimensions while keeping the center point unchanged. 
+
+Adjusts the size of the box to match the new dimensions provided, keeping the center point fixed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+new\+Dimensions} & The new dimensions to resize the box to. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a23c307fa9842addd26bc283b4642afd6}\label{classtagfilterdb_1_1BoundingBox_a23c307fa9842addd26bc283b4642afd6} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!scale@{scale}}
+\index{scale@{scale}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{scale()}{scale()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::scale (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{a\+\_\+factor }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Scales the box\textquotesingle{}s dimensions by a specified factor. 
+
+Adjusts the size of the box by multiplying the width in each dimension by the given factor, keeping the center point unchanged.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+factor} & The factor by which to scale the box\textquotesingle{}s dimensions. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a375155c1dea6b11c6c4d41cba77e913c}\label{classtagfilterdb_1_1BoundingBox_a375155c1dea6b11c6c4d41cba77e913c} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!setAxis@{setAxis}}
+\index{setAxis@{setAxis}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{setAxis()}{setAxis()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::set\+Axis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}}]{a\+\_\+axis,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a6ae0dd59da89f9f89f4eef03971cb342}{EDGE}}}]{a\+\_\+edge }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the bounds for the specified axis using a \{min, max\} pair. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+axis} & The axis to set. \\
+\hline
+{\em a\+\_\+edge} & A pair representing the \{min, max\} values for the axis. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status indicating success or failure. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a594ff6309d38ee2e318666544ca03052}\label{classtagfilterdb_1_1BoundingBox_a594ff6309d38ee2e318666544ca03052} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!setAxis@{setAxis}}
+\index{setAxis@{setAxis}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{setAxis()}{setAxis()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{bool}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::set\+Axis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}}]{a\+\_\+axis,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{a\+\_\+start,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{a\+\_\+end }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the bounds of a specific axis. 
+
+Sets the start and end values for the specified axis. The start value must be less than or equal to the end value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+\_\+axis} & The axis to set. \\
+\hline
+{\em a\+\_\+start} & The minimum value for the axis. \\
+\hline
+{\em a\+\_\+end} & The maximum value for the axis. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status indicating success or failure. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ad9cdd738edea68a114c7c947c5d3410f}\label{classtagfilterdb_1_1BoundingBox_ad9cdd738edea68a114c7c947c5d3410f} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!toString@{toString}}
+\index{toString@{toString}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{toString()}{toString()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+std\+::string \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::to\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Converts the \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box} to a string representation. 
+
+Generates a string that represents the bounding box by listing the \{min, max\} pairs for each dimension.
+
+\begin{DoxyReturn}{Returns}
+A string representation of the \doxylink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_ab0dfb4a97596baa8ac0f4dacc8d19ffb}\label{classtagfilterdb_1_1BoundingBox_ab0dfb4a97596baa8ac0f4dacc8d19ffb} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!translate@{translate}}
+\index{translate@{translate}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{translate()}{translate()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::translate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} std\+::array$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}} $>$ \&}]{r\+\_\+delta }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Translates (moves) the box by a specified delta vector in all dimensions. 
+
+Adjusts the position of the box by adding the delta to both the minimum and maximum bounds in each dimension.
+
+
+\begin{DoxyParams}{Parameters}
+{\em r\+\_\+delta} & The delta vector to translate the box by. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}\label{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!UnionBox@{UnionBox}}
+\index{UnionBox@{UnionBox}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{UnionBox()}{UnionBox()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Union\+Box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{self,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the union (bounding box) of the current box and another box. 
+
+Determines the smallest bounding box that contains both the current box and the other box.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The box to compute the union with. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new bounding box representing the union of the two boxes. 
+\end{DoxyReturn}
+\Hypertarget{classtagfilterdb_1_1BoundingBox_af15005a30bda81eb7977e28bcb7b5edc}\label{classtagfilterdb_1_1BoundingBox_af15005a30bda81eb7977e28bcb7b5edc} 
+\index{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}!Universe@{Universe}}
+\index{Universe@{Universe}!tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$@{tagfilterdb::BoundingBox$<$ Dimensions, RangeType, AreaType $>$}}
+\doxysubsubsection{\texorpdfstring{Universe()}{Universe()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} Dimensions, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = double, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = double$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{static}} \mbox{\hyperlink{broundingbox_8h_a315ad821d21104153060d9f6fd87249f}{BROUNDINGBOX\+\_\+\+TYPE}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{tagfilterdb\+::\+Bounding\+Box}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Universe (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{min = {\ttfamily 0},  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}}]{max = {\ttfamily std\+:\+:numeric\+\_\+limits$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}}$>$\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{\+::max}}()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Returns a box representing the entire universe (default bounds). 
+
+Creates a box that represents the maximum possible bounds in all dimensions.
+
+\begin{DoxyReturn}{Returns}
+A bounding box with default bounds representing the universe. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/spatial\+Index/\mbox{\hyperlink{broundingbox_8h}{broundingbox.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,101 @@
+\doxysection{cache\+\_\+example.\+h}
+\hypertarget{cache__example_8h_source}{}\label{cache__example_8h_source}\index{include/tagfilterdb/cache\_example.h@{include/tagfilterdb/cache\_example.h}}
+\mbox{\hyperlink{cache__example_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{cache_8h}{cache.h}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{cache__example_8h_a5247de557f328478321b98b6beb655e0}{cache\_example}}()\ \{}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{keyword}{using\ namespace\ }\mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}};}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{keyword}{using\ }SLC\ =\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{ShareLRUCache<std::string,\ std::string>}};}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{comment}{//\ Create\ a\ cache\ with\ 4\ LRU\ caches\ and\ total\ charge\ 1000}}
+\DoxyCodeLine{00010\ \ \ \ \ SLC\ cache(4,\ 1000);}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//\ Case\ 1:\ Insert\ a\ new\ key-\/value\ pair}}
+\DoxyCodeLine{00013\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}630414821"{}},\ \textcolor{stringliteral}{"{}Siriwid\ Thongon"{}}));}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\ Case\ 2:\ Insert\ another\ key-\/value\ pair}}
+\DoxyCodeLine{00016\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}65123"{}},\ \textcolor{stringliteral}{"{}John\ Doe"{}}));}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ Case\ 3:\ Remove\ a\ key-\/value\ pair}}
+\DoxyCodeLine{00019\ \ \ \ \ cache.Remove(\textcolor{stringliteral}{"{}65123"{}});}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ Case\ 4:\ Retrieve\ a\ value\ from\ cache}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}630414821"{}}));\ n\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Found\ 630414821:\ "{}}\ <<\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{ShareLRUCache<std::string,\ std::string>::GetValue}}(n)\ <<\ std::endl;}
+\DoxyCodeLine{00024\ \ \ \ \ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ Case\ 5:\ Try\ to\ retrieve\ a\ non-\/existent\ key}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}123456789"{}}));\ n\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Key\ 123456789\ not\ found\ in\ cache."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ Case\ 6:\ Insert\ a\ key\ with\ a\ custom\ charge}}
+\DoxyCodeLine{00032\ \ \ \ \ cache.\mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a2a6ba68931c722b0ec1aa7c2a699e29c}{Release}}(cache.Insert(\textcolor{stringliteral}{"{}10001"{}},\ \textcolor{stringliteral}{"{}Alice"{}},\ 200));}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Case\ 7:\ Retrieve\ a\ key\ with\ custom\ charge}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}10001"{}}));\ n\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Found\ 10001:\ "{}}\ <<\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{ShareLRUCache<std::string,\ std::string>::GetValue}}(n)\ <<\ std::endl;}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ Case\ 8:\ Check\ total\ cache\ usage}}
+\DoxyCodeLine{00040\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Total\ cache\ usage:\ "{}}\ <<\ cache.\mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_ae90139c57a7036ae4651a630b2216f9b}{TotalUsage}}()\ <<\ std::endl;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{//\ Case\ 9:\ Prune\ cache\ to\ remove\ stale\ entries}}
+\DoxyCodeLine{00043\ \ \ \ \ cache.Prune();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//\ Case\ 10:\ Print\ all\ caches}}
+\DoxyCodeLine{00046\ \ \ \ \ cache.Print();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ Case\ 11:\ Remove\ a\ key\ that\ doesn't\ exist\ (shouldn't\ cause\ errors)}}
+\DoxyCodeLine{00049\ \ \ \ \ cache.Remove(\textcolor{stringliteral}{"{}99999"{}});}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ Case\ 12:\ Add\ more\ keys\ and\ check\ if\ eviction\ happens}}
+\DoxyCodeLine{00052\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}999"{}},\ \textcolor{stringliteral}{"{}Bob"{}}));}
+\DoxyCodeLine{00053\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1000"{}},\ \textcolor{stringliteral}{"{}Charlie"{}}));}
+\DoxyCodeLine{00054\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1001"{}},\ \textcolor{stringliteral}{"{}Dave"{}}));}
+\DoxyCodeLine{00055\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1002"{}},\ \textcolor{stringliteral}{"{}Eve"{}}));}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//\ Case\ 13:\ Print\ caches\ after\ inserting\ more\ items}}
+\DoxyCodeLine{00058\ \ \ \ \ cache.Print();}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ Case\ 14:\ Insert\ multiple\ keys\ and\ verify\ eviction\ and\ order}}
+\DoxyCodeLine{00061\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1500"{}},\ \textcolor{stringliteral}{"{}Grace"{}}));}
+\DoxyCodeLine{00062\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1501"{}},\ \textcolor{stringliteral}{"{}Heidi"{}}));}
+\DoxyCodeLine{00063\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1502"{}},\ \textcolor{stringliteral}{"{}Ivy"{}}));}
+\DoxyCodeLine{00064\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}1503"{}},\ \textcolor{stringliteral}{"{}Jack"{}}));}
+\DoxyCodeLine{00065\ \ \ \ \ }
+\DoxyCodeLine{00066\ \ \ \ \ cache.Print();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ Case\ 15:\ Try\ to\ get\ value\ after\ cache\ eviction}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}630414821"{}}));\ n\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Key\ 630414821\ has\ been\ evicted\ from\ the\ cache."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//\ Case\ 16:\ Insert\ another\ key\ after\ eviction\ and\ check\ cache\ status}}
+\DoxyCodeLine{00074\ \ \ \ \ cache.Release(cache.Insert(\textcolor{stringliteral}{"{}2000"{}},\ \textcolor{stringliteral}{"{}Zack"{}}));}
+\DoxyCodeLine{00075\ \ \ \ \ cache.Print();}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{//\ Case\ 17:\ Check\ if\ a\ key\ exists\ after\ being\ removed}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}65123"{}}));\ n\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Key\ 65123\ was\ removed\ and\ is\ no\ longer\ in\ the\ cache."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ Case\ 18:\ Release\ a\ handle\ to\ free\ cache\ space}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}1001"{}}));\ n\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ cache.Release(n);\ \ \textcolor{comment}{//\ Release\ handle\ explicitly}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Released\ handle\ for\ key\ 1001."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ Case\ 19:\ Print\ detailed\ information\ of\ cache\ states}}
+\DoxyCodeLine{00089\ \ \ \ \ cache.Detail();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ Case\ 20:\ Attempt\ to\ get\ a\ key\ again\ after\ handle\ release}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ n\ =\ cache.Release(cache.Get(\textcolor{stringliteral}{"{}1001"{}}));\ n\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Key\ 1001\ is\ not\ found\ after\ handle\ release."{}}\ <<\ std::endl;}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \}}
+
+\end{DoxyCode}

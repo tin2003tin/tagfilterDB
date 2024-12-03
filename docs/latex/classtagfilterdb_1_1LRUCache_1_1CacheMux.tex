@@ -1,0 +1,69 @@
+\doxysection{tagfilterdb\+::LRUCache\texorpdfstring{$<$}{<} Key, Value \texorpdfstring{$>$}{>}\+::Cache\+Mux Class Reference}
+\hypertarget{classtagfilterdb_1_1LRUCache_1_1CacheMux}{}\label{classtagfilterdb_1_1LRUCache_1_1CacheMux}\index{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}}
+
+
+A class to handle locking mechanisms for cache access.  
+
+
+
+
+{\ttfamily \#include $<$cache.\+h$>$}
+
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_a06171a9b55f84a44df1af8252888ae77}{Cache\+Mux}} (std\+::mutex \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{mux}})
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_ae8512f048e21e005bee6824065831e30}{\texorpdfstring{$\sim$}{\string~}\+Cache\+Mux}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::mutex \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2}{\+\_\+mux}}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{friend}} \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_a8df2ca273d7296bf3804466318cac59a}{LRUCache}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}}$>$\newline
+class tagfilterdb\+::\+LRUCache$<$ Key, Value $>$\+::\+Cache\+Mux}
+A class to handle locking mechanisms for cache access. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classtagfilterdb_1_1LRUCache_1_1CacheMux_a06171a9b55f84a44df1af8252888ae77}\label{classtagfilterdb_1_1LRUCache_1_1CacheMux_a06171a9b55f84a44df1af8252888ae77} 
+\index{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}!CacheMux@{CacheMux}}
+\index{CacheMux@{CacheMux}!tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}}
+\doxysubsubsection{\texorpdfstring{CacheMux()}{CacheMux()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}} , \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{tagfilterdb\+::\+LRUCache}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$\+::\+Cache\+Mux\+::\+Cache\+Mux (\begin{DoxyParamCaption}\item[{std\+::mutex \texorpdfstring{$\ast$}{*}}]{mux }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+\Hypertarget{classtagfilterdb_1_1LRUCache_1_1CacheMux_ae8512f048e21e005bee6824065831e30}\label{classtagfilterdb_1_1LRUCache_1_1CacheMux_ae8512f048e21e005bee6824065831e30} 
+\index{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}!````~CacheMux@{\texorpdfstring{$\sim$}{\string~}CacheMux}}
+\index{````~CacheMux@{\texorpdfstring{$\sim$}{\string~}CacheMux}!tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}CacheMux()}{\string~CacheMux()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}} , \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{tagfilterdb\+::\+LRUCache}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$\+::\+Cache\+Mux\+::\texorpdfstring{$\sim$}{\string~}\+Cache\+Mux (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2}\label{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2} 
+\index{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}!\_mux@{\_mux}}
+\index{\_mux@{\_mux}!tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}}
+\doxysubsubsection{\texorpdfstring{\_mux}{\_mux}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}} , \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$ \\
+std\+::mutex\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{tagfilterdb\+::\+LRUCache}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$\+::\+Cache\+Mux\+::\+\_\+mux\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classtagfilterdb_1_1LRUCache_1_1CacheMux_a8df2ca273d7296bf3804466318cac59a}\label{classtagfilterdb_1_1LRUCache_1_1CacheMux_a8df2ca273d7296bf3804466318cac59a} 
+\index{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}!LRUCache@{LRUCache}}
+\index{LRUCache@{LRUCache}!tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux@{tagfilterdb::LRUCache$<$ Key, Value $>$::CacheMux}}
+\doxysubsubsection{\texorpdfstring{LRUCache}{LRUCache}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}} , \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{typename}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{friend}} \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{tagfilterdb\+::\+LRUCache}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Key}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Value}} $>$\+::\+Cache\+Mux\+::\+LRUCache\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/\mbox{\hyperlink{cache_8h}{cache.\+h}}\end{DoxyCompactItemize}

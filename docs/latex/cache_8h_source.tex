@@ -1,0 +1,551 @@
+\doxysection{cache.\+h}
+\hypertarget{cache_8h_source}{}\label{cache_8h_source}\index{include/tagfilterdb/cache.h@{include/tagfilterdb/cache.h}}
+\mbox{\hyperlink{cache_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifndef\ TAGFILTERDB\_CACHE\_H}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ TAGFILTERDB\_CACHE\_H}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}\ \{}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}\ \{\};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUConfig}{LRUConfig}}\ \{}
+\DoxyCodeLine{00052\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_abe7bd0f944143d27415e31fa9bf0b6f2}{DEFAULT\_CACHE\_RATIO}};\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a6c588206c582cd2533d2c170ac02ef48}{DEFAULT\_CACHE\_CAP}};\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a97bc567becd8c93e3e427ea14ad506f1}{DEFAULT\_CAHCE\_EXPAND}};\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_ad170c96ad91a138631b612dbd9f108f7}{DEFAULT\_CACHE\_CHARGE\_PER}};\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_acd9944c4b2774552589f38427ac19cda}{DEFAULT\_CACHE\_TOTAL\_CHANGE}};\ }
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_abe7bd0f944143d27415e31fa9bf0b6f2}{LRUConfig::DEFAULT\_CACHE\_RATIO}}\ =\ 0.8;}
+\DoxyCodeLine{00061\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a6c588206c582cd2533d2c170ac02ef48}{LRUConfig::DEFAULT\_CACHE\_CAP}}\ =\ 2;}
+\DoxyCodeLine{00062\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a97bc567becd8c93e3e427ea14ad506f1}{LRUConfig::DEFAULT\_CAHCE\_EXPAND}}\ =\ 2;}
+\DoxyCodeLine{00063\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_ad170c96ad91a138631b612dbd9f108f7}{LRUConfig::DEFAULT\_CACHE\_CHARGE\_PER}}\ =\ 8;}
+\DoxyCodeLine{00064\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_acd9944c4b2774552589f38427ac19cda}{LRUConfig::DEFAULT\_CACHE\_TOTAL\_CHANGE}}\ =\ 1000;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ Key,\ \textcolor{keyword}{typename}\ Value>}
+\DoxyCodeLine{00078\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{LRUCache}}\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ public\ :}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux}{CacheMux}}\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ std::mutex*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2}{\_mux}};}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_a06171a9b55f84a44df1af8252888ae77}{CacheMux}}(std::mutex*\ mux)\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>\_mux\ =\ mux;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2}{\_mux}}-\/>lock();}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_ae8512f048e21e005bee6824065831e30}{\string~CacheMux}}()\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_adb93e57627b1fd93f3c69667aa4475f2}{\_mux}}-\/>unlock();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux_a8df2ca273d7296bf3804466318cac59a}{LRUCache}};}
+\DoxyCodeLine{00097\ \ \ \ \ \};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}};\ }
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a76c5e34233d2b83e81080f66c458fa58}{BucketNode}}()\ :\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}(nullptr),\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}(nullptr),\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}(nullptr)\ \{\}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad6ef0e5fa2d3918f0912acffa094a5bc}{\string~BucketNode}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a370b339c1a0237412b651eb5be90b3dc}{LRUCache}};}
+\DoxyCodeLine{00113\ \ \ \ \ \};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable}{Referenceable}}}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable_a92670bb4ad31215cd38b0c21b942e2b1}{m\_ref}};\ }
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable_a8858cea33a545c772ff4d2de71308c94}{Referenceable}}()\ :\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable_a92670bb4ad31215cd38b0c21b942e2b1}{m\_ref}}(1)\ \{\}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable_abf1dd6698c5b1736f65f4a8908de0ef6}{LRUCache}};}
+\DoxyCodeLine{00127\ \ \ \ \ \};}
+\DoxyCodeLine{00128\ \ \ \ \ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}\ final\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable}{Referenceable}},\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}\ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ Key\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}};\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ Value\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}};\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a4b2b0183b6056a5b3988822eea165ac0}{m\_charge}};\ }
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a9780abb26e88a264f9be714e7cf81c6a}{BucketValueNode}}(Key\ key,\ Value\ value,\ \textcolor{keywordtype}{size\_t}\ charge)\ :\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}}(key),\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}}(value),\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a4b2b0183b6056a5b3988822eea165ac0}{m\_charge}}(charge)\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \}\ \ \ \ \ \ \ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ Value\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a57a8bc96e20ff590e171f6553b34618c}{getValue}}()\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ assert(\textcolor{keyword}{this});}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}};\ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ Key\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a92800b151bb10da45e7a20c68d0275a1}{getKey}}()\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ assert(\textcolor{keyword}{this});}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}};}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a5e41b4bd1e56685195059996cff4e822}{LRUCache}};}
+\DoxyCodeLine{00162\ \ \ \ \ \};}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{private}:\ }
+\DoxyCodeLine{00164\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ m\_data;\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_cap;\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_size;\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_total\_charge;\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_total\_usage;\ }
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ m\_inUsed\_head;\ }
+\DoxyCodeLine{00171\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ m\_inUsed\_tail;\ }
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ m\_outdated\_head;\ }
+\DoxyCodeLine{00174\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ m\_outdated\_tail;\ }
+\DoxyCodeLine{00175\ \ \ \ \ }
+\DoxyCodeLine{00176\ \ \ \ \ std::mutex\ m\_mux;\ }
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keyword}{public}:\ }
+\DoxyCodeLine{00179\ \ \ \ \ }
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_aa3e98b70fbe3e2603e073e23cf675cbb}{LRUCache}}()\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ setup(\mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a6c588206c582cd2533d2c170ac02ef48}{LRUConfig::DEFAULT\_CACHE\_CAP}},\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_acd9944c4b2774552589f38427ac19cda}{LRUConfig::DEFAULT\_CACHE\_TOTAL\_CHANGE}});}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00192\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_aae86ada7f7db85b8c30ad3066ffb9d8a}{LRUCache}}(\textcolor{keywordtype}{size\_t}\ cap,\ \textcolor{keywordtype}{size\_t}\ total\_change\ =\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_acd9944c4b2774552589f38427ac19cda}{LRUConfig::DEFAULT\_CACHE\_TOTAL\_CHANGE}})\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ setup(cap,total\_change);}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00199\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a160cb426bffd0a719106a14d1b49f491}{\string~LRUCache}}()\ \{\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ m\_cap;\ i++)\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ curr\ =\ m\_data[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ next\ =\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ curr;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ next;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ []m\_data;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ m\_outdated\_head;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ m\_outdated\_tail;}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ m\_inUsed\_head;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ m\_inUsed\_tail;}
+\DoxyCodeLine{00213\ \ \ \ \ \}\ }
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a16b5a68d34db0a04a74b7ac6b9fddc48}{SetCharge}}(\textcolor{keywordtype}{size\_t}\ charge)\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ m\_total\_charge\ =\ charge;}
+\DoxyCodeLine{00221\ \ \ \ \ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00230\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a990e1fec7b8c85eee145a4dba6d47675}{Insert}}(Key\ key,\ Value\ value,\ \textcolor{keywordtype}{size\_t}\ charge\ =\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_ad170c96ad91a138631b612dbd9f108f7}{LRUConfig::DEFAULT\_CACHE\_CHARGE\_PER}})\ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (charge\ >\ m\_total\_charge)\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ assert(charge\ >\ 0);}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux}{CacheMux}}\ m(\&m\_mux);}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isExpand())\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ expand(m\_cap\ *\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_a97bc567becd8c93e3e427ea14ad506f1}{LRUConfig::DEFAULT\_CAHCE\_EXPAND}});}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ u\ =\ h(key);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ newNode\ =\ \ \textcolor{keyword}{new}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}(key,value,charge);}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ u\ \%\ m\_cap;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ prev\ =\ \&m\_data[index];}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}\ !=\ \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ )(prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}))-\/>m\_key\ ==\ key)\ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ prev\ =\ prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}\ =\ newNode;}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ m\_size++;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ key\ already\ existed}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ newNode-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}\ =\ prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ removeList(prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}});}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ m\_total\_usage\ -\/=\ ((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ )(prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}))-\/>m\_charge;}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ prev-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}}\ =\ newNode;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ in\ OutDated\ List\ if\ excess\ a\ total\ charge}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (m\_total\_usage\ +\ charge\ >\ m\_total\_charge\ }
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ m\_outdated\_tail-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}\ !=\ m\_outdated\_head)\ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ s\ =\ removeNode(((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ )(m\_outdated\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}))-\/>m\_key);}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ assert(s);}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ appendToList(newNode,\ m\_inUsed\_tail);}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ m\_total\_usage\ +=\ charge;}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ assert(m\_total\_usage\ >\ 0);}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ assert(m\_total\_usage\ <=\ m\_total\_charge);}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ ref(newNode);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ newNode;}
+\DoxyCodeLine{00284\ \ \ \ \ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a25231f97c3838557318acb15d312fc77}{Remove}}(Key\ key)\ \{}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux}{CacheMux}}\ m(\&m\_mux);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ removeNode(key);}
+\DoxyCodeLine{00294\ \ \ \ \ \}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00301\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a4c256042d255939c0c3d73466b9dd512}{Get}}(Key\ key)\ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1CacheMux}{CacheMux}}\ m(\&m\_mux);}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ u\ =\ h(key)\ \%\ m\_cap;}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ curr\ =\ (\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*)\ \ m\_data[u].m\_next;}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}}\ ==\ key)\ \{}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ref(curr);}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ curr;}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ (\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*)\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00315\ \ \ \ \ \}}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a07b17677ded93e1a4b509ebbe90dc60c}{Prune}}()\ \{}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ curr\ =\ m\_outdated\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ m\_outdated\_tail)\ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ next\ =\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ assert((((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}\ *)\ curr)-\/>m\_ref\ ==\ 1));}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ s\ =\ removeNode(((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}\ *)curr)-\/>m\_key);}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ assert(s);}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ next;}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00329\ \ \ \ \ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_aca14deeba63bbee669c5be71f26364f1}{Release}}(\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ node)\ \{}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ unref(node);}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00339\ \ \ \ \ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a28f2866a23ad4ddf19cffc26af066574}{Print}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ m\_cap;\ i++)\ \{}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ i\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ curr\ =\ (\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*)\ \ m\_data[i].m\_next;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}("{}}<<\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}}\ <<\ \textcolor{stringliteral}{"{},\ "{}}\ <<\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}}\ <<\ \textcolor{stringliteral}{"{},\ "{}}\ <<\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a4b2b0183b6056a5b3988822eea165ac0}{m\_charge}}<<\ \textcolor{stringliteral}{"{},\ "{}}\ <<\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1Referenceable_a92670bb4ad31215cd38b0c21b942e2b1}{m\_ref}}\ <<\ \ \textcolor{stringliteral}{"{})\ "{}};}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ \ (\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*)\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00355\ \ \ \ \ \}}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_ab8bebde2b3f3bc472abe1e1abf26756d}{TotalCharge}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_total\_charge;}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a3454ac63996c542f8372b2aa543fc7ee}{TotalUsage}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_total\_usage;}
+\DoxyCodeLine{00371\ \ \ \ \ \}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_ad3767cec6251bee98884860e79307e11}{PrintOutDated}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ curr\ =\ m\_outdated\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}OutDated:\ "{}};}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ m\_outdated\_tail)}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ node\ =\ (\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ )\ curr;}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}("{}}\ <<\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}}\ <<\ \textcolor{stringliteral}{"{},\ "{}}\ \ <<\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}}\ <<\ \textcolor{stringliteral}{"{})\ "{}};}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00391\ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a0f75792031611b132c4d5e7163ce1954}{PrintInUsed}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode}{BucketNode}}*\ curr\ =\ m\_inUsed\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}InUsed:\ "{}};}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ m\_inUsed\_tail)}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ node\ =\ (\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ )\ curr;}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}("{}}\ <<\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}}\ <<\ \textcolor{stringliteral}{"{},\ "{}}\ \ <<\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_aae934a06284ab0e94c4077b7f28f5860}{m\_value}}\ <<\ \textcolor{stringliteral}{"{})\ "{}};}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}};}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{00401\ \ \ \ \ \}}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a3de087c5ccc04622c35867294cb22d39}{Detail}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Detail:"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}-\/\ Capacity:\ "{}}\ <<\ m\_cap\ <<\ std::endl;}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}-\/\ Size:\ "{}}\ <<\ m\_size\ <<\ std::endl;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}-\/\ Total\ Charge:\ "{}}\ <<\ m\_total\_charge\ <<\ std::endl;}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}-\/\ Total\ Usage:\ "{}}\ <<\ m\_total\_usage\ <<\ std::endl;}
+\DoxyCodeLine{00412\ \ \ \ \ \}}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00419\ \ \ \ \ \textcolor{keyword}{static}\ Value\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a2164d92713d49fe8d372603ed395717d}{GetValue}}(\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ node)\ \{}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Value();}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ((\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}\ *)\ node)-\/>m\_value;}
+\DoxyCodeLine{00424\ \ \ \ \ \}}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keyword}{static}\ Key\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a0018133f5784d6405c5deda2e3663466}{GetKey}}(\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{BucketValueNode}}*\ node)\ \{}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Key();}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a89f0aeeca5ffe5adde0935ebc5398d40}{m\_key}};}
+\DoxyCodeLine{00436\ \ \ \ \ \}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ setup(\textcolor{keywordtype}{size\_t}\ cap,\ \textcolor{keywordtype}{size\_t}\ total\_charge)\ \{}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ assert(cap\ >\ 0);}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ assert(total\_charge\ >\ 0);}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ m\_data\ =\ \textcolor{keyword}{new}\ BucketNode[cap];}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ m\_cap\ =\ cap;}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ m\_size\ =\ 0;}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ m\_total\_charge\ =\ total\_charge;}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ m\_total\_usage\ =\ 0;}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_head\ =\ \textcolor{keyword}{new}\ BucketNode;}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_tail\ =\ \textcolor{keyword}{new}\ BucketNode;}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}\ =\ m\_outdated\_tail;}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}\ =\ m\_outdated\_tail;}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_tail-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}\ =\ m\_outdated\_head;}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ m\_outdated\_tail-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}\ =\ m\_outdated\_head;}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_head\ =\ \textcolor{keyword}{new}\ BucketNode;}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_tail\ =\ \textcolor{keyword}{new}\ BucketNode;}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}\ =\ m\_inUsed\_tail;}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_head-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}\ =\ m\_inUsed\_tail;}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_tail-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a7acf696065b4bc03b1e44a07dfd7bd22}{m\_lNext}}\ =\ m\_inUsed\_head;}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ m\_inUsed\_tail-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_a739a233f0ce97d0b33edbc173401c809}{m\_lPrev}}\ =\ m\_inUsed\_head;}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ref(BucketValueNode\ *refNode)\ \{}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \ \ \ \ assert(refNode-\/>m\_ref\ >=\ 1);}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ refNode-\/>m\_ref++;}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (refNode-\/>m\_ref\ ==\ 2)\ \{}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ removeList(refNode);}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ appendToList(refNode,\ m\_inUsed\_tail);}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ unref(BucketValueNode\ *refNode)\ \{}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ assert(refNode-\/>m\_ref\ >=\ 1);}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ refNode-\/>m\_ref-\/-\/;}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (refNode-\/>m\_ref\ ==\ 1)\ \{}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ removeList(refNode);}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ appendToList(refNode,\ m\_outdated\_tail);}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (refNode-\/>m\_ref\ ==\ 0)\ \{}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ removeNode(refNode-\/>m\_key);}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isExpand()\ \{}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_cap\ *\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_abe7bd0f944143d27415e31fa9bf0b6f2}{LRUConfig::DEFAULT\_CACHE\_RATIO}}\ <\ \ m\_size;}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isBucketValueNode(BucketNode*\ node)\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{dynamic\_cast<}BucketValueNode*\textcolor{keyword}{>}(node)\ !=\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ expand(\textcolor{keywordtype}{size\_t}\ newCap)\ \{}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ newLoc\ =\ \textcolor{keyword}{new}\ BucketNode[newCap];}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ std::hash<Key>\ h;\ \ \ \ \ }
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rehash}}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ m\_cap;\ i++)\ \{}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BucketValueNode*\ curr\ =\ (BucketValueNode*)\ m\_data[i].m\_next;}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BucketValueNode*\ next\ =\ (BucketValueNode*)\ \ curr-\/>m\_next;}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr-\/>m\_next\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ u\ =\ h(curr-\/>m\_key)\ \%\ newCap;\ \ }
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newLoc[u].m\_next\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ newLoc[u].m\_next\ =\ curr;}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ b\ =\ newLoc[u].m\_next;}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (b-\/>m\_next\ !=\ \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b=\ b-\/>m\_next;}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b-\/>m\_next\ =\ curr;}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ next;}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}[]\ m\_data;}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ m\_data\ =\ newLoc;}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ m\_cap\ =\ newCap;}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00520\ }
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ removeNode(Key\ key)\ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ u\ =\ h(key)\ \%\ m\_cap;}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ BucketValueNode*\ curr\ =\ (BucketValueNode*)\ \ m\_data[u].m\_next;}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ prev\ =\ \&m\_data[u];}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ \textcolor{keyword}{nullptr}\ \&\&\ curr-\/>m\_key\ !=\ key)\ \{}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ prev\ =\ curr;}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr\ =\ (BucketValueNode*)\ \ curr-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketNode_ad2ab1a8739fc6b43d89892c4c5d9533e}{m\_next}};}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curr\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ m\_total\_usage\ -\/=\ curr-\/>m\_charge;\ }
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ m\_size-\/-\/;}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ prev-\/>m\_next\ =\ curr-\/>m\_next;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ removeList(curr);}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ curr;}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ appendToList(BucketNode*\ node,\ BucketNode*\ tail)\ \{}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ assert(node\ !=\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ prev\ =\ tail-\/>m\_lPrev;}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ node-\/>m\_lNext\ =\ tail;}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ node-\/>m\_lPrev\ =\ prev;}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ prev-\/>m\_lNext\ =\ node;}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ tail-\/>m\_lPrev\ =\ node;}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ removeList(BucketNode*\ node)\ \{}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ assert(node\ !=\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (node-\/>m\_lNext\ ==\ \textcolor{keyword}{nullptr}\ \&\&\ node-\/>m\_lPrev\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ next\ =\ node-\/>m\_lNext;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ BucketNode*\ prev\ =\ node-\/>m\_lPrev;}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ prev-\/>m\_lNext\ =\ next;}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ next-\/>m\_lPrev\ =\ prev;}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ node-\/>m\_lNext\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ node-\/>m\_lPrev\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00563\ \};}
+\DoxyCodeLine{00564\ }
+\DoxyCodeLine{00569\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig}{ShareLRUConfig}}\ \{}
+\DoxyCodeLine{00570\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00571\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig_ae12622759510f5ad361deaa57f6fa17c}{DEFAULT\_SHARECACHE\_N}};\ }
+\DoxyCodeLine{00572\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig_a974c1e1a118931f0a64fa3c7d8968344}{DEFAULT\_SHARECACHE\_TOTAL\_CHARGE}};\ }
+\DoxyCodeLine{00573\ \};}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig_ae12622759510f5ad361deaa57f6fa17c}{ShareLRUConfig::DEFAULT\_SHARECACHE\_N}}\ =\ 4;}
+\DoxyCodeLine{00576\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig_a974c1e1a118931f0a64fa3c7d8968344}{ShareLRUConfig::DEFAULT\_SHARECACHE\_TOTAL\_CHARGE}}\ =\ 4000;}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00589\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ Key,\ \textcolor{keyword}{typename}\ Value>}
+\DoxyCodeLine{00590\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{ShareLRUCache}}\ \{}
+\DoxyCodeLine{00591\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{LRUCache<Key,\ Value>}}*\ m\_caches;\ }
+\DoxyCodeLine{00592\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_count;\ }
+\DoxyCodeLine{00593\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_total\_charge;\ }
+\DoxyCodeLine{00594\ }
+\DoxyCodeLine{00595\ \ \ \ \ public\ :}
+\DoxyCodeLine{00601\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a3360957cf52a2832c08524df2a9635d7}{ShareLRUCache}}(\textcolor{keywordtype}{size\_t}\ n\ =\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig_ae12622759510f5ad361deaa57f6fa17c}{ShareLRUConfig::DEFAULT\_SHARECACHE\_N}},}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ charge\ =\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_acd9944c4b2774552589f38427ac19cda}{LRUConfig::DEFAULT\_CACHE\_TOTAL\_CHANGE}})\ \{}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ assert(n\ >\ 0);}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ assert(charge\ >\ 0);}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ m\_caches\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{LRUCache<Key,Value>}}[n];}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ n;\ i++)\ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a16b5a68d34db0a04a74b7ac6b9fddc48}{SetCharge}}((charge\ +\ n\ -\/\ 1)\ /\ n);}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ m\_count\ =\ n;}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ m\_total\_charge\ =\ charge;}
+\DoxyCodeLine{00611\ \ \ \ \ \}\ \ }
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00616\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a6384971295743eb59e0f18cdbe66bcd3}{\string~ShareLRUCache}}()\ \{}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ []\ m\_caches;}
+\DoxyCodeLine{00618\ \ \ \ \ \}}
+\DoxyCodeLine{00619\ }
+\DoxyCodeLine{00627\ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a70801d64b6b1625b57c43c6035f83c63}{Insert}}(Key\ key,\ Value\ value,\ \textcolor{keywordtype}{size\_t}\ charge\ =\ \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig_ad170c96ad91a138631b612dbd9f108f7}{LRUConfig::DEFAULT\_CACHE\_CHARGE\_PER}})\ \{}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ h(key)\ \%\ m\_count;}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \ (\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}\ *)\ m\_caches[index].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a990e1fec7b8c85eee145a4dba6d47675}{Insert}}(key,\ value,\ charge);}
+\DoxyCodeLine{00631\ \ \ \ \ \}}
+\DoxyCodeLine{00632\ }
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a88b616b7b305fd779a5346c4eda8ba65}{Remove}}(Key\ key)\ \{}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ h(key)\ \%\ m\_count;}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ m\_caches[index].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a25231f97c3838557318acb15d312fc77}{Remove}}(key);}
+\DoxyCodeLine{00641\ \ \ \ \ \}\ }
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00648\ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a4687b0514c60bfd1d06bc9b1a99b84f7}{Get}}(Key\ key)\ \{}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ h(key)\ \%\ m\_count;}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_caches[index].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a4c256042d255939c0c3d73466b9dd512}{Get}}(key);}
+\DoxyCodeLine{00652\ \ \ \ \ \}\ }
+\DoxyCodeLine{00653\ }
+\DoxyCodeLine{00658\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_ae90139c57a7036ae4651a630b2216f9b}{TotalUsage}}()\ \{}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ t\ =\ 0;}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <m\_count;\ i++)\ \{}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ t\ +=\ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a3454ac63996c542f8372b2aa543fc7ee}{TotalUsage}}();}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
+\DoxyCodeLine{00664\ \ \ \ \ \}}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00669\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a0f29c9bf04326de93cdc272107e07f44}{Print}}()\ \{}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ m\_count;\ i++)\ \{}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\textcolor{stringliteral}{"{}Cache:\ "{}}\ <<\ i\ +\ 1\ <<\ \textcolor{stringliteral}{"{}\ ====="{}}\ <<\ std::endl;}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a28f2866a23ad4ddf19cffc26af066574}{Print}}();}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a3de087c5ccc04622c35867294cb22d39}{Detail}}();}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a0f75792031611b132c4d5e7163ce1954}{PrintInUsed}}();}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_ad3767cec6251bee98884860e79307e11}{PrintOutDated}}();}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00678\ \ \ \ \ \}}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00683\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_adaf12e14f7f6a118f45aca19aa679ee7}{Detail}}()\ \{}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Total\ Charge:\ "{}}\ <<\ m\_total\_charge\ <<\ std::endl;\ }
+\DoxyCodeLine{00685\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Total\ Usage:\ "{}}\ <<\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_ae90139c57a7036ae4651a630b2216f9b}{TotalUsage}}()\ <<\ std::endl;\ }
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ m\_count;\ i++)\ \{}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\textcolor{stringliteral}{"{}Cache:\ "{}}\ <<\ i\ +\ 1\ <<\ \textcolor{stringliteral}{"{}\ ====="{}}\ <<\ std::endl;}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a3de087c5ccc04622c35867294cb22d39}{Detail}}();}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00690\ \ \ \ \ \}}
+\DoxyCodeLine{00691\ }
+\DoxyCodeLine{00697\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{LRUCache<Key,Value>}}*\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a349e50568101969b83767f5eb19ad552}{GetLRU}}(\textcolor{keywordtype}{size\_t}\ index)\ \{}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&m\_caches[index];}
+\DoxyCodeLine{00699\ \ \ \ \ \}}
+\DoxyCodeLine{00700\ }
+\DoxyCodeLine{00704\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a8dd250a9111da8e323ccceb0d1a22192}{Prune}}()\ \{}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0\ ;\ i\ <\ m\_count;\ i++)\ \{}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ \ \ \ \ m\_caches[i].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_a07b17677ded93e1a4b509ebbe90dc60c}{Prune}}();}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00708\ \ \ \ \ \}}
+\DoxyCodeLine{00709\ }
+\DoxyCodeLine{00714\ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a2a6ba68931c722b0ec1aa7c2a699e29c}{Release}}(\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ bnode)\ \{}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bnode\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typename}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\ node\ =\ }
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}typename\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\textcolor{keyword}{>}(bnode);}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ std::hash<Key>\ h;}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ u\ =\ h(node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a92800b151bb10da45e7a20c68d0275a1}{getKey}}())\ \%\ m\_count;}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ m\_caches[u].\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_aca14deeba63bbee669c5be71f26364f1}{Release}}(node);}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bnode;}
+\DoxyCodeLine{00724\ \ \ \ \ \}}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00731\ \ \ \ \ \textcolor{keyword}{static}\ Value\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_a815b7eb05b6c368b888aeb42a79ba600}{GetValue}}(\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ bnode)\ \{}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bnode\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Value();}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typename}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\ node\ =\ }
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}typename\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\textcolor{keyword}{>}(bnode);}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a57a8bc96e20ff590e171f6553b34618c}{getValue}}();}
+\DoxyCodeLine{00738\ \ \ \ \ \}}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00745\ \ \ \ \ \textcolor{keyword}{static}\ Key\ \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache_add2c5b23d9f90eafaa498e66e90f7962}{GetKey}}(\mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{BaseNode}}*\ bnode)\ \{}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bnode\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Value();}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typename}\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\ node\ =\ }
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}typename\ \mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode}{LRUCache<Key,\ Value>::BucketValueNode}}*\textcolor{keyword}{>}(bnode);}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ node-\/>\mbox{\hyperlink{classtagfilterdb_1_1LRUCache_1_1BucketValueNode_a92800b151bb10da45e7a20c68d0275a1}{getKey}}();}
+\DoxyCodeLine{00752\ \ \ \ \ \}}
+\DoxyCodeLine{00753\ \};}
+\DoxyCodeLine{00754\ }
+\DoxyCodeLine{00755\ \}\ \textcolor{comment}{//\ namespace\ tagfilterdb}}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,492 @@
+\doxysection{spatial\+Index.\+h}
+\hypertarget{spatialIndex_8h_source}{}\label{spatialIndex_8h_source}\index{include/tagfilterdb/spatialIndex/spatialIndex.h@{include/tagfilterdb/spatialIndex/spatialIndex.h}}
+\mbox{\hyperlink{spatialIndex_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#ifndef\ TAGFILTERDB\_SPATIAL\_INDEX\_H}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ TAGFILTERDB\_SPATIAL\_INDEX\_H}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{broundingbox_8h}{broundingbox.h}}"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}\ \{}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions}{SpatialIndexOptions}}\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_adb0e48ce75b520b0adc8c27b53bb7816}{DEFAULT\_MAX\_CHILD}}\ =}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ 4;\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_aeb4668b82fb1d3cbb6d52066e11d00f7}{DEFAULT\_MIN\_CHILD}}\ =\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_adb0e48ce75b520b0adc8c27b53bb7816}{DEFAULT\_MAX\_CHILD}}\ /\ 2;\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_a707b2df69b6f0331ceffeb616e0a12d6}{DEFAULT\_RANGETYPE}}\ =\ double;\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_ac1c0ccf077aa4bfe0cbc755421e2dc24}{DEFAULT\_AREATYPE}}\ =\ double;\ \ }
+\DoxyCodeLine{00061\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ SIndex>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{ISIndexCallback}}\ \{}
+\DoxyCodeLine{00074\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback_af96b69890b4f44aa42c129113238d03a}{CallBackValue}}\ =}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keyword}{typename}\ SIndex::CallBackValue;\ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback_a703d6a6f54064f69cccb5b06e463a07b}{process}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback_af96b69890b4f44aa42c129113238d03a}{CallBackValue}}\ \&value)\ =\ 0;}
+\DoxyCodeLine{00085\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{template}\ <\textcolor{keyword}{class\ }DataType,\ std::size\_t\ Dimensions,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ std::size\_t\ MaxChildren\ =\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_adb0e48ce75b520b0adc8c27b53bb7816}{SpatialIndexOptions::DEFAULT\_MAX\_CHILD}},}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ std::size\_t\ MinChildren\ =\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_aeb4668b82fb1d3cbb6d52066e11d00f7}{SpatialIndexOptions::DEFAULT\_MIN\_CHILD}},}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }RangeType\ =\ \textcolor{keyword}{typename}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_a707b2df69b6f0331ceffeb616e0a12d6}{SpatialIndexOptions::DEFAULT\_RANGETYPE}},}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }AreaType\ =\ \textcolor{keyword}{typename}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions_ac1c0ccf077aa4bfe0cbc755421e2dc24}{SpatialIndexOptions::DEFAULT\_AREATYPE}}>}
+\DoxyCodeLine{00108\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{SpatialIndex}}\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{static\_assert}(Dimensions\ >\ 0,\ \textcolor{stringliteral}{"{}Dimensions\ must\ be\ greater\ than\ 0"{}});}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{static\_assert}(std::numeric\_limits<RangeType>::is\_iec559,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RangeType\ must\ be\ a\ floating-\/point\ type"{}});}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{static\_assert}(MaxChildren\ >\ MinChildren\ \&\&\ MinChildren\ >\ 0,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}MaxChildren\ must\ be\ greater\ than\ MinChildren\ and\ "{}}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}MinChildren\ must\ be\ greater\ than\ 0"{}});}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BoundingBox<Dimensions,\ RangeType,\ AreaType>}};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}};}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{SubNode}};}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{Group}};}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign}{GroupAssign}};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}}\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ad3063a296386bc72444a498644f98e22}{m\_csize}};\ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}{m\_height}};\ }
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ std::array<SubNode,\ MaxChildren>\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ad8e509d09b3f6022f4fb744354e76929}{m\_subNodes}};\ }
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a865264c4cde1d5b66efc35352cba7e6f}{Node}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ac24fab3cca6bc7a8d441e152b1b61812}{Node}}(\textcolor{keywordtype}{int}\ a\_csize\ =\ 0,\ \textcolor{keywordtype}{int}\ a\_height\ =\ -\/1)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_ad3063a296386bc72444a498644f98e22}{m\_csize}}(a\_csize),\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}{m\_height}}(a\_height)\ \{\}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a4f4f29bcd6562a2b677fe6650414c4cb}{isLeaf}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node_a5c31149514bf645a3c4c07db5aa203c6}{m\_height}}\ ==\ 0;\ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \};}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{SubNode}}\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_aaa2285c30955967ac8a83be273f22d51}{m\_box}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}}\ *\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a14294a25eb9c3bad4ac3e9a7ae22583c}{m\_child}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ DataType\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a554c534872e3e6249c94007d7ef88d67}{m\_data}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_adfaf9488dd4daf45522f4a067fb1c552}{SubNode}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a9b24295a37e0b78ed01e05599c110867}{SubNode}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ \&box,\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}}\ *child\ =\ \textcolor{keyword}{nullptr},}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ DataType\ \&data\ =\ DataType())}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_aaa2285c30955967ac8a83be273f22d51}{m\_box}}(box),\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a14294a25eb9c3bad4ac3e9a7ae22583c}{m\_child}}(child),\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a554c534872e3e6249c94007d7ef88d67}{m\_data}}(data)\ \{\}}
+\DoxyCodeLine{00168\ \ \ \ \ \};}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{Group}}\ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group_a072c571db3d58bf2c6079a28570ff52d}{m\_box}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group_aa3e99d07146fbed080602186a0a6d72b}{m\_count}}\ =\ 0;\ }
+\DoxyCodeLine{00180\ \ \ \ \ \};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign}{GroupAssign}}\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a2a2d3eacd3112c5bd4a7341d401afb8f}{m\_groupAssign}}[MaxChildren\ +\ 1];\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_af33db672b4043da368dff0bb5769203a}{m\_size}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{Group}}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_ad7e0aab5218e752c4f575412d6e78fd6}{m\_groups}}[2];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a7feb8396bd5e0947b2002e91be58b160}{GroupAssign}}()\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ MaxChildren\ +\ 1;\ ++i)\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a2a2d3eacd3112c5bd4a7341d401afb8f}{m\_groupAssign}}[i]\ =\ -\/1;}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_af33db672b4043da368dff0bb5769203a}{m\_size}}\ =\ MaxChildren\ +\ 1;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{CallBackValue}}\ =\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{SubNode}};\ }
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_ade232379a80ff4726e51f9ecd4edbfca}{SpatialIndex}}()\ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ m\_root\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}}(0,\ 0);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ m\_size\ =\ 0;\ }
+\DoxyCodeLine{00215\ \ \ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00222\ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_a297d2d76228c09ca9362e8530ac81090}{\string~SpatialIndex}}()\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ RecursivelyDeleteNode(m\_root);}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_ac931bcf30b8eb79cf10068bbc6a0aa3e}{Insert}}(\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ a\_box,\ \textcolor{keyword}{const}\ DataType\ \&r\_data)\ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{SubNode}}\ subNode(a\_box,\ \textcolor{keyword}{nullptr},\ r\_data);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ InsertSubNode(subNode,\ \&m\_root);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ m\_size++;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \ }
+\DoxyCodeLine{00237\ \ \ \ \ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_a7d430f67c2a0b25ef1d47fb3c6dd7f32}{Print}}()\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ t\_b;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ RecursivelyPrint(m\_root,\ \&t\_b);}
+\DoxyCodeLine{00248\ \ \ \ \ \}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_a983e6e6811190099da11709081117ef1}{SearchTag}}(\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}}\ r\_target,\ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{ISIndexCallback<SpatialIndex>}}\ *callback)\ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ RecursivelySearchTag(r\_target,\ m\_root,\ callback);}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00266\ \ \ \ \ std::size\_t\ \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex_a717e80081c02fe5f652011cdf7223cf7}{size}}()\ \{\ \textcolor{keywordflow}{return}\ m\_size;\ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00269\ \ \ \ \ Node\ *m\_root;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00270\ \ \ \ \ std::size\_t\ m\_size;\ }
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ Node\ **m\_nodeBuffer;\ }
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{void}\ RecursivelyDeleteNode(Node\ *p\_node)\ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&e\ :\ p\_node-\/>m\_subNodes)\ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ RecursivelyDeleteNode(e.m\_child);\ }
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ p\_node;}
+\DoxyCodeLine{00289\ \ \ \ \ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{bool}\ InsertSubNode(\textcolor{keyword}{const}\ SubNode\ \&r\_SubNode,\ Node\ **p\_root)\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ assert(p\_root);\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ splited\ =\ RecursivelyInsertSubNode(r\_SubNode,\ *p\_root);\ }
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (splited)\ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ Node\ *newRoot\ =\ \textcolor{keyword}{new}\ Node(0,\ (*p\_root)-\/>m\_height\ +\ 1);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ SubNode\ subNode;}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ subNode.m\_box\ =\ NodeCover(*p\_root);}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ subNode.m\_child\ =\ *p\_root;}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ AddSubNode(subNode,\ newRoot);}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ subNode.m\_box\ =\ NodeCover(*m\_nodeBuffer);}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ subNode.m\_child\ =\ *m\_nodeBuffer;}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ AddSubNode(subNode,\ newRoot);}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ *p\_root\ =\ newRoot;\ }
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00317\ \ \ \ \ \}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keywordtype}{bool}\ RecursivelyInsertSubNode(\textcolor{keyword}{const}\ SubNode\ \&r\_subNode,\ Node\ *p\_node)\ \{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ assert(p\_node);\ }
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node-\/>isLeaf())\ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ AddSubNode(r\_subNode,\ p\_node);\ }
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ SelectBestSubNode(r\_subNode.m\_box,}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node);\ }
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ childSplited\ =\ RecursivelyInsertSubNode(}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ r\_subNode,\ p\_node-\/>m\_subNodes[index].m\_child);\ }
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (childSplited)\ \{}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[index].m\_box\ =\ NodeCover(}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[index].m\_child);\ \textcolor{comment}{//\ Update\ the\ bounding\ box\ of\ the\ child\ node}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ SubNode\ subnode;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ subnode.m\_child\ =\ (*m\_nodeBuffer);}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ subnode.m\_box\ =\ NodeCover(*m\_nodeBuffer);}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ AddSubNode(subnode,\ p\_node);}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ bounding\ box\ if\ no\ split\ occurred}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[index].m\_box\ =}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(p\_node-\/>m\_subNodes[index].m\_box,\ r\_subNode.m\_box);}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ Indicate\ no\ split}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{00350\ \ \ \ \ \}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00357\ \ \ \ \ BND\ NodeCover(Node\ *p\_node)\ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ assert(p\_node);}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ BND\ t\_box\ =\ p\_node-\/>m\_subNodes[0].m\_box;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 1;\ index\ <\ p\_node-\/>m\_csize;\ index++)\ \{}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ t\_box\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(t\_box,}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[index]}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .m\_box);\ \textcolor{comment}{//\ Union\ all\ subnodes'\ bounding\ boxes}}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ t\_box;\ }
+\DoxyCodeLine{00367\ \ \ \ \ \}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordtype}{int}\ SelectBestSubNode(\textcolor{keyword}{const}\ BND\ \&r\_box,\ Node\ *p\_node)\ \{}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bestIndex\ =\ -\/1;}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ AreaType\ bestIncr\ =\ std::numeric\_limits<AreaType>::max();}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ AreaType\ bestArea\ =\ std::numeric\_limits<AreaType>::max();}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 0;\ index\ <\ p\_node-\/>m\_csize;\ ++index)\ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ BND\ t\_box\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r\_box,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[index].m\_box);\ \textcolor{comment}{//\ Compute\ the\ union\ of\ boxes}}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ AreaType\ area\ =\ p\_node-\/>m\_subNodes[index]}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .m\_box.area();\ \textcolor{comment}{//\ Area\ of\ the\ current\ subnode's\ box}}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ AreaType\ increase\ =}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_box.area()\ -\/\ area;\ \textcolor{comment}{//\ Increase\ in\ area\ due\ to\ the\ new\ box}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ best\ index\ based\ on\ area\ increase}}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (increase\ <\ bestIncr\ ||\ (increase\ ==\ bestIncr\ \&\&\ area\ <\ bestArea))\ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bestIndex\ =\ index;}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bestIncr\ =\ increase;}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bestArea\ =\ area;}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bestIndex;}
+\DoxyCodeLine{00397\ \ \ \ \ \}}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{bool}\ AddSubNode(\textcolor{keyword}{const}\ SubNode\ \&r\_subNode,\ Node\ *p\_node)\ \{}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ assert(p\_node);}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node-\/>m\_csize\ <\ MaxChildren)\ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[p\_node-\/>m\_csize++]\ =}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r\_subNode;\ \textcolor{comment}{//\ Add\ SubNode\ to\ the\ node}}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ Indicate\ no\ split}}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Need\ to\ split\ the\ node}}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SplitNode(r\_subNode,\ p\_node);}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ Indicate\ split\ occurred}}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{void}\ SplitNode(\textcolor{keyword}{const}\ SubNode\ \&r\_subNode,\ Node\ *p\_node)\ \{}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ assert(p\_node);}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ assert(p\_node-\/>m\_csize\ ==\ MaxChildren);}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ GroupAssign\ t\_groupAssign;\ \textcolor{comment}{//\ Holds\ the\ assignment\ of\ SubNodes\ to\ groups}}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ SubNode}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ t\_overflowBuffer[5];\ \textcolor{comment}{//\ Buffer\ to\ hold\ nodes\ during\ the\ split\ process}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ BND\ t\_boundingBox\ =}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[0].m\_box;\ \textcolor{comment}{//\ Bounding\ box\ of\ the\ current\ node}}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ AreaType\ t\_overflowBufferArea[MaxChildren\ +\ 1];\ \textcolor{comment}{//\ Areas\ of\ the\ bounding}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ boxes\ in\ the\ buffer}}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Copy\ existing\ SubNodes\ and\ the\ new\ SubNode\ into\ t\_overflowBuffer}}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\_subNode\ =\ 0;\ i\_subNode\ <\ MaxChildren;\ i\_subNode++)\ \{}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ t\_overflowBuffer[i\_subNode]\ =\ p\_node-\/>m\_subNodes[i\_subNode];}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ t\_boundingBox\ =}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(t\_boundingBox,\ t\_overflowBuffer[i\_subNode].m\_box);}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ t\_overflowBufferArea[i\_subNode]\ =}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_overflowBuffer[i\_subNode].m\_box.area();}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ t\_overflowBuffer[MaxChildren]\ =}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ r\_subNode;\ \textcolor{comment}{//\ Add\ the\ new\ SubNode\ to\ the\ buffer}}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ t\_boundingBox\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ t\_boundingBox,}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ r\_subNode.m\_box);\ \textcolor{comment}{//\ Update\ the\ bounding\ box\ with\ the\ new\ SubNode}}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ t\_overflowBufferArea[MaxChildren]\ =}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ r\_subNode.m\_box.area();\ \textcolor{comment}{//\ Update\ the\ area\ of\ the\ new\ SubNode}}
+\DoxyCodeLine{00451\ }
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ seed0\ =\ 0,\ seed1\ =\ 0;\ \textcolor{comment}{//\ Indices\ of\ the\ seeds\ for\ splitting}}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ RangeType\ bestNormalizedSeparation\ =}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ -\/std::numeric\_limits<RangeType>::infinity();\ \textcolor{comment}{//\ Initialize\ best}}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ separation\ value}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ best\ pair\ of\ seeds\ for\ the\ split\ based\ on\ bounding\ box}}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dimensions}}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ dim\ =\ 0;\ dim\ <\ Dimensions;\ ++dim)\ \{}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ minIndex\ =\ 0,\ maxIndex\ =\ 0;}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ RangeType\ minLower\ =\ t\_overflowBuffer[0].m\_box.min(dim);}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ RangeType\ maxUpper\ =\ t\_overflowBuffer[0].m\_box.max(dim);}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 1;\ index\ <\ MaxChildren\ +\ 1;\ ++index)\ \{}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ minimum\ and\ maximum\ extents\ for\ the\ current\ dimension}}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\_overflowBuffer[index].m\_box.\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a441481ad2f4f4b1c545dc1baff50cb1e}{min}}(dim)\ <\ minLower)\ \{}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minLower\ =\ t\_overflowBuffer[index].m\_box.min(dim);}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minIndex\ =\ index;}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\_overflowBuffer[index].m\_box.\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a7012dc3fa59ff84888b639c425176812}{max}}(dim)\ >\ maxUpper)\ \{}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxUpper\ =\ t\_overflowBuffer[index].m\_box.max(dim);}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxIndex\ =\ index;}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ normalized\ separation\ for\ the\ current\ dimension}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ RangeType\ denominator\ =\ t\_boundingBox.max(dim)\ -\/\ t\_boundingBox.min(dim);}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ RangeType\ reciprocal\ =\ 1.0\ /\ denominator;}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ RangeType\ separation\ =\ (maxUpper\ -\/\ minLower)\ *\ reciprocal;}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ best\ seeds\ if\ current\ separation\ is\ better}}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (separation\ >\ bestNormalizedSeparation)\ \{}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bestNormalizedSeparation\ =\ separation;}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ seed0\ =\ minIndex;}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ seed1\ =\ maxIndex;}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Initialize\ group\ assignments\ with\ the\ chosen\ seeds}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ AssignGroup(seed0,\ 0,\ t\_overflowBuffer[seed0].m\_box,\ t\_groupAssign);}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ AssignGroup(seed1,\ 1,\ t\_overflowBuffer[seed1].m\_box,\ t\_groupAssign);}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ firstTime\ =\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ Flag\ for\ first\ iteration}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ chosen\ =\ -\/1;\ \ \ \ \ \ \ \textcolor{comment}{//\ Index\ of\ the\ chosen\ SubNode\ for\ assignment}}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ betterGroup\ =\ -\/1;\ \ \textcolor{comment}{//\ Index\ of\ the\ better\ group\ for\ assignment}}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ group;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Current\ group\ being\ considered}}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ AreaType\ biggestDiff;\ \ \textcolor{comment}{//\ Biggest\ difference\ in\ growth\ between\ groups}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ remaining\ SubNodes\ to\ groups\ based\ on\ growth\ criteria}}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_groups[0].m\_count\ +\ t\_groupAssign.m\_groups[1].m\_count\ <}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_size)\ \&\&}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_groups[0].m\_count\ <}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_size\ -\/\ MinChildren))\ \&\&}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_groups[1].m\_count\ <}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_size\ -\/\ MinChildren)))\ \{}
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ firstTime\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 0;\ index\ <\ t\_groupAssign.m\_size;\ ++index)\ \{}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\_groupAssign.m\_groupAssign[index]\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compute\ growth\ of\ bounding\ boxes\ if\ the\ current\ SubNode\ is}}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ added\ to\ each\ group}}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BND\ box0\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(t\_overflowBuffer[index].m\_box,}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_groups[0].m\_box);}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BND\ box1\ =\ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(t\_overflowBuffer[index].m\_box,}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_groups[1].m\_box);}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AreaType\ growth0\ =}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ box0.area()\ -\/\ t\_groupAssign.m\_groups[0].m\_box.area();}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AreaType\ growth1\ =}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ box1.area()\ -\/\ t\_groupAssign.m\_groups[1].m\_box.area();}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AreaType\ diff\ =\ growth1\ -\/\ growth0;}
+\DoxyCodeLine{00522\ }
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Determine\ which\ group\ would\ be\ better\ for\ the\ current\ SubNode}}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (diff\ >=\ 0)\ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ group\ =\ 0;}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ group\ =\ 1;}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ diff\ =\ -\/diff;}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00530\ }
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ best\ assignment\ based\ on\ the\ biggest\ difference}}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (firstTime\ ||\ diff\ >\ biggestDiff)\ \{}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstTime\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ biggestDiff\ =\ diff;}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chosen\ =\ index;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ betterGroup\ =\ group;}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((diff\ ==\ biggestDiff)\ \&\&}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (t\_groupAssign.m\_groups[group].m\_count\ <}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_groups[betterGroup].m\_count))\ \{}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chosen\ =\ index;}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ betterGroup\ =\ group;}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ we\ found\ a\ valid\ choice}}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ assert(!firstTime);}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ the\ chosen\ SubNode\ to\ the\ better\ group}}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ AssignGroup(chosen,\ betterGroup,\ t\_overflowBuffer[chosen].m\_box,}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign);}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Final\ adjustments\ if\ the\ total\ number\ of\ nodes\ is\ less\ than\ expected}}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((t\_groupAssign.m\_groups[0].m\_count\ +}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_groups[1].m\_count)\ <\ t\_groupAssign.m\_size)\ \{}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Determine\ which\ group\ to\ assign\ remaining\ nodes\ to}}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\_groupAssign.m\_groups[0].m\_count\ >=}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_size\ -\/\ MinChildren)\ \{}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ group\ =\ 1;}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ group\ =\ 0;}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ remaining\ nodes\ to\ the\ determined\ group}}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ t\_groupAssign.m\_size;\ i++)\ \{}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (t\_groupAssign.m\_groupAssign[i]\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AssignGroup(i,\ group,\ t\_overflowBuffer[i].m\_box,\ t\_groupAssign);}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ valid\ group\ assignments}}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ assert((t\_groupAssign.m\_groups[0].m\_count\ +}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_groupAssign.m\_groups[1].m\_count)\ ==\ t\_groupAssign.m\_size);}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ assert(t\_groupAssign.m\_groups[0].m\_count\ >=\ MinChildren);}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ assert(t\_groupAssign.m\_groups[1].m\_count\ >=\ MinChildren);}
+\DoxyCodeLine{00576\ }
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clear\ the\ current\ node\ and\ create\ a\ new\ node\ for\ one\ group}}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ p\_node-\/>m\_csize\ =\ 0;}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ Node\ *t\_node\ =\ \textcolor{keyword}{new}\ Node(0,\ p\_node-\/>m\_height);}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ Node\ *targetNodes[]\ =\ \{p\_node,}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t\_node\};\ \textcolor{comment}{//\ Nodes\ to\ receive\ the\ split\ SubNodes}}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ number\ of\ nodes\ in\ the\ split\ is\ correct}}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ assert(t\_groupAssign.m\_size\ <=\ MaxChildren\ +\ 1);}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ index\ =\ 0;\ index\ <\ t\_groupAssign.m\_size;\ index++)\ \{}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ groupAssignValue\ =\ t\_groupAssign.m\_groupAssign[index];}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ assert(groupAssignValue\ ==\ 0\ ||\ groupAssignValue\ ==\ 1);}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ each\ SubNode\ to\ the\ appropriate\ group\ node}}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ nodeSplited\ =}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AddSubNode(t\_overflowBuffer[index],\ targetNodes[groupAssignValue]);}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ assert(!nodeSplited);}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00596\ }
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ split\ was\ performed\ correctly}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ assert((p\_node-\/>m\_csize\ +\ (t\_node)-\/>m\_csize)\ ==\ t\_groupAssign.m\_size);}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ m\_nodeBuffer\ =\ \&t\_node;}
+\DoxyCodeLine{00600\ \ \ \ \ \}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00609\ \ \ \ \ \textcolor{keywordtype}{void}\ AssignGroup(\textcolor{keywordtype}{int}\ a\_index,\ \textcolor{keywordtype}{int}\ a\_group,\ BND\ \&r\_box,}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GroupAssign\ \&r\_groupAssign)\ \{}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ assert(a\_index\ <\ r\_groupAssign.m\_size);}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ assert(a\_group\ <\ 2);}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ assert(r\_groupAssign.m\_groupAssign[a\_index]\ ==\ -\/1);}
+\DoxyCodeLine{00614\ }
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ the\ SubNode\ to\ the\ specified\ group}}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ r\_groupAssign.m\_groupAssign[a\_index]\ =\ a\_group;}
+\DoxyCodeLine{00617\ }
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ bounding\ box\ for\ the\ group}}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r\_groupAssign.m\_groups[a\_group].m\_count\ ==\ 0)\ \{}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ this\ is\ the\ first\ SubNode\ in\ the\ group,\ initialize\ the\ bounding}}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ box}}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ r\_groupAssign.m\_groups[a\_group].m\_box\ =\ r\_box;}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Otherwise,\ expand\ the\ existing\ bounding\ box\ to\ include\ the\ new}}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ SubNode}}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ r\_groupAssign.m\_groups[a\_group].m\_box\ =}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox_a4379d25eb4a9adb3206613b8979201a1}{BND::UnionBox}}(r\_groupAssign.m\_groups[a\_group].m\_box,\ r\_box);}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Increment\ the\ count\ of\ SubNodes\ in\ the\ group}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ r\_groupAssign.m\_groups[a\_group].m\_count++;}
+\DoxyCodeLine{00632\ \ \ \ \ \}}
+\DoxyCodeLine{00633\ }
+\DoxyCodeLine{00639\ \ \ \ \ \textcolor{keywordtype}{void}\ RecursivelyPrint(Node\ *p\_node,\ BND\ *p\_box)\ \{}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00643\ }
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ p\_node-\/>m\_csize;\ i++)\ \{}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ p\_node-\/>m\_height\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ p\_box-\/>toString()\ <<\ \textcolor{stringliteral}{"{}\ -\/>\ "{}}}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ p\_node-\/>m\_subNodes[i].m\_data\ <<}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[i].m\_box.toString()\ <<\ std::endl;}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Recursively\ print\ for\ child\ nodes}}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ RecursivelyPrint(p\_node-\/>m\_subNodes[i].m\_child,}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&p\_node-\/>m\_subNodes[i].m\_box);}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00652\ \ \ \ \ \}}
+\DoxyCodeLine{00653\ }
+\DoxyCodeLine{00660\ \ \ \ \ \textcolor{keywordtype}{void}\ RecursivelySearchTag(BND\ \&r\_target,\ Node\ *p\_node,}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ISIndexCallback<SpatialIndex>\ *callback)\ \{}
+\DoxyCodeLine{00662\ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node\ ==\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00664\ \ \ \ \ \}}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \ \ \ \ \textcolor{comment}{//\ Search\ through\ each\ SubNode\ in\ the\ current\ node}}
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ p\_node-\/>m\_csize;\ i++)\ \{}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ node\ is\ a\ leaf\ and\ the\ target\ box\ overlaps\ with\ the\ SubNode's}}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ box}}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\_node-\/>isLeaf()\ \&\&}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ p\_node-\/>m\_subNodes[i].m\_box.isOverlap(r\_target))\ \{}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Process\ the\ SubNode\ using\ the\ callback}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ conti\ =\ callback-\/>process(p\_node-\/>m\_subNodes[i]);}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ callback\ returns\ false,\ stop\ further\ processing}}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!conti)\ \{}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Recursively\ search\ child\ nodes}}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ RecursivelySearchTag(r\_target,\ p\_node-\/>m\_subNodes[i].m\_child,\ callback);}
+\DoxyCodeLine{00681\ \ \ \ \ \}}
+\DoxyCodeLine{00682\ \ \ \ \ \}}
+\DoxyCodeLine{00683\ \};}
+\DoxyCodeLine{00684\ \}\ \textcolor{comment}{//\ namespace\ tagfilterdb}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ TAGFILTERDB\_SPATIAL\_INDEX\_HPP\_}}
+
+\end{DoxyCode}

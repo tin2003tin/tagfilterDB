@@ -1,0 +1,15 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [id="Node000000",label="tagfilterdb::BaseNode",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$structtagfilterdb_1_1BaseNode.html",tooltip=" "];
+  Node0 -> Node1 [id="edge1_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node1 [id="Node000001",label="tagfilterdb::LRUCache\l\< Key, Value \>::BucketValueNode",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtagfilterdb_1_1LRUCache_1_1BucketValueNode.html",tooltip="A class representing a value node in the cache."];
+  Node2 [id="Node000002",label="tagfilterdb::LRUCache\l\< Key, Value \>::BucketNode",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtagfilterdb_1_1LRUCache_1_1BucketNode.html",tooltip="A class representing a node in the bucket list."];
+  Node2 -> Node1 [id="edge2_Node000002_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="tagfilterdb::LRUCache\l\< Key, Value \>::Referenceable",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classtagfilterdb_1_1LRUCache_1_1Referenceable.html",tooltip="A class that manages reference counting for cache nodes."];
+  Node3 -> Node1 [id="edge3_Node000003_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
+}

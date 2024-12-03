@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtagfilterdb.a CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o
+/usr/bin/ranlib libtagfilterdb.a
