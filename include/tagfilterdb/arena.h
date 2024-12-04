@@ -93,11 +93,7 @@ inline char* Arena::Allocate(size_t bytes) {
 
 }  // namespace leveldb
 
-#endif  // STORAGE_LEVELDB_UTIL_ARENA_H_
 
-// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 namespace tagfilterdb {
 
@@ -159,3 +155,9 @@ char* Arena::AllocateNewBlock(size_t block_bytes) {
 }
 
 }  // namespace leveldb
+
+#endif  // STORAGE_LEVELDB_UTIL_ARENA_H_
+
+// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file. See the AUTHORS file for names of contributors.

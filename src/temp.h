@@ -1,752 +1,695 @@
 /**
- * @file cache.h
- * @brief Cache header file for the LevelDB implementation.
+ * @file spatialIndex.h
+ * @brief N-dimensional RTree implementation in C++
  * 
- * This code is based on the cache implementation from the LevelDB project.
- * The original implementation can be found at:
- * https://github.com/google/leveldb
+ * This implementation is inspired by the N-dimensional RTree implementation from
+ * the `nushoin/RTree` repository. The original implementation can be found at:
+ * https://github.com/nushoin/RTree
  * 
- * Credit: Cache implementation by Google (LevelDB).
+ * Credit: RTree implementation by nushoin.
  * 
- * @note This code is based on the original work in the `google/leveldb` repository.
+ * @note This code is based on the original work in the `nushoin/RTree` repository.
  * 
- * @license Apache License, Version 2.0
+ * @license MIT License
  * 
- * Copyright 2012 Google Inc.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * provided to do so, subject to the following conditions:
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
+#ifndef TAGFILTERDB_SPATIAL_INDEX_H
+#define TAGFILTERDB_SPATIAL_INDEX_H
 
-#ifndef TAGFILTERDB_CACHE_H
-#define TAGFILTERDB_CACHE_H
+#include "broundingbox.h"
+#include "arena.h"
 
-#include <iostream>
+#include <algorithm>
+#include <array>
 #include <cassert>
-#include <mutex>
-#include "murmurHash.h"
+#include <limits>
+#include <stddef.h>
 
 namespace tagfilterdb {
 
 /**
- * @struct BaseBucketNode
- * @brief A base structure for nodes in cache buckets.
+ * @struct SpatialIndexOptions
+ * @brief Configuration options for the spatial index.
+ *
+ * This struct provides default values and types for various parameters used
+ * in the `SpatialIndex`. It includes default maximum and minimum number of
+ * children per node, as well as default types for range and area calculations.
  */
-struct BaseNode {};
-
-/**
- * @class LRUConfig
- * @brief A configuration class to hold cache-related constants.
- */
-class LRUConfig {
-public:
-    static const double DEFAULT_CACHE_RATIO; ///< The default cache ratio for expansion.
-    static const size_t DEFAULT_CACHE_CAP; ///< The default cache capacity.
-    static const size_t DEFAULT_CAHCE_EXPAND; ///< The default expansion factor for the cache.
-    static const size_t DEFAULT_CACHE_CHARGE_PER; ///< The default charge per cache item.
-    static const size_t DEFAULT_CACHE_TOTAL_CHANGE; ///< The default total cache charge.
+struct SpatialIndexOptions {
+    static const int DEFAULT_MAX_CHILD =
+        4; ///< Default maximum number of children per node.
+    static const int DEFAULT_MIN_CHILD = DEFAULT_MAX_CHILD / 2; ///< Default minimum number of children per node.
+    using DEFAULT_RANGETYPE = double; ///< Default type for range values.
+    using DEFAULT_AREATYPE = double;  ///< Default type for area calculations.
 };
 
-const double LRUConfig::DEFAULT_CACHE_RATIO = 0.8;
-const size_t LRUConfig::DEFAULT_CACHE_CAP = 2;
-const size_t LRUConfig::DEFAULT_CAHCE_EXPAND = 2;
-const size_t LRUConfig::DEFAULT_CACHE_CHARGE_PER = 8;
-const size_t LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE = 1000;
+/**
+ * @class ISIndexCallback
+ * @brief Interface for callback functions used in spatial index operations.
+ *
+ * This class is used to define callbacks that can process the results of
+ * spatial index operations such as searches. It is a template class where
+ * `SIndex` is the spatial index type.
+ *
+ * @tparam SIndex The spatial index type using this callback.
+ */
+template <class SIndex> class ISIndexCallback {
+  public:
+    using CallBackValue =
+        typename SIndex::CallBackValue; ///< Type of value processed by the
+                                        ///< callback.
+
+    /**
+     * @brief Process a value returned by the spatial index.
+     * @param value The value to be processed.
+     * @return True if processing should continue, false otherwise.
+     */
+    virtual bool process(const CallBackValue &value) = 0;
+};
 
 /**
- * @class LRUCache
- * @brief A Least Recently Used (LRU) Cache implementation.
- * 
- * This class manages a cache using the LRU eviction policy. It stores key-value pairs 
- * and ensures that the least recently used items are evicted when the cache exceeds its 
- * total charge limit.
+ * @class SpatialIndex
+ * @brief A spatial index for querying and inserting multidimensional data.
  *
- * @tparam Value Type of the value in the cache.
+ * This class represents a spatial index structure that supports efficient
+ * querying and insertion of multidimensional data. It can handle varying
+ * numbers of dimensions and provides functionality for managing nodes
+ * and sub-nodes.
+ *
+ * @tparam DataType The type of data stored in the index.
+ * @tparam Dimensions The number of dimensions in the spatial index.
+ * @tparam MaxChildren Maximum number of children per node.
+ * @tparam MinChildren Minimum number of children per node.
+ * @tparam RangeType Type used for range calculations.
+ * @tparam AreaType Type used for area calculations.
  */
-template <typename Value>
-class LRUCache {
-    public :
+template <class DataType, std::size_t Dimensions,
+          std::size_t MaxChildren = SpatialIndexOptions::DEFAULT_MAX_CHILD,
+          std::size_t MinChildren = SpatialIndexOptions::DEFAULT_MIN_CHILD,
+          class RangeType = typename SpatialIndexOptions::DEFAULT_RANGETYPE,
+          class AreaType = typename SpatialIndexOptions::DEFAULT_AREATYPE>
+class SpatialIndex {
+    static_assert(Dimensions > 0, "Dimensions must be greater than 0");
+
+    static_assert(std::numeric_limits<RangeType>::is_iec559,
+                  "RangeType must be a floating-point type");
+
+    static_assert(MaxChildren > MinChildren && MinChildren > 0,
+                  "MaxChildren must be greater than MinChildren and "
+                  "MinChildren must be greater than 0");
+
+    using BND = BoundingBox<Dimensions, RangeType, AreaType>;
+
+  protected:
+    struct Node;
+    struct SubNode;
+    struct Group;
+    struct GroupAssign;
 
     /**
-     * @class CacheMux
-     * @brief A class to handle locking mechanisms for cache access.
+     * @struct Node
+     * @brief Represents a node in the spatial index tree.
+     *
+     * A node contains an array of sub-nodes and information about its height
+     * and the current number of children. It provides functionality to check
+     * if the node is a leaf node.
      */
-    class CacheMux {
-        protected:
-        std::mutex* _mux;
-        CacheMux(std::mutex* mux) {
-            this->_mux = mux;
-            _mux->lock();
-        }
-        ~CacheMux() {
-            _mux->unlock();
-        }
+    struct Node {
+        int m_csize;  ///< Current number of children in the node.
+        int m_height; ///< Height of the node in the tree.
 
-        friend LRUCache;
-    };
+        std::array<SubNode, MaxChildren> m_subNodes; ///< Array of sub-nodes.
 
-     /**
-     * @class BucketNode
-     * @brief A class representing a node in the bucket list.
-     */
-    class BucketNode {
-        protected:
-        BucketNode* m_next; ///< Pointer to the next node in the bucket.
-        BucketNode* m_lNext; ///< Pointer to the next node in the LRU list.
-        BucketNode* m_lPrev; ///< Pointer to the previous node in the LRU list.
+        Node() = default;
+        Node(int a_csize = 0, int a_height = -1)
+            : m_csize(a_csize), m_height(a_height) {}
 
-        BucketNode() : m_next(nullptr), m_lNext(nullptr), m_lPrev(nullptr) {}
-        virtual ~BucketNode() = default;
-
-        friend LRUCache;
-    };
-
-     /**
-     * @class Referenceable
-     * @brief A class that manages reference counting for cache nodes.
-     */
-    class Referenceable
-    {
-        protected:
-        size_t m_ref; ///< Reference count for the node.
-
-        Referenceable() : m_ref(1) {}
-
-        friend LRUCache;
-    };
-    
-    /**
-     * @class BucketValueNode
-     * @brief A class representing a value node in the cache.
-     */
-    class BucketValueNode final : public BucketNode, public Referenceable, public BaseNode {
-        protected:
-        std::string m_key; ///< The key of the cache item.
-        uint32_t m_hash;
-        Value m_value; ///< The value of the cache item.
-        size_t m_charge; ///< The charge (size) of the cache item.
-
-        BucketValueNode(std::string key, Value value, size_t charge,uint32_t hash) : 
-        m_key(key), m_value(value), m_charge(charge), m_hash(hash) {
-    }       
-        public:
         /**
-         * @brief Returns the value stored in the cache node.
-         * @return The value of the cache item.
+         * @brief Check if the node is a leaf.
+         * @return True if the node is a leaf (height is 0), false otherwise.
          */
-        Value getValue() {
-            assert(this);
-            return m_value; 
-        }
-
-         /**
-         * @brief Returns the key of the cache node.
-         * @return The key of the cache item.
-         */
-        std::string getKey() {
-            assert(this);
-            return m_key;
-        }
-
-        friend LRUCache;
+        bool isLeaf() const { return m_height == 0; }
     };
-    private: 
-    BucketNode* m_data; ///< Array of bucket nodes to store the cache data.
-    size_t m_cap; ///< The capacity of the cache.
-    size_t m_size; ///< The current size of the cache.
-    size_t m_total_charge; ///< The total charge available for the cache.
-    size_t m_total_usage; ///< The total usage of cache space.
-
-    BucketNode* m_inUsed_head; ///< Head of the LRU "in-use" list.
-    BucketNode* m_inUsed_tail; ///< Tail of the LRU "in-use" list.
-
-    BucketNode* m_outdated_head; ///< Head of the LRU "outdated" list.
-    BucketNode* m_outdated_tail; ///< Tail of the LRU "outdated" list.
-    
-    std::mutex m_mux; ///< Mutex used to synchronize cache access.
-
-    public: 
-    
-     /**
-     * @brief Default constructor that initializes the cache with default configuration.
-     */
-    LRUCache() {
-        setup(LRUConfig::DEFAULT_CACHE_CAP, LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE);
-    }
 
     /**
-     * @brief Constructor that initializes the cache with a specified capacity and total charge.
-     * @param cap The capacity of the cache.
-     * @param total_change The total charge available for the cache.
+     * @struct SubNode
+     * @brief Represents a sub-node in the spatial index.
+     *
+     * A sub-node contains a bounding box, an optional child node, and
+     * associated data. It represents a data entry or a child node in the
+     * index.
      */
-    LRUCache(size_t cap, size_t total_change = LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE) {
-        setup(cap,total_change);
-    }
+    struct SubNode {
+        BND m_box;               ///< Bounding box of the sub-node.
+        Node *m_child = nullptr; ///< Pointer to child node, if any.
+        DataType m_data;         ///< Data associated with the sub-node.
+
+        SubNode() = default;
+        SubNode(const BND &box, Node *child = nullptr,
+                const DataType &data = DataType())
+            : m_box(box), m_child(child), m_data(data) {}
+    };
 
     /**
-     * @brief Destructor that cleans up the allocated memory.
+     * @struct Group
+     * @brief Represents a group of nodes used during node splitting.
+     *
+     * A group contains a bounding box and a count of nodes. It is used to
+     * manage and split nodes during insertions.
      */
-    ~LRUCache() { 
-        for (size_t i = 0 ; i < m_cap; i++) {
-            BucketNode* curr = m_data[i].m_next;
-            while (curr != nullptr) {
-                BucketNode* next = curr->m_next;
-                delete curr;
-                curr = next;
+    struct Group {
+        BND m_box;       ///< Bounding box of the group.
+        int m_count = 0; ///< Number of nodes in the group.
+    };
+
+    /**
+     * @struct GroupAssign
+     * @brief Assignment of nodes to groups during splitting.
+     *
+     * This struct is used to assign nodes to two groups during the node
+     * splitting process. It includes an array for group assignments and
+     * two groups for managing the split.
+     */
+    struct GroupAssign {
+        int m_groupAssign[MaxChildren + 1]; ///< Array for group assignments.
+        int m_size;                         ///< Size of the assignment array.
+        Group m_groups[2];                  ///< Two groups used for splitting.
+
+        GroupAssign() {
+            for (int i = 0; i < MaxChildren + 1; ++i) {
+                m_groupAssign[i] = -1;
             }
+            m_size = MaxChildren + 1;
         }
-        delete []m_data;
-        delete m_outdated_head;
-        delete m_outdated_tail;
-        delete m_inUsed_head;
-        delete m_inUsed_tail;
-    } 
+    };
+
+  public:
+    using CallBackValue = SubNode; ///< Alias for the callback value type.
 
     /**
-     * @brief Sets the charge for the cache.
-     * @param charge The new total charge for the cache.
+     * @brief Constructs a SpatialIndex with an initial root node.
+     * 
+     * This constructor initializes the spatial index with a root node located at (0, 0)
+     * and sets the initial size of the index to 0.
      */
-    void SetCharge(size_t charge) {
-        m_total_charge = charge;
-    }
-
-    /**
-     * @brief Inserts a new key-value pair into the cache.
-     * @param key The key to insert.
-     * @param value The value to insert.
-     * @param charge The charge (size) of the item to insert.
-     * @return A pointer to the inserted cache node.
-     */
-    BucketValueNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        if (charge > m_total_charge) {
-            return nullptr;
-        }
-        assert(charge > 0);
-
-        CacheMux m(&m_mux);
-
-        if (isExpand()) {
-            expand(m_cap * LRUConfig::DEFAULT_CAHCE_EXPAND);
-        }
-
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        BucketValueNode* newNode =  new BucketValueNode(key,value,charge,hash);
-
-        size_t index = hash % m_cap;
-        BucketNode* prev = &m_data[index];
-
-        while (prev != nullptr && prev->m_next != nullptr)
-        {
-            if (((BucketValueNode* )(prev->m_next))->m_key == key) {
-                break;
-            }
-            prev = prev->m_next;
-        }
-        if (prev->m_next == nullptr) {
-            prev->m_next = newNode;
-            m_size++;
-        } else {
-            // The key already existed
-            newNode->m_next = prev->m_next->m_next;
-
-            removeList(prev->m_next);
-            m_total_usage -= ((BucketValueNode* )(prev->m_next))->m_charge;
-            delete prev->m_next;
-
-            prev->m_next = newNode;
-        }
-
-        // Remove in OutDated List if excess a total charge
-        while (m_total_usage + charge > m_total_charge 
-               && m_outdated_tail->m_lPrev != m_outdated_head) {
-            bool s = removeNode(((BucketValueNode* )(m_outdated_head->m_lNext))->m_key);
-            assert(s);
-        }
-
-        appendToList(newNode, m_inUsed_tail);
-        m_total_usage += charge;
-
-        assert(m_total_usage > 0);
-        assert(m_total_usage <= m_total_charge);
-        ref(newNode);
-        return newNode;
+    SpatialIndex(Arena* arena) : m_arena(arena) {
+        m_root = newNode(0, 0);
+        m_size = 0; 
     }
 
     /**
-     * @brief Removes a key-value pair from the cache.
-     * @param key The key to remove.
-     * @return True if the item was successfully removed, false otherwise.
+     * @brief Destructor for SpatialIndex.
+     * 
+     * The destructor recursively deletes all nodes in the spatial index to free up memory.
      */
-    bool Remove(std::string key) {
-       CacheMux m(&m_mux);
-       return removeNode(key);
+    ~SpatialIndex() {
+        // RecursivelyDeleteNode(m_root);
     }
 
     /**
-     * @brief Retrieves a value from the cache using a key.
-     * @param key The key to search for.
-     * @return A pointer to the cache node if found, nullptr otherwise.
+     * @brief Insert a new bounding box and associated data into the index.
+     * @param a_box The bounding box to insert.
+     * @param r_data The data to associate with the bounding box.
+     * @return Status of the insertion operation.
      */
-    BucketValueNode* Get(std::string key) {
-        CacheMux m(&m_mux);
-
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        size_t index = hash % m_cap;
-        BucketValueNode* curr = (BucketValueNode*)  m_data[index].m_next;
-        while (curr != nullptr) {
-            if (curr->m_key == key) {
-                ref(curr);
-                return curr;
-            }
-            curr = (BucketValueNode*) curr->m_next;
-        }
-        return nullptr;
+    bool Insert(BND a_box, const DataType &r_data) {
+        SubNode subNode(a_box, nullptr, r_data);
+        InsertSubNode(subNode, &m_root);
+        m_size++;                 
+        return true;  
     }
 
     /**
-     * @brief Prunes the cache by removing all outdated nodes.
-     */
-    void Prune() {
-        BucketNode* curr = m_outdated_head->m_lNext;
-        while (curr != m_outdated_tail) {
-            BucketNode* next = curr->m_lNext;
-            assert((((BucketValueNode *) curr)->m_ref == 1));
-            bool s = removeNode(((BucketValueNode *)curr)->m_key);
-            assert(s);
-            curr = next;
-        }
-    }
-
-     /**
-     * @brief Releases a cache node, decreasing its reference count.
-     * @param node The node to release.
-     */
-    void Release(BucketValueNode* node) {
-        if (node != nullptr) {
-            unref(node);
-        }
-    }
-
-    /**
-     * @brief Prints the current state of the cache.
-     */
-    void Print() const {
-        for (size_t i = 0; i < m_cap; i++) {
-            std::cout << i << " ";
-            BucketValueNode* curr = (BucketValueNode*)  m_data[i].m_next;
-            while (curr != nullptr)
-            {
-                std::cout << "("<< curr->m_key << ", " << curr->m_value << ", " << curr->m_charge<< ", " << curr->m_ref <<  ") ";
-                curr =  (BucketValueNode*) curr->m_next;
-            }
-            std::cout << std::endl;
-        }
-    }
-
-     /**
-     * @brief Returns the total charge of the cache.
-     * @return The total charge.
-     */
-    size_t TotalCharge() const {
-        return m_total_charge;
-    }
-
-     /**
-     * @brief Returns the total usage of the cache.
-     * @return The total usage.
-     */
-    size_t TotalUsage() const {
-        return m_total_usage;
-    }
-
-     /**
-     * @brief Prints the nodes in the "outdated" list.
-     */
-    void PrintOutDated() const {
-        BucketNode* curr = m_outdated_head->m_lNext;
-        std::cout << "OutDated: ";
-        while (curr != m_outdated_tail)
-        {
-            BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->m_key << ", "  << node->m_value << ") ";
-            curr = curr->m_lNext;
-        }
-        std::cout << std::endl;
-    }
-
-    /**
-     * @brief Prints the nodes in the "in-use" list.
-     */
-     void PrintInUsed() const {
-        BucketNode* curr = m_inUsed_head->m_lNext;
-        std::cout << "InUsed: ";
-        while (curr != m_inUsed_tail)
-        {
-            BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->m_key << ", "  << node->m_value << ") ";
-            curr = curr->m_lNext;
-        }
-        std::cout << std::endl;
-    }
-
-     /**
-     * @brief Prints detailed information about the cache.
-     */
-    void Detail() const {
-        std::cout << "Detail:" << std::endl;
-        std::cout << "- Capacity: " << m_cap << std::endl;
-        std::cout << "- Size: " << m_size << std::endl;
-        std::cout << "- Total Charge: " << m_total_charge << std::endl;
-        std::cout << "- Total Usage: " << m_total_usage << std::endl;
-    }
-
-     /**
-     * @brief Retrieves the value stored in a cache node.
-     * @param node The cache node.
-     * @return The value of the cache item.
-     */
-    static Value GetValue(BaseNode* node) {
-        if (node == nullptr) {
-            return Value();
-        }
-        return ((BucketValueNode *) node)->m_value;
-    }
-
-    /**
-     * @brief Retrieves the key of a cache node.
-     * @param node The cache node.
-     * @return The key of the cache item.
-     */
-    static std::string GetKey(BucketValueNode* node) {
-        if (node == nullptr) {
-            return "";
-        }
-        return node->m_key;
-    }
-
-
-    private:
-        void setup(size_t cap, size_t total_charge) {
-            assert(cap > 0);
-            assert(total_charge > 0);
-
-            m_data = new BucketNode[cap];
-            m_cap = cap;
-            m_size = 0;
-            m_total_charge = total_charge;
-            m_total_usage = 0;
-
-            m_outdated_head = new BucketNode;
-            m_outdated_tail = new BucketNode;
-            m_outdated_head->m_lNext = m_outdated_tail;
-            m_outdated_head->m_lPrev = m_outdated_tail;
-            m_outdated_tail->m_lNext = m_outdated_head;
-            m_outdated_tail->m_lPrev = m_outdated_head;
-
-            m_inUsed_head = new BucketNode;
-            m_inUsed_tail = new BucketNode;
-            m_inUsed_head->m_lNext = m_inUsed_tail;
-            m_inUsed_head->m_lPrev = m_inUsed_tail;
-            m_inUsed_tail->m_lNext = m_inUsed_head;
-            m_inUsed_tail->m_lPrev = m_inUsed_head;
-        }
-
-        void ref(BucketValueNode *refNode) {
-            assert(refNode->m_ref >= 1);
-            refNode->m_ref++;
-            if (refNode->m_ref == 2) {
-                 removeList(refNode);
-                appendToList(refNode, m_inUsed_tail);
-            }
-        }
-
-        void unref(BucketValueNode *refNode) {
-            assert(refNode->m_ref >= 1);
-            refNode->m_ref--;
-            if (refNode->m_ref == 1) {
-                removeList(refNode);
-                appendToList(refNode, m_outdated_tail);
-            } else if (refNode->m_ref == 0) {
-                removeNode(refNode->m_key);
-            }
-        }
-
-        bool isExpand() {
-            return m_cap * LRUConfig::DEFAULT_CACHE_RATIO <  m_size;
-        }
-
-        bool isBucketValueNode(BucketNode* node) {
-            return dynamic_cast<BucketValueNode*>(node) != nullptr;
-        }
-
-        void expand(size_t newCap) {
-            BucketNode* newLoc = new BucketNode[newCap];    
-            // rehash
-            for (size_t i = 0 ; i < m_cap; i++) {
-                BucketValueNode* curr = (BucketValueNode*) m_data[i].m_next;
-                while (curr != nullptr) {
-                    BucketValueNode* next = (BucketValueNode*)  curr->m_next;
-                    curr->m_next = nullptr;
-                    size_t index = support::MurmurHash::Hash(curr->m_key.data(),curr->m_key.size(),0) % newCap;  
-                    if (newLoc[index].m_next == nullptr) {
-                        newLoc[index].m_next = curr;
-                    } else {
-                        BucketNode* b = newLoc[index].m_next;
-                        while (b->m_next != nullptr)
-                        {
-                            b= b->m_next;
-                        }
-                        b->m_next = curr;
-                    }
-                    curr = next;
-                }
-            }
-            delete[] m_data;
-            m_data = newLoc;
-            m_cap = newCap;
-        }
-
-        bool removeNode(std::string key) {
-            size_t index = support::MurmurHash::Hash(key.data(),key.size(),0) % m_cap;  
-            BucketValueNode* curr = (BucketValueNode*)  m_data[index].m_next;
-            BucketNode* prev = &m_data[index];
-            while (curr != nullptr && curr->m_key != key) {
-                    prev = curr;
-                    curr = (BucketValueNode*)  curr->m_next;
-            } 
-            if (curr == nullptr) {
-                return false;
-            }
-            m_total_usage -= curr->m_charge; 
-            m_size--;
-            prev->m_next = curr->m_next;
-            removeList(curr);
-            delete curr;
-            return true;
-        }
-
-        void appendToList(BucketNode* node, BucketNode* tail) {
-            assert(node != nullptr);
-            BucketNode* prev = tail->m_lPrev;
-            node->m_lNext = tail;
-            node->m_lPrev = prev;
-            prev->m_lNext = node;
-            tail->m_lPrev = node;
-        }
-
-        void removeList(BucketNode* node) {
-            assert(node != nullptr);
-            if (node->m_lNext == nullptr && node->m_lPrev == nullptr) {
-                return;
-            }
-            BucketNode* next = node->m_lNext;                
-            BucketNode* prev = node->m_lPrev;
-            prev->m_lNext = next;
-            next->m_lPrev = prev;
-
-            node->m_lNext = nullptr;
-            node->m_lPrev = nullptr;
-        }
-};
-
-/**
- * @class ShareLRUConfig
- * @brief A configuration class to hold constants related to the shared LRU cache.
- */
-class ShareLRUConfig {
-public:
-    static const size_t DEFAULT_SHARECACHE_BIT; ///< Default bit of LRU caches.
-    static const size_t DEFAULT_SHARECACHE_N; ///< Default number of LRU caches.
-    static const size_t DEFAULT_SHARECACHE_TOTAL_CHARGE; ///< Default total charge to be divided among caches.
-};
-
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_BIT = 4;
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_N = 1 << ShareLRUConfig::DEFAULT_SHARECACHE_BIT;
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_TOTAL_CHARGE = 4000;
-
-/**
- * @class ShareLRUCache
- * @brief A shared LRU cache that divides a total charge across multiple LRU caches.
- * 
- * This class manages multiple LRU caches and ensures the cache is shared across them 
- * using a hash-based distribution. The cache is divided into a specified number of
- * individual LRU caches, each of which manages its own items and charges.
- *
- * @tparam Key Type of the key in the cache.
- * @tparam Value Type of the value in the cache.
- */
-template <typename Value>
-class ShareLRUCache {
-    private :
-    LRUCache<Value>* m_caches; ///< Array of LRUCache instances.
-    size_t m_count; ///< Number of LRUCache instances.
-    size_t m_total_charge; ///< Total charge shared among caches.
-
-     static uint32_t Shard(uint32_t hash) { return hash >> (32 - ShareLRUConfig::DEFAULT_SHARECACHE_BIT); }
-
-    public :
-    /**
-     * @brief Constructs a shared LRU cache with a specified number of caches.
-     * @param charge The total charge to divide among caches.
-     */
-    ShareLRUCache(size_t charge = LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE) {
-        assert(charge > 0);
-        m_count = ShareLRUConfig::DEFAULT_SHARECACHE_N;
-        m_caches = new LRUCache<Value>[m_count];
-        for (size_t i = 0 ; i < m_count; i++) {
-        m_caches[i].SetCharge((charge + m_count - 1) / m_count);
-        }
-        m_total_charge = charge;
-    }  
-
-    /**
-     * @brief Destructor that cleans up the allocated memory.
-     */
-    ~ShareLRUCache() {
-        delete [] m_caches;
-    }
-
-     /**
-     * @brief Inserts a new key-value pair into the shared cache.
-     * @param key The key to insert.
-     * @param value The value to insert.
-     * @param charge The charge (size) of the item to insert.
-     * @return A pointer to the inserted cache node.
-     */
-    BaseNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return  (BaseNode *) m_caches[Shard(hash)].Insert(key, value, charge);
-    }
-
-    /**
-     * @brief Removes a key-value pair from the shared cache.
-     * @param key The key to remove.
-     */
-    void Remove(std::string key) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        m_caches[Shard(hash)].Remove(key);
-    } 
-
-    /**
-     * @brief Retrieves a value from the shared cache using a key.
-     * @param key The key to search for.
-     * @return A pointer to the cache node if found, nullptr otherwise.
-     */
-    BaseNode* Get(std::string key) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return m_caches[Shard(hash)].Get(key);
-    } 
-
-     /**
-     * @brief Calculates the total cache usage across all individual caches.
-     * @return The total usage of the shared cache.
-     */
-    size_t TotalUsage() {
-        size_t t = 0;
-        for (size_t i = 0; i <m_count; i++) {
-            t += m_caches[i].TotalUsage();
-        }
-        return t;
-    }
-
-    /**
-     * @brief Prints the state of each individual LRU cache in the shared cache.
+     * @brief Print the contents of the spatial index.
+     *
+     * This function prints a textual representation of the spatial index,
+     * useful for debugging and visualization.
      */
     void Print() {
-        for (size_t i = 0 ; i < m_count; i++) {
-            std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
-            m_caches[i].Print();
-            m_caches[i].Detail();
-            m_caches[i].PrintInUsed();
-            m_caches[i].PrintOutDated();
-            std::cout << std::endl;
+        BND t_b;                      
+        RecursivelyPrint(m_root, &t_b);
+    }
+
+    /**
+     * @brief Search for tags within a specified bounding box.
+     * @param r_target The bounding box to search within.
+     * @param callback The callback to process each result.
+     *
+     * This function performs a search within the index and uses the provided
+     * callback to handle each result found within the bounding box.
+     */
+    void SearchTag(BND r_target, ISIndexCallback<SpatialIndex> *callback) {
+         RecursivelySearchTag(r_target, m_root, callback);
+    }
+
+    /**
+     * @brief Get the number of elements in the spatial index.
+     * @return The number of elements.
+     */
+    std::size_t size() { return m_size; }
+
+  private:
+    Node *m_root;       ///< Pointer to the root node of the index.
+    std::size_t m_size; ///< Number of elements in the index.
+
+    Node **m_nodeBuffer; ///< Buffer for node pointers.
+
+    Arena* m_arena;
+
+  private:
+
+    Node* newNode(size_t a_csize = 0, size_t a_height = -1) {
+        char* node_memory = m_arena->AllocateAligned(sizeof(Node));
+        Node* node = new (node_memory) Node(a_csize, a_height);
+        return node;
+    }
+    /**
+     * @brief Recursively delete nodes starting from a given node.
+     * @param p_node The starting node for deletion.
+     *
+     * This function deletes the given node and all its children recursively.
+     */
+    void RecursivelyDeleteNode(Node *p_node) {
+        if (p_node == nullptr) {
+        return;
+        }
+        for (auto &e : p_node->m_subNodes) {
+            RecursivelyDeleteNode(e.m_child); 
+        }
+        delete p_node;
+    }
+
+    /**
+     * @brief Insert a sub-node into the index.
+     * @param r_SubNode The sub-node to insert.
+     * @param p_root Pointer to the root node.
+     * @return True if the node was split, false otherwise.
+     */
+    bool InsertSubNode(const SubNode &r_SubNode, Node **p_root) {
+        assert(p_root); 
+        bool splited = RecursivelyInsertSubNode(r_SubNode, *p_root); 
+
+        if (splited) {
+        Node *newRoot = newNode(0, (*p_root)->m_height + 1);
+        SubNode subNode;
+        subNode.m_box = NodeCover(*p_root);
+        subNode.m_child = *p_root;
+        AddSubNode(subNode, newRoot);
+
+        subNode.m_box = NodeCover(*m_nodeBuffer);
+        subNode.m_child = *m_nodeBuffer;
+        AddSubNode(subNode, newRoot);
+
+        *p_root = newRoot; 
+
+        return true;
+        }
+        return false;
+    }
+
+    /**
+     * @brief Recursively insert a sub-node.
+     * @param r_subNode The sub-node to insert.
+     * @param p_node The current node to insert into.
+     * @return True if the node was split, false otherwise.
+     */
+    bool RecursivelyInsertSubNode(const SubNode &r_subNode, Node *p_node) {
+        assert(p_node); 
+
+        if (p_node->isLeaf()) {
+            return AddSubNode(r_subNode, p_node); 
+        }
+        int index = SelectBestSubNode(r_subNode.m_box,
+                                    p_node); 
+        bool childSplited = RecursivelyInsertSubNode(
+            r_subNode, p_node->m_subNodes[index].m_child); 
+        if (childSplited) {
+            p_node->m_subNodes[index].m_box = NodeCover(
+                p_node->m_subNodes[index].m_child); // Update the bounding box of the child node
+            SubNode subnode;
+            subnode.m_child = (*m_nodeBuffer);
+            subnode.m_box = NodeCover(*m_nodeBuffer);
+
+            return AddSubNode(subnode, p_node);
+        } else {
+            // Update the bounding box if no split occurred
+            p_node->m_subNodes[index].m_box =
+                BND::UnionBox(p_node->m_subNodes[index].m_box, r_subNode.m_box);
+            return false; // Indicate no split
+        }
+        return false; 
+    }
+
+    /**
+     * @brief Compute the bounding box covering a node.
+     * @param p_node The node to compute the bounding box for.
+     * @return The bounding box covering the node.
+     */
+    BB nodeCover(Node *p_node) {
+        assert(p_node);
+
+        BB t_box = p_node->m_subNodes[0].m_box;
+        for (int index = 1; index < p_node->m_csize; index++) {
+            t_box = bbf.Union(t_box,
+                                p_node->m_subNodes[index]
+                                   .m_box); // Union all subnodes' bounding boxes
+        }
+        return t_box; 
+    }
+
+    /**
+     * @brief Select the best sub-node to fit a given bounding box.
+     * @param r_box The bounding box to fit.
+     * @param p_node The current node to search in.
+     * @return The index of the best sub-node.
+     */
+    int SelectBestSubNode(const BND &r_box, Node *p_node) {
+         int bestIndex = -1;
+        AreaType bestIncr = std::numeric_limits<AreaType>::max();
+        AreaType bestArea = std::numeric_limits<AreaType>::max();
+
+        for (int index = 0; index < p_node->m_csize; ++index) {
+            BND t_box = BND::UnionBox(
+                r_box,
+                p_node->m_subNodes[index].m_box); // Compute the union of boxes
+            AreaType area = p_node->m_subNodes[index]
+                                .m_box.area(); // Area of the current subnode's box
+            AreaType increase =
+                t_box.area() - area; // Increase in area due to the new box
+
+            // Update best index based on area increase
+            if (increase < bestIncr || (increase == bestIncr && area < bestArea)) {
+                bestIndex = index;
+                bestIncr = increase;
+                bestArea = area;
+            }
+        }
+        return bestIndex;
+    }
+
+    /**
+     * @brief Add a sub-node to a node.
+     * @param r_subNode The sub-node to add.
+     * @param p_node The node to add the sub-node to.
+     * @return True if the node was split, false otherwise.
+     */
+    bool AddSubNode(const SubNode &r_subNode, Node *p_node) {
+         assert(p_node);
+
+        if (p_node->m_csize < MaxChildren) {
+                p_node->m_subNodes[p_node->m_csize++] =
+                    r_subNode; // Add SubNode to the node
+                return false;  // Indicate no split
+            } else {
+                // Need to split the node
+                SplitNode(r_subNode, p_node);
+                return true; // Indicate split occurred
+            }
+        }
+
+        /**
+         * @brief Split a node if necessary.
+         * @param r_subNode The sub-node to insert.
+         * @param p_node The node to split.
+         */
+    void SplitNode(const SubNode &r_subNode, Node *p_node) {
+        assert(p_node);
+        assert(p_node->m_csize == MaxChildren);
+
+        GroupAssign t_groupAssign; // Holds the assignment of SubNodes to groups
+        SubNode
+            t_overflowBuffer[5]; // Buffer to hold nodes during the split process
+        BND t_boundingBox =
+            p_node->m_subNodes[0].m_box; // Bounding box of the current node
+        AreaType t_overflowBufferArea[MaxChildren + 1]; // Areas of the bounding
+                                                        // boxes in the buffer
+
+        // Copy existing SubNodes and the new SubNode into t_overflowBuffer
+        for (int i_subNode = 0; i_subNode < MaxChildren; i_subNode++) {
+            t_overflowBuffer[i_subNode] = p_node->m_subNodes[i_subNode];
+            t_boundingBox =
+                BND::UnionBox(t_boundingBox, t_overflowBuffer[i_subNode].m_box);
+            t_overflowBufferArea[i_subNode] =
+                t_overflowBuffer[i_subNode].m_box.area();
+        }
+        t_overflowBuffer[MaxChildren] =
+            r_subNode; // Add the new SubNode to the buffer
+        t_boundingBox = BND::UnionBox(
+            t_boundingBox,
+            r_subNode.m_box); // Update the bounding box with the new SubNode
+        t_overflowBufferArea[MaxChildren] =
+            r_subNode.m_box.area(); // Update the area of the new SubNode
+
+        int seed0 = 0, seed1 = 0; // Indices of the seeds for splitting
+        RangeType bestNormalizedSeparation =
+            -std::numeric_limits<RangeType>::infinity(); // Initialize best
+                                                        // separation value
+
+        // Find the best pair of seeds for the split based on bounding box
+        // dimensions
+        for (int dim = 0; dim < Dimensions; ++dim) {
+            int minIndex = 0, maxIndex = 0;
+            RangeType minLower = t_overflowBuffer[0].m_box.min(dim);
+            RangeType maxUpper = t_overflowBuffer[0].m_box.max(dim);
+
+            for (int index = 1; index < MaxChildren + 1; ++index) {
+                // Find the minimum and maximum extents for the current dimension
+                if (t_overflowBuffer[index].m_box.min(dim) < minLower) {
+                    minLower = t_overflowBuffer[index].m_box.min(dim);
+                    minIndex = index;
+                }
+                if (t_overflowBuffer[index].m_box.max(dim) > maxUpper) {
+                    maxUpper = t_overflowBuffer[index].m_box.max(dim);
+                    maxIndex = index;
+                }
+            }
+
+            // Calculate normalized separation for the current dimension
+            RangeType denominator = t_boundingBox.max(dim) - t_boundingBox.min(dim);
+            RangeType reciprocal = 1.0 / denominator;
+            RangeType separation = (maxUpper - minLower) * reciprocal;
+
+            // Update best seeds if current separation is better
+            if (separation > bestNormalizedSeparation) {
+                bestNormalizedSeparation = separation;
+                seed0 = minIndex;
+                seed1 = maxIndex;
+            }
+        }
+
+        // Initialize group assignments with the chosen seeds
+        AssignGroup(seed0, 0, t_overflowBuffer[seed0].m_box, t_groupAssign);
+        AssignGroup(seed1, 1, t_overflowBuffer[seed1].m_box, t_groupAssign);
+
+        bool firstTime = true; // Flag for first iteration
+        int chosen = -1;       // Index of the chosen SubNode for assignment
+        int betterGroup = -1;  // Index of the better group for assignment
+        int group;             // Current group being considered
+        AreaType biggestDiff;  // Biggest difference in growth between groups
+
+        // Assign remaining SubNodes to groups based on growth criteria
+        while (
+            (t_groupAssign.m_groups[0].m_count + t_groupAssign.m_groups[1].m_count <
+            t_groupAssign.m_size) &&
+            (t_groupAssign.m_groups[0].m_count <
+            (t_groupAssign.m_size - MinChildren)) &&
+            (t_groupAssign.m_groups[1].m_count <
+            (t_groupAssign.m_size - MinChildren))) {
+
+            bool firstTime = true;
+            for (int index = 0; index < t_groupAssign.m_size; ++index) {
+                if (t_groupAssign.m_groupAssign[index] == -1) {
+                    // Compute growth of bounding boxes if the current SubNode is
+                    // added to each group
+                    BND box0 = BND::UnionBox(t_overflowBuffer[index].m_box,
+                                            t_groupAssign.m_groups[0].m_box);
+                    BND box1 = BND::UnionBox(t_overflowBuffer[index].m_box,
+                                            t_groupAssign.m_groups[1].m_box);
+                    AreaType growth0 =
+                        box0.area() - t_groupAssign.m_groups[0].m_box.area();
+                    AreaType growth1 =
+                        box1.area() - t_groupAssign.m_groups[1].m_box.area();
+                    AreaType diff = growth1 - growth0;
+
+                    // Determine which group would be better for the current SubNode
+                    if (diff >= 0) {
+                        group = 0;
+                    } else {
+                        group = 1;
+                        diff = -diff;
+                    }
+
+                    // Update the best assignment based on the biggest difference
+                    if (firstTime || diff > biggestDiff) {
+                        firstTime = false;
+                        biggestDiff = diff;
+                        chosen = index;
+                        betterGroup = group;
+                    } else if ((diff == biggestDiff) &&
+                            (t_groupAssign.m_groups[group].m_count <
+                                t_groupAssign.m_groups[betterGroup].m_count)) {
+                        chosen = index;
+                        betterGroup = group;
+                    }
+                }
+            }
+
+            // Ensure we found a valid choice
+            assert(!firstTime);
+            // Assign the chosen SubNode to the better group
+            AssignGroup(chosen, betterGroup, t_overflowBuffer[chosen].m_box,
+                        t_groupAssign);
+        }
+
+        // Final adjustments if the total number of nodes is less than expected
+        if ((t_groupAssign.m_groups[0].m_count +
+            t_groupAssign.m_groups[1].m_count) < t_groupAssign.m_size) {
+            // Determine which group to assign remaining nodes to
+            if (t_groupAssign.m_groups[0].m_count >=
+                t_groupAssign.m_size - MinChildren) {
+                group = 1;
+            } else {
+                group = 0;
+            }
+            // Assign remaining nodes to the determined group
+            for (int i = 0; i < t_groupAssign.m_size; i++) {
+                if (t_groupAssign.m_groupAssign[i] == -1) {
+                    AssignGroup(i, group, t_overflowBuffer[i].m_box, t_groupAssign);
+                }
+            }
+        }
+
+        // Ensure valid group assignments
+        assert((t_groupAssign.m_groups[0].m_count +
+                t_groupAssign.m_groups[1].m_count) == t_groupAssign.m_size);
+        assert(t_groupAssign.m_groups[0].m_count >= MinChildren);
+        assert(t_groupAssign.m_groups[1].m_count >= MinChildren);
+
+        // Clear the current node and create a new node for one group
+        p_node->m_csize = 0;
+        Node *t_node = newNode(0, p_node->m_height);
+        Node *targetNodes[] = {p_node,
+                            t_node}; // Nodes to receive the split SubNodes
+
+        // Ensure the number of nodes in the split is correct
+        assert(t_groupAssign.m_size <= MaxChildren + 1);
+
+        for (int index = 0; index < t_groupAssign.m_size; index++) {
+            int groupAssignValue = t_groupAssign.m_groupAssign[index];
+            assert(groupAssignValue == 0 || groupAssignValue == 1);
+
+            // Add each SubNode to the appropriate group node
+            bool nodeSplited =
+                AddSubNode(t_overflowBuffer[index], targetNodes[groupAssignValue]);
+
+            assert(!nodeSplited);
+        }
+
+        // Ensure the split was performed correctly
+        assert((p_node->m_csize + (t_node)->m_csize) == t_groupAssign.m_size);
+        m_nodeBuffer = &t_node;
+    }
+
+    /**
+     * @brief Assign nodes to groups during splitting.
+     * @param a_index The index of the node to assign.
+     * @param a_group The group to assign the node to.
+     * @param r_box The bounding box of the group.
+     * @param r_groupAssign The assignment structure to update.
+     */
+    void AssignGroup(int a_index, int a_group, BND &r_box,
+                     GroupAssign &r_groupAssign) {
+        assert(a_index < r_groupAssign.m_size);
+        assert(a_group < 2);
+        assert(r_groupAssign.m_groupAssign[a_index] == -1);
+
+        // Assign the SubNode to the specified group
+        r_groupAssign.m_groupAssign[a_index] = a_group;
+
+        // Update the bounding box for the group
+        if (r_groupAssign.m_groups[a_group].m_count == 0) {
+            // If this is the first SubNode in the group, initialize the bounding
+            // box
+            r_groupAssign.m_groups[a_group].m_box = r_box;
+        } else {
+            // Otherwise, expand the existing bounding box to include the new
+            // SubNode
+            r_groupAssign.m_groups[a_group].m_box =
+                BND::UnionBox(r_groupAssign.m_groups[a_group].m_box, r_box);
+        }
+
+        // Increment the count of SubNodes in the group
+        r_groupAssign.m_groups[a_group].m_count++;
+    }
+
+    /**
+     * @brief Recursively print nodes starting from a given node.
+     * @param p_node The starting node to print.
+     * @param p_box The bounding box of the current node.
+     */
+    void RecursivelyPrint(Node *p_node, BND *p_box) {
+        if (p_node == nullptr) {
+            return;
+        }
+
+        for (int i = 0; i < p_node->m_csize; i++) {
+            std::cout << p_node->m_height << " " << p_box->toString() << " -> "
+                     << p_node->m_subNodes[i].m_data <<
+                    p_node->m_subNodes[i].m_box.toString() << std::endl;
+            // Recursively print for child nodes
+            RecursivelyPrint(p_node->m_subNodes[i].m_child,
+                            &p_node->m_subNodes[i].m_box);
         }
     }
 
     /**
-     * @brief Prints detailed information about the shared cache and its individual caches.
+     * @brief Recursively search for tags within a specified bounding box.
+     * @param r_target The bounding box to search within.
+     * @param p_node The current node to search in.
+     * @param callback The callback to process each result.
      */
-    void Detail() {
-        std::cout << "Total Charge: " << m_total_charge << std::endl; 
-        std::cout << "Total Usage: " << TotalUsage() << std::endl; 
-        for (size_t i = 0 ; i < m_count; i++) {
-            std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
-            m_caches[i].Detail();
-        }
+    void RecursivelySearchTag(BND &r_target, Node *p_node,
+                            ISIndexCallback<SpatialIndex> *callback) {
+    if (p_node == nullptr) {
+        return;
     }
 
-    /**
-     * @brief Retrieves the LRU cache at a specified index.
-     * @param index The index of the LRU cache to retrieve.
-     * @return A pointer to the specified LRU cache.
-     */
-    LRUCache<Value>* GetLRU(size_t index) {
-        return &m_caches[index];
-    }
-
-    /**
-     * @brief Prunes all individual caches by removing outdated nodes.
-     */
-    void Prune() {
-        for (size_t i = 0 ; i < m_count; i++) {
-            m_caches[i].Prune();
+    // Search through each SubNode in the current node
+    for (int i = 0; i < p_node->m_csize; i++) {
+        // If the node is a leaf and the target box overlaps with the SubNode's
+        // box
+        if (p_node->isLeaf() &&
+            p_node->m_subNodes[i].m_box.isOverlap(r_target)) {
+            // Process the SubNode using the callback
+            bool conti = callback->process(p_node->m_subNodes[i]);
+            // If the callback returns false, stop further processing
+            if (!conti) {
+                break;
+            }
         }
+        // Recursively search child nodes
+        RecursivelySearchTag(r_target, p_node->m_subNodes[i].m_child, callback);
     }
-
-     /**
-     * @brief Releases a cache node, decreasing its reference count.
-     * @param bnode The cache node to release.
-     */
-    BaseNode* Release(BaseNode* bnode) {
-        if (bnode == nullptr) {
-            return nullptr;
-        }
-        typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);\
-            uint32_t hash = support::MurmurHash::Hash(node->getKey().data(),node->getKey().size(),0);
-            m_caches[Shard(hash)].Release(node);
-        return bnode;
-    }
-
-    /**
-     * @brief Retrieves the value stored in a cache node.
-     * @param bnode The cache node.
-     * @return The value of the cache item.
-     */
-    static Value GetValue(BaseNode* bnode) {
-        if (bnode == nullptr) {
-            return Value();
-        }
-         typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);
-        return node->getValue();
-    }
-
-     /**
-     * @brief Retrieves the key of a cache node.
-     * @param bnode The cache node.
-     * @return The key of the cache item.
-     */
-    static std::string GetKey(BaseNode* bnode) {
-        if (bnode == nullptr) {
-            return Value();
-        }
-         typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);
-        return node->getKey();
     }
 };
-
 } // namespace tagfilterdb
 
-#endif
+#endif // TAGFILTERDB_SPATIAL_INDEX_HPP_
