@@ -35,6 +35,7 @@
 #define TAGFILTERDB_SPATIAL_INDEX_H
 
 #include "broundingbox.h"
+#include "arena.h"
 
 #include <algorithm>
 #include <array>
@@ -209,9 +210,10 @@ class SpatialIndex {
      * This constructor initializes the spatial index with a root node located at (0, 0)
      * and sets the initial size of the index to 0.
      */
-    SpatialIndex() {
+    SpatialIndex(Arena* arena) {
         m_root = new Node(0, 0);
         m_size = 0; 
+        m_arena = arena;
     }
 
     /**
@@ -271,6 +273,8 @@ class SpatialIndex {
 
     Node **m_nodeBuffer; ///< Buffer for node pointers.
 
+    Arena* const m_arena; 
+
   private:
     /**
      * @brief Recursively delete nodes starting from a given node.
@@ -299,7 +303,8 @@ class SpatialIndex {
         bool splited = RecursivelyInsertSubNode(r_SubNode, *p_root); 
 
         if (splited) {
-        Node *newRoot = new Node(0, (*p_root)->m_height + 1);
+        Node* newRoot = m_arena->AllocateAligned(sizeof(Node));
+        Node * newRoot = Node(0, (*p_root)->m_height + 1);
         SubNode subNode;
         subNode.m_box = NodeCover(*p_root);
         subNode.m_child = *p_root;
