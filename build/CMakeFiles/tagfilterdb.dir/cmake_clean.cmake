@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o"
-  "CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o.d"
+  "CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
+  "CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o.d"
   "libtagfilterdb.a"
   "libtagfilterdb.pdb"
 )

@@ -69,28 +69,28 @@ include CMakeFiles/tagfilterdb.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/tagfilterdb.dir/flags.make
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
-CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o: /home/siriwid/new/tagfilterdb/cache_test.cpp
-CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o -MF CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o.d -o CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o -c /home/siriwid/new/tagfilterdb/cache_test.cpp
+CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: /home/siriwid/new/tagfilterdb/test.cpp
+CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -MF CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o.d -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/siriwid/new/tagfilterdb/test.cpp
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/siriwid/new/tagfilterdb/cache_test.cpp > CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.i
+CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/siriwid/new/tagfilterdb/test.cpp > CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/siriwid/new/tagfilterdb/cache_test.cpp -o CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.s
+CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/siriwid/new/tagfilterdb/test.cpp -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s
 
 # Object files for target tagfilterdb
 tagfilterdb_OBJECTS = \
-"CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o"
+"CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
 
 # External object files for target tagfilterdb
 tagfilterdb_EXTERNAL_OBJECTS =
 
-libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o
 libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/build.make
 libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libtagfilterdb.a"

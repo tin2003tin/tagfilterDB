@@ -220,27 +220,14 @@ class LRUCache {
         m_total_charge = charge;
     }
 
-    /** 
-     * @brief Inserts a new key-value pair into the cache.
-     * @param key The key to insert.
-     * @param value The value to insert.
-     * @param charge The charge (size) of the item to insert.
-     * @return A pointer to the inserted cache node.
-     */
-     BucketValueNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return Insert(key,value,hash,charge);
-     }
-
     /**
      * @brief Inserts a new key-value pair into the cache.
      * @param key The key to insert.
      * @param value The value to insert.
-     * @param hash The hash to insert.
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    BucketValueNode* Insert(std::string key, Value value,uint32_t hash, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
+    BucketValueNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
         if (charge > m_total_charge) {
             return nullptr;
         }
@@ -252,6 +239,7 @@ class LRUCache {
             expand(m_cap * LRUConfig::DEFAULT_CAHCE_EXPAND);
         }
 
+        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
         BucketValueNode* newNode =  new BucketValueNode(key,value,charge,hash);
 
         size_t index = hash % m_cap;
@@ -637,7 +625,7 @@ class ShareLRUCache {
      */
     BaseNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
         uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return  (BaseNode *) m_caches[Shard(hash)].Insert(key, value, hash, charge);
+        return  (BaseNode *) m_caches[Shard(hash)].Insert(key, value, charge);
     }
 
     /**

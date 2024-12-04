@@ -16,8 +16,7 @@
 					"targetIndexes" : 
 					[
 						0,
-						1,
-						2
+						1
 					]
 				}
 			],
@@ -33,8 +32,7 @@
 					"targetIndexes" : 
 					[
 						0,
-						1,
-						2
+						1
 					]
 				}
 			],
@@ -49,15 +47,8 @@
 				},
 				{
 					"directoryIndex" : 0,
-					"id" : "cache_test_test::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-cache_test_test-Debug-cd3fbe3b165edced357b.json",
-					"name" : "cache_test_test",
-					"projectIndex" : 0
-				},
-				{
-					"directoryIndex" : 0,
 					"id" : "tagfilterdb::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-tagfilterdb-Debug-ecf6bc3eba8883ad155f.json",
+					"jsonFile" : "target-tagfilterdb-Debug-a57682eac14ea0a6e990.json",
 					"name" : "tagfilterdb",
 					"projectIndex" : 0
 				}

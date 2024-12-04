@@ -4,10 +4,10 @@
 
 void cache_example() {
     using namespace tagfilterdb;
-    using SLC = ShareLRUCache<std::string, std::string>;
+    using SLC = ShareLRUCache<std::string>;
 
     // Create a cache with 4 LRU caches and total charge 1000
-    SLC cache(4, 1000);
+    SLC cache(1000);
 
     // Case 1: Insert a new key-value pair
     cache.Release(cache.Insert("630414821", "Siriwid Thongon"));
@@ -20,7 +20,7 @@ void cache_example() {
 
     // Case 4: Retrieve a value from cache
     if (auto n = cache.Release(cache.Get("630414821")); n != nullptr) {
-        std::cout << "Found 630414821: " << ShareLRUCache<std::string, std::string>::GetValue(n) << std::endl;
+        std::cout << "Found 630414821: " << ShareLRUCache<std::string>::GetValue(n) << std::endl;
     }
 
     // Case 5: Try to retrieve a non-existent key
@@ -33,7 +33,7 @@ void cache_example() {
 
     // Case 7: Retrieve a key with custom charge
     if (auto n = cache.Release(cache.Get("10001")); n != nullptr) {
-        std::cout << "Found 10001: " << ShareLRUCache<std::string, std::string>::GetValue(n) << std::endl;
+        std::cout << "Found 10001: " << ShareLRUCache<std::string>::GetValue(n) << std::endl;
     }
 
     // Case 8: Check total cache usage

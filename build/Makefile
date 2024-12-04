@@ -152,19 +152,6 @@ MyProject/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyProject.dir/build.make CMakeFiles/MyProject.dir/build
 .PHONY : MyProject/fast
 
-#=============================================================================
-# Target rules for targets named cache_test_test
-
-# Build rule for target.
-cache_test_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cache_test_test
-.PHONY : cache_test_test
-
-# fast build rule for target.
-cache_test_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/build
-.PHONY : cache_test_test/fast
-
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -189,32 +176,29 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyProject.dir/build.make CMakeFiles/MyProject.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-tagfilterdb/cache_test.o: tagfilterdb/cache_test.cpp.o
-.PHONY : tagfilterdb/cache_test.o
+tagfilterdb/test.o: tagfilterdb/test.cpp.o
+.PHONY : tagfilterdb/test.o
 
 # target to build an object file
-tagfilterdb/cache_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/tagfilterdb/cache_test.cpp.o
-.PHONY : tagfilterdb/cache_test.cpp.o
+tagfilterdb/test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o
+.PHONY : tagfilterdb/test.cpp.o
 
-tagfilterdb/cache_test.i: tagfilterdb/cache_test.cpp.i
-.PHONY : tagfilterdb/cache_test.i
+tagfilterdb/test.i: tagfilterdb/test.cpp.i
+.PHONY : tagfilterdb/test.i
 
 # target to preprocess a source file
-tagfilterdb/cache_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/tagfilterdb/cache_test.cpp.i
-.PHONY : tagfilterdb/cache_test.cpp.i
+tagfilterdb/test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i
+.PHONY : tagfilterdb/test.cpp.i
 
-tagfilterdb/cache_test.s: tagfilterdb/cache_test.cpp.s
-.PHONY : tagfilterdb/cache_test.s
+tagfilterdb/test.s: tagfilterdb/test.cpp.s
+.PHONY : tagfilterdb/test.s
 
 # target to generate assembly for a file
-tagfilterdb/cache_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/cache_test.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/tagfilterdb/cache_test.cpp.s
-.PHONY : tagfilterdb/cache_test.cpp.s
+tagfilterdb/test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s
+.PHONY : tagfilterdb/test.cpp.s
 
 # Help Target
 help:
@@ -226,14 +210,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... MyProject"
-	@echo "... cache_test_test"
 	@echo "... tagfilterdb"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... tagfilterdb/cache_test.o"
-	@echo "... tagfilterdb/cache_test.i"
-	@echo "... tagfilterdb/cache_test.s"
+	@echo "... tagfilterdb/test.o"
+	@echo "... tagfilterdb/test.i"
+	@echo "... tagfilterdb/test.s"
 .PHONY : help
 
 

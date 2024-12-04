@@ -65,7 +65,6 @@ CMAKE_BINARY_DIR = /home/siriwid/new/build
 # The main recursive "all" target.
 all: CMakeFiles/tagfilterdb.dir/all
 all: CMakeFiles/MyProject.dir/all
-all: CMakeFiles/cache_test_test.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -75,7 +74,6 @@ preinstall:
 # The main recursive "clean" target.
 clean: CMakeFiles/tagfilterdb.dir/clean
 clean: CMakeFiles/MyProject.dir/clean
-clean: CMakeFiles/cache_test_test.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -85,7 +83,7 @@ clean: CMakeFiles/cache_test_test.dir/clean
 CMakeFiles/tagfilterdb.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=5,6 "Built target tagfilterdb"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=3,4 "Built target tagfilterdb"
 .PHONY : CMakeFiles/tagfilterdb.dir/all
 
 # Build rule for subdir invocation for target.
@@ -129,32 +127,6 @@ MyProject: CMakeFiles/MyProject.dir/rule
 CMakeFiles/MyProject.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyProject.dir/build.make CMakeFiles/MyProject.dir/clean
 .PHONY : CMakeFiles/MyProject.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/cache_test_test.dir
-
-# All Build rule for target.
-CMakeFiles/cache_test_test.dir/all: CMakeFiles/tagfilterdb.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/siriwid/new/build/CMakeFiles --progress-num=3,4 "Built target cache_test_test"
-.PHONY : CMakeFiles/cache_test_test.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/cache_test_test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/siriwid/new/build/CMakeFiles 4
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cache_test_test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/siriwid/new/build/CMakeFiles 0
-.PHONY : CMakeFiles/cache_test_test.dir/rule
-
-# Convenience name for target.
-cache_test_test: CMakeFiles/cache_test_test.dir/rule
-.PHONY : cache_test_test
-
-# clean rule for target.
-CMakeFiles/cache_test_test.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cache_test_test.dir/build.make CMakeFiles/cache_test_test.dir/clean
-.PHONY : CMakeFiles/cache_test_test.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -1,6 +1,5 @@
-#include "tagfilterdb/filemanager_test.h"
-
+#include "tagfilterdb/cache_example.h"
 
 int main() {
-    filemanager_test();
+
 }
