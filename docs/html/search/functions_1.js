@@ -1,6 +1,0 @@
-var searchData=
-[
-  ['boundingbox_0',['boundingbox',['../classtagfilterdb_1_1BoundingBox.html#aa4fbfc6d9e17042824be2e454ff61d97',1,'tagfilterdb::BoundingBox::boundingBox(const std::vector&lt; std::array&lt; RangeType, Dimensions &gt; &gt; &amp;r_points)'],['../classtagfilterdb_1_1BoundingBox.html#ad1d6f36b97729c4ba5e7b42962a08e38',1,'tagfilterdb::BoundingBox::BoundingBox()'],['../classtagfilterdb_1_1BoundingBox.html#a02f439613c9e2c1ba02be4af76c40d94',1,'tagfilterdb::BoundingBox::BoundingBox(std::vector&lt; EDGE &gt; a_vec)'],['../classtagfilterdb_1_1BoundingBox.html#ab022359ec97a5e664c13d7a1e1013570',1,'tagfilterdb::BoundingBox::BoundingBox(std::array&lt; EDGE, Dimensions &gt; a_arr)'],['../classtagfilterdb_1_1BoundingBox.html#a3928e4716c1332df8b3ae0c61c0a7bff',1,'tagfilterdb::BoundingBox::BoundingBox(BROUNDINGBOX_TYPE &amp;&amp;other) noexcept'],['../classtagfilterdb_1_1BoundingBox.html#a05b992e7622c1768ae0a4687adaaeb44',1,'tagfilterdb::BoundingBox::BoundingBox(const BROUNDINGBOX_TYPE &amp;other)']]],
-  ['bucketnode_1',['BucketNode',['../classtagfilterdb_1_1LRUCache_1_1BucketNode.html#a76c5e34233d2b83e81080f66c458fa58',1,'tagfilterdb::LRUCache::BucketNode']]],
-  ['bucketvaluenode_2',['BucketValueNode',['../classtagfilterdb_1_1LRUCache_1_1BucketValueNode.html#a9780abb26e88a264f9be714e7cf81c6a',1,'tagfilterdb::LRUCache::BucketValueNode']]]
-];

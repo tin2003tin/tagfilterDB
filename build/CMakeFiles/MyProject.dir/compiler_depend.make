@@ -5,7 +5,10 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /home/siriwid/new/include/tagfilterdb/arena.h \
   /home/siriwid/new/include/tagfilterdb/broundingbox.h \
   /home/siriwid/new/include/tagfilterdb/memtable.h \
+  /home/siriwid/new/include/tagfilterdb/random.h \
   /home/siriwid/new/include/tagfilterdb/sp_example/example1.h \
+  /home/siriwid/new/include/tagfilterdb/sp_example/example2.h \
+  /home/siriwid/new/include/tagfilterdb/sp_example/speedTest.h \
   /home/siriwid/new/include/tagfilterdb/spatialIndex.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
@@ -26,6 +29,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /usr/include/c++/13/bits/basic_string.tcc \
   /usr/include/c++/13/bits/char_traits.h \
   /usr/include/c++/13/bits/charconv.h \
+  /usr/include/c++/13/bits/chrono.h \
   /usr/include/c++/13/bits/codecvt.h \
   /usr/include/c++/13/bits/concept_check.h \
   /usr/include/c++/13/bits/cpp_type_traits.h \
@@ -54,6 +58,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /usr/include/c++/13/bits/new_allocator.h \
   /usr/include/c++/13/bits/ostream.tcc \
   /usr/include/c++/13/bits/ostream_insert.h \
+  /usr/include/c++/13/bits/parse_numbers.h \
   /usr/include/c++/13/bits/postypes.h \
   /usr/include/c++/13/bits/predefined_ops.h \
   /usr/include/c++/13/bits/ptr_traits.h \
@@ -84,6 +89,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /usr/include/c++/13/cassert \
   /usr/include/c++/13/cctype \
   /usr/include/c++/13/cerrno \
+  /usr/include/c++/13/chrono \
   /usr/include/c++/13/clocale \
   /usr/include/c++/13/compare \
   /usr/include/c++/13/cstddef \
@@ -112,6 +118,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /usr/include/c++/13/locale \
   /usr/include/c++/13/new \
   /usr/include/c++/13/ostream \
+  /usr/include/c++/13/ratio \
   /usr/include/c++/13/sstream \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/streambuf \
@@ -265,8 +272,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
-
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
@@ -347,13 +352,17 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/pthread.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
-/usr/include/c++/13/bits/refwrap.h:
+/usr/include/locale.h:
 
-/usr/include/c++/13/debug/debug.h:
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
-/usr/include/c++/13/stdexcept:
+/usr/include/linux/errno.h:
+
+/usr/include/features.h:
+
+/usr/include/features-time64.h:
 
 /usr/include/c++/13/bits/locale_facets_nonio.tcc:
 
@@ -365,15 +374,15 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /home/siriwid/new/include/tagfilterdb/broundingbox.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+
+/home/siriwid/new/include/tagfilterdb/sp_example/speedTest.h:
+
 /usr/include/c++/13/sstream:
 
 /usr/include/c++/13/bits/locale_classes.h:
 
 /usr/include/ctype.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
-
-/usr/include/c++/13/bits/char_traits.h:
 
 /usr/include/c++/13/bits/ostream.tcc:
 
@@ -381,15 +390,15 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/ios_base.h:
 
+/usr/include/errno.h:
+
+/usr/include/c++/13/bits/functional_hash.h:
+
 /usr/include/c++/13/bits/nested_exception.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h:
 
 /usr/include/c++/13/bits/basic_ios.tcc:
-
-/usr/include/c++/13/bits/istream.tcc:
-
-/usr/include/c++/13/bits/exception_ptr.h:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
@@ -403,23 +412,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/localefwd.h:
 
-/usr/include/c++/13/array:
-
-/usr/include/asm-generic/errno-base.h:
-
-/usr/include/c++/13/bits/hash_bytes.h:
-
-/usr/include/c++/13/bits/predefined_ops.h:
-
-/usr/include/c++/13/iosfwd:
-
-/usr/include/c++/13/cwchar:
-
-/usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdint-least.h:
-
-/usr/include/c++/13/cerrno:
+/usr/include/c++/13/bits/cxxabi_forced.h:
 
 /usr/include/c++/13/bits/move.h:
 
@@ -429,39 +422,65 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/cpp_type_traits.h:
 
-/usr/include/time.h:
-
-/home/siriwid/new/include/tagfilterdb/spatialIndex.h:
-
-/usr/include/c++/13/bits/memoryfwd.h:
-
-/home/siriwid/new/include/tagfilterdb/sp_example/example1.h:
-
-/home/siriwid/new/src/main.cpp:
-
-/usr/include/c++/13/bits/locale_facets_nonio.h:
-
-/usr/include/c++/13/algorithm:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h:
-
-/usr/include/c++/13/bits/ptr_traits.h:
-
-/home/siriwid/new/include/tagfilterdb/memtable.h:
-
-/usr/include/c++/13/bits/basic_string.tcc:
-
-/usr/include/alloca.h:
-
 /usr/include/c++/13/bits/locale_conv.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
+/usr/include/c++/13/bits/atomic_base.h:
+
 /usr/include/c++/13/bits/new_allocator.h:
 
-/usr/include/c++/13/bits/atomic_base.h:
+/home/siriwid/new/include/tagfilterdb/random.h:
+
+/usr/include/c++/13/cwchar:
+
+/usr/include/c++/13/bits/locale_facets_nonio.h:
+
+/usr/include/alloca.h:
+
+/usr/include/c++/13/bits/basic_string.tcc:
+
+/usr/include/c++/13/bits/parse_numbers.h:
+
+/usr/include/c++/13/bits/stl_heap.h:
+
+/home/siriwid/new/include/tagfilterdb/sp_example/example1.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/c++/13/bits/hash_bytes.h:
+
+/usr/include/c++/13/array:
+
+/usr/include/time.h:
+
+/usr/include/c++/13/bits/memoryfwd.h:
+
+/home/siriwid/new/include/tagfilterdb/spatialIndex.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdint-least.h:
+
+/usr/include/c++/13/cerrno:
+
+/usr/include/c++/13/bits/codecvt.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
+
+/usr/include/c++/13/bits/stl_tempbuf.h:
+
+/usr/include/c++/13/bits/stl_vector.h:
+
+/usr/include/assert.h:
+
+/home/siriwid/new/include/tagfilterdb/sp_example/example2.h:
+
+/home/siriwid/new/src/main.cpp:
+
+/usr/include/c++/13/algorithm:
+
+/home/siriwid/new/include/tagfilterdb/memtable.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 
@@ -475,23 +494,11 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/alloc_traits.h:
 
-/usr/include/c++/13/bits/locale_facets.tcc:
+/usr/include/c++/13/new:
 
-/usr/include/c++/13/bits/requires_hosted.h:
-
-/usr/include/features.h:
+/usr/include/c++/13/ext/alloc_traits.h:
 
 /usr/include/c++/13/backward/binders.h:
-
-/usr/include/assert.h:
-
-/usr/include/c++/13/bits/codecvt.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
-
-/usr/include/c++/13/bits/stl_tempbuf.h:
-
-/usr/include/c++/13/bits/stl_vector.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h:
 
@@ -507,7 +514,21 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/invoke.h:
 
+/usr/include/x86_64-linux-gnu/bits/endianness.h:
+
+/usr/include/libintl.h:
+
+/usr/include/c++/13/bits/basic_string.h:
+
 /usr/include/c++/13/atomic:
+
+/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+
+/usr/include/c++/13/bits/char_traits.h:
+
+/usr/include/c++/13/bits/exception_ptr.h:
+
+/usr/include/c++/13/bits/istream.tcc:
 
 /usr/include/c++/13/bits/locale_facets.h:
 
@@ -515,11 +536,37 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/type_traits:
 
-/usr/include/c++/13/bits/cxxabi_forced.h:
+/usr/include/c++/13/bits/chrono.h:
+
+/usr/include/c++/13/iosfwd:
+
+/usr/include/c++/13/bits/predefined_ops.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h:
+
+/usr/include/c++/13/bits/ptr_traits.h:
+
+/usr/include/c++/13/debug/debug.h:
+
+/usr/include/c++/13/stdexcept:
+
+/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+
+/usr/include/c++/13/bits/refwrap.h:
+
+/usr/include/c++/13/bits/locale_facets.tcc:
+
+/usr/include/c++/13/bits/requires_hosted.h:
 
 /usr/include/c++/13/cwctype:
 
+/usr/include/c++/13/ratio:
+
 /usr/include/c++/13/bits/sstream.tcc:
+
+/usr/include/c++/13/chrono:
 
 /usr/include/c++/13/bits/stl_algobase.h:
 
@@ -528,12 +575,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/stl_bvector.h:
 
 /usr/include/c++/13/bits/stl_construct.h:
-
-/usr/include/c++/13/bits/stl_heap.h:
-
-/usr/include/c++/13/ext/alloc_traits.h:
-
-/usr/include/c++/13/new:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h:
 
@@ -559,13 +600,13 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/stl_uninitialized.h:
 
+/usr/include/endian.h:
+
+/usr/include/c++/13/bits/streambuf.tcc:
+
 /usr/include/c++/13/bits/stringfwd.h:
 
 /usr/include/c++/13/bits/uniform_int_dist.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/usr/include/locale.h:
 
 /usr/include/c++/13/bits/stl_function.h:
 
@@ -574,6 +615,10 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/vector.tcc:
 
 /usr/include/c++/13/cassert:
+
+/usr/include/c++/13/ext/atomicity.h:
+
+/usr/include/c++/13/cctype:
 
 /usr/include/c++/13/cstdlib:
 
@@ -603,19 +648,11 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/debug/assertions.h:
 
-/usr/include/c++/13/bits/functional_hash.h:
-
-/usr/include/errno.h:
-
 /usr/include/x86_64-linux-gnu/bits/errno.h:
 
 /usr/include/wctype.h:
 
 /usr/include/c++/13/exception:
-
-/usr/include/c++/13/cctype:
-
-/usr/include/c++/13/ext/atomicity.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
@@ -637,8 +674,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/istream:
 
-/usr/include/features-time64.h:
-
 /usr/include/c++/13/limits:
 
 /usr/include/c++/13/bits/streambuf_iterator.h:
@@ -654,17 +689,3 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/cxxabi_init_exception.h:
 
 /usr/include/c++/13/typeinfo:
-
-/usr/include/x86_64-linux-gnu/bits/endianness.h:
-
-/usr/include/c++/13/bits/basic_string.h:
-
-/usr/include/libintl.h:
-
-/usr/include/c++/13/bits/streambuf.tcc:
-
-/usr/include/endian.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
-
-/usr/include/linux/errno.h:
