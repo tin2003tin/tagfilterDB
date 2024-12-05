@@ -1,0 +1,62 @@
+\doxysection{tagfilterdb Namespace Reference}
+\hypertarget{namespacetagfilterdb}{}\label{namespacetagfilterdb}\index{tagfilterdb@{tagfilterdb}}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacetagfilterdb_1_1support}{support}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1BaseNode}{Base\+Node}}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{Bounding\+Box}}
+\begin{DoxyCompactList}\small\item\em A template class for representing a multi-\/dimensional bounding box. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1DataRecord}{Data\+Record}}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1FileManager}{File\+Manager}}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{ISIndex\+Callback}}
+\begin{DoxyCompactList}\small\item\em Interface for callback functions used in spatial index operations. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUCache}{LRUCache}}
+\begin{DoxyCompactList}\small\item\em A Least Recently Used (LRU) Cache implementation. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1LRUConfig}{LRUConfig}}
+\begin{DoxyCompactList}\small\item\em A configuration class to hold cache-\/related constants. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUCache}{Share\+LRUCache}}
+\begin{DoxyCompactList}\small\item\em A shared LRU cache that divides a total charge across multiple LRU caches. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1ShareLRUConfig}{Share\+LRUConfig}}
+\begin{DoxyCompactList}\small\item\em A configuration class to hold constants related to the shared LRU cache. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{Spatial\+Index}}
+\begin{DoxyCompactList}\small\item\em A spatial index for querying and inserting multidimensional data. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndexOptions}{Spatial\+Index\+Options}}
+\begin{DoxyCompactList}\small\item\em Configuration options for the spatial index. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} \mbox{\hyperlink{namespacetagfilterdb_a5c1c959e4e82aca5e1c6e61845fb15a6}{FILE\+\_\+\+SIZE}} = 1024 \texorpdfstring{$\ast$}{*} 1024
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} \mbox{\hyperlink{namespacetagfilterdb_ad00081105d59831725762aa825a7f601}{METADATA\+\_\+\+SIZE}} = \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{sizeof}}(\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}})
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\+\_\+\+SIZE}} = 1024
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespacetagfilterdb_a5c1c959e4e82aca5e1c6e61845fb15a6}\label{namespacetagfilterdb_a5c1c959e4e82aca5e1c6e61845fb15a6} 
+\index{tagfilterdb@{tagfilterdb}!FILE\_SIZE@{FILE\_SIZE}}
+\index{FILE\_SIZE@{FILE\_SIZE}!tagfilterdb@{tagfilterdb}}
+\doxysubsubsection{\texorpdfstring{FILE\_SIZE}{FILE\_SIZE}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} tagfilterdb\+::\+FILE\+\_\+\+SIZE = 1024 \texorpdfstring{$\ast$}{*} 1024\hspace{0.3cm}{\ttfamily [constexpr]}}
+
+\Hypertarget{namespacetagfilterdb_ad00081105d59831725762aa825a7f601}\label{namespacetagfilterdb_ad00081105d59831725762aa825a7f601} 
+\index{tagfilterdb@{tagfilterdb}!METADATA\_SIZE@{METADATA\_SIZE}}
+\index{METADATA\_SIZE@{METADATA\_SIZE}!tagfilterdb@{tagfilterdb}}
+\doxysubsubsection{\texorpdfstring{METADATA\_SIZE}{METADATA\_SIZE}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} tagfilterdb\+::\+METADATA\+\_\+\+SIZE = \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{sizeof}}(\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}})\hspace{0.3cm}{\ttfamily [constexpr]}}
+
+\Hypertarget{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}\label{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d} 
+\index{tagfilterdb@{tagfilterdb}!RECORD\_SIZE@{RECORD\_SIZE}}
+\index{RECORD\_SIZE@{RECORD\_SIZE}!tagfilterdb@{tagfilterdb}}
+\doxysubsubsection{\texorpdfstring{RECORD\_SIZE}{RECORD\_SIZE}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{constexpr}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{size\+\_\+t}} tagfilterdb\+::\+RECORD\+\_\+\+SIZE = 1024\hspace{0.3cm}{\ttfamily [constexpr]}}
+

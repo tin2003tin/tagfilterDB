@@ -1,0 +1,87 @@
+\doxysection{tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Group\+Assign Struct Reference}
+\hypertarget{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign}{}\label{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign}\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}}
+
+
+Assignment of nodes to groups during splitting.  
+
+
+
+
+{\ttfamily \#include $<$spatial\+Index.\+h$>$}
+
+
+
+Collaboration diagram for tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Group\+Assign\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a7feb8396bd5e0947b2002e91be58b160}{Group\+Assign}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a2a2d3eacd3112c5bd4a7341d401afb8f}{m\+\_\+group\+Assign}} \mbox{[}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}+1\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array for group assignments. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_af33db672b4043da368dff0bb5769203a}{m\+\_\+size}}
+\begin{DoxyCompactList}\small\item\em Size of the assignment array. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{Group}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_ad7e0aab5218e752c4f575412d6e78fd6}{m\+\_\+groups}} \mbox{[}2\mbox{]}
+\begin{DoxyCompactList}\small\item\em Two groups used for splitting. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$\newline
+struct tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Group\+Assign}
+Assignment of nodes to groups during splitting. 
+
+This struct is used to assign nodes to two groups during the node splitting process. It includes an array for group assignments and two groups for managing the split. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a7feb8396bd5e0947b2002e91be58b160}\label{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a7feb8396bd5e0947b2002e91be58b160} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}!GroupAssign@{GroupAssign}}
+\index{GroupAssign@{GroupAssign}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}}
+\doxysubsubsection{\texorpdfstring{GroupAssign()}{GroupAssign()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+Assign\+::\+Group\+Assign (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a2a2d3eacd3112c5bd4a7341d401afb8f}\label{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_a2a2d3eacd3112c5bd4a7341d401afb8f} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}!m\_groupAssign@{m\_groupAssign}}
+\index{m\_groupAssign@{m\_groupAssign}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}}
+\doxysubsubsection{\texorpdfstring{m\_groupAssign}{m\_groupAssign}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+Assign\+::m\+\_\+group\+Assign\mbox{[}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}+1\mbox{]}}
+
+
+
+Array for group assignments. 
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_ad7e0aab5218e752c4f575412d6e78fd6}\label{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_ad7e0aab5218e752c4f575412d6e78fd6} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}!m\_groups@{m\_groups}}
+\index{m\_groups@{m\_groups}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}}
+\doxysubsubsection{\texorpdfstring{m\_groups}{m\_groups}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Group}{Group}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+Assign\+::m\+\_\+groups\mbox{[}2\mbox{]}}
+
+
+
+Two groups used for splitting. 
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_af33db672b4043da368dff0bb5769203a}\label{structtagfilterdb_1_1SpatialIndex_1_1GroupAssign_af33db672b4043da368dff0bb5769203a} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}!m\_size@{m\_size}}
+\index{m\_size@{m\_size}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::GroupAssign}}
+\doxysubsubsection{\texorpdfstring{m\_size}{m\_size}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{int}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Group\+Assign\+::m\+\_\+size}
+
+
+
+Size of the assignment array. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/spatial\+Index/\mbox{\hyperlink{spatialIndex_8h}{spatial\+Index.\+h}}\end{DoxyCompactItemize}

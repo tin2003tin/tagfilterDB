@@ -1,0 +1,96 @@
+\doxysection{tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Sub\+Node Struct Reference}
+\hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode}{}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode}\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+
+
+Represents a sub-\/node in the spatial index.  
+
+
+
+
+{\ttfamily \#include $<$spatial\+Index.\+h$>$}
+
+
+
+Collaboration diagram for tagfilterdb\+::Spatial\+Index\texorpdfstring{$<$}{<} Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type \texorpdfstring{$>$}{>}\+::Sub\+Node\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_adfaf9488dd4daf45522f4a067fb1c552}{Sub\+Node}} ()=\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{default}}
+\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a9b24295a37e0b78ed01e05599c110867}{Sub\+Node}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{box}}, \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{child}}=\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{nullptr}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} \&\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{data}}=\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}())
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_aaa2285c30955967ac8a83be273f22d51}{m\+\_\+box}}
+\begin{DoxyCompactList}\small\item\em Bounding box of the sub-\/node. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a14294a25eb9c3bad4ac3e9a7ae22583c}{m\+\_\+child}} = \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{nullptr}}
+\begin{DoxyCompactList}\small\item\em Pointer to child node, if any. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} \mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a554c534872e3e6249c94007d7ef88d67}{m\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em Data associated with the sub-\/node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$\newline
+struct tagfilterdb\+::\+Spatial\+Index$<$ Data\+Type, Dimensions, Max\+Children, Min\+Children, Range\+Type, Area\+Type $>$\+::\+Sub\+Node}
+Represents a sub-\/node in the spatial index. 
+
+A sub-\/node contains a bounding box, an optional child node, and associated data. It represents a data entry or a child node in the index. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode_adfaf9488dd4daf45522f4a067fb1c552}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode_adfaf9488dd4daf45522f4a067fb1c552} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}!SubNode@{SubNode}}
+\index{SubNode@{SubNode}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+\doxysubsubsection{\texorpdfstring{SubNode()}{SubNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Sub\+Node\+::\+Sub\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a9b24295a37e0b78ed01e05599c110867}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a9b24295a37e0b78ed01e05599c110867} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}!SubNode@{SubNode}}
+\index{SubNode@{SubNode}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+\doxysubsubsection{\texorpdfstring{SubNode()}{SubNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Sub\+Node\+::\+Sub\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \&}]{box,  }\item[{\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}} \texorpdfstring{$\ast$}{*}}]{child = {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{nullptr}}},  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} \&}]{data = {\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode_aaa2285c30955967ac8a83be273f22d51}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode_aaa2285c30955967ac8a83be273f22d51} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}!m\_box@{m\_box}}
+\index{m\_box@{m\_box}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+\doxysubsubsection{\texorpdfstring{m\_box}{m\_box}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1BoundingBox}{BND}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Sub\+Node\+::m\+\_\+box}
+
+
+
+Bounding box of the sub-\/node. 
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a14294a25eb9c3bad4ac3e9a7ae22583c}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a14294a25eb9c3bad4ac3e9a7ae22583c} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}!m\_child@{m\_child}}
+\index{m\_child@{m\_child}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+\doxysubsubsection{\texorpdfstring{m\_child}{m\_child}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{structtagfilterdb_1_1SpatialIndex_1_1Node}{Node}}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Sub\+Node\+::m\+\_\+child = \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{nullptr}}}
+
+
+
+Pointer to child node, if any. 
+
+\Hypertarget{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a554c534872e3e6249c94007d7ef88d67}\label{structtagfilterdb_1_1SpatialIndex_1_1SubNode_a554c534872e3e6249c94007d7ef88d67} 
+\index{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}!m\_data@{m\_data}}
+\index{m\_data@{m\_data}!tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode@{tagfilterdb::SpatialIndex$<$ DataType, Dimensions, MaxChildren, MinChildren, RangeType, AreaType $>$::SubNode}}
+\doxysubsubsection{\texorpdfstring{m\_data}{m\_data}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} , std\+::size\+\_\+t Dimensions, std\+::size\+\_\+t Max\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MAX\+\_\+\+CHILD, std\+::size\+\_\+t Min\+Children = Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+MIN\+\_\+\+CHILD, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+RANGETYPE, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{class}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}}  = typename Spatial\+Index\+Options\+::\+DEFAULT\+\_\+\+AREATYPE$>$ \\
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}} \mbox{\hyperlink{classtagfilterdb_1_1SpatialIndex}{tagfilterdb\+::\+Spatial\+Index}}$<$ \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Data\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Dimensions}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Max\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Min\+Children}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Range\+Type}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{Area\+Type}} $>$\+::\+Sub\+Node\+::m\+\_\+data}
+
+
+
+Data associated with the sub-\/node. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tagfilterdb/spatial\+Index/\mbox{\hyperlink{spatialIndex_8h}{spatial\+Index.\+h}}\end{DoxyCompactItemize}

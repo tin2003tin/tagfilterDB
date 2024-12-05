@@ -1,0 +1,5 @@
+/home/siriwid/new/build/CMakeFiles/tagfilterdb.dir
+/home/siriwid/new/build/CMakeFiles/MyProject.dir
+/home/siriwid/new/build/CMakeFiles/test.dir
+/home/siriwid/new/build/CMakeFiles/edit_cache.dir
+/home/siriwid/new/build/CMakeFiles/rebuild_cache.dir

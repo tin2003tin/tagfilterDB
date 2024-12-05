@@ -1,0 +1,71 @@
+\doxysection{tagfilterdb\+::support Namespace Reference}
+\hypertarget{namespacetagfilterdb_1_1support}{}\label{namespacetagfilterdb_1_1support}\index{tagfilterdb::support@{tagfilterdb::support}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classtagfilterdb_1_1support_1_1MurmurHash}{Murmur\+Hash}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{namespacetagfilterdb_1_1support_ab77f12134ec5cbc8a47fbf93fff54ba7}{Encode32}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{p\+\_\+dst}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+v}})
+\begin{DoxyCompactList}\small\item\em Encodes a 32-\/bit integer into a 4-\/byte sequence in little-\/endian format. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} \mbox{\hyperlink{namespacetagfilterdb_1_1support_a2684d31d7bfa5a01aaf4148c1ee90a89}{Decode32}} (\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{p}})
+\begin{DoxyCompactList}\small\item\em Decodes a 4-\/byte sequence from little-\/endian format into a 32-\/bit integer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} \mbox{\hyperlink{namespacetagfilterdb_1_1support_aa8700b4ce44ecd45f122cf73f613a31e}{Append\+Encode32}} (std\+::string \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{p\+\_\+dst}}, \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{a\+\_\+v}})
+\begin{DoxyCompactList}\small\item\em Appends a 32-\/bit integer encoded in little-\/endian format to a string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacetagfilterdb_1_1support_aa8700b4ce44ecd45f122cf73f613a31e}\label{namespacetagfilterdb_1_1support_aa8700b4ce44ecd45f122cf73f613a31e} 
+\index{tagfilterdb::support@{tagfilterdb::support}!AppendEncode32@{AppendEncode32}}
+\index{AppendEncode32@{AppendEncode32}!tagfilterdb::support@{tagfilterdb::support}}
+\doxysubsubsection{\texorpdfstring{AppendEncode32()}{AppendEncode32()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} tagfilterdb\+::support\+::\+Append\+Encode32 (\begin{DoxyParamCaption}\item[{std\+::string \texorpdfstring{$\ast$}{*}}]{p\+\_\+dst,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}}}]{a\+\_\+v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Appends a 32-\/bit integer encoded in little-\/endian format to a string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+dst} & Pointer to the {\ttfamily std\+::string} object to which the encoded value will be appended. \\
+\hline
+{\em a\+\_\+v} & The 32-\/bit integer value to encode and append. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{namespacetagfilterdb_1_1support_a2684d31d7bfa5a01aaf4148c1ee90a89}\label{namespacetagfilterdb_1_1support_a2684d31d7bfa5a01aaf4148c1ee90a89} 
+\index{tagfilterdb::support@{tagfilterdb::support}!Decode32@{Decode32}}
+\index{Decode32@{Decode32}!tagfilterdb::support@{tagfilterdb::support}}
+\doxysubsubsection{\texorpdfstring{Decode32()}{Decode32()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}} tagfilterdb\+::support\+::\+Decode32 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{const}} \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Decodes a 4-\/byte sequence from little-\/endian format into a 32-\/bit integer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & Pointer to the source buffer containing the encoded value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The decoded 32-\/bit integer value. 
+\end{DoxyReturn}
+\Hypertarget{namespacetagfilterdb_1_1support_ab77f12134ec5cbc8a47fbf93fff54ba7}\label{namespacetagfilterdb_1_1support_ab77f12134ec5cbc8a47fbf93fff54ba7} 
+\index{tagfilterdb::support@{tagfilterdb::support}!Encode32@{Encode32}}
+\index{Encode32@{Encode32}!tagfilterdb::support@{tagfilterdb::support}}
+\doxysubsubsection{\texorpdfstring{Encode32()}{Encode32()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{void}} tagfilterdb\+::support\+::\+Encode32 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{char}} \texorpdfstring{$\ast$}{*}}]{p\+\_\+dst,  }\item[{\mbox{\hyperlink{classtagfilterdb_1_1ISIndexCallback}{uint32\+\_\+t}}}]{a\+\_\+v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encodes a 32-\/bit integer into a 4-\/byte sequence in little-\/endian format. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+dst} & Pointer to the destination buffer where the encoded value will be stored. \\
+\hline
+{\em a\+\_\+v} & The 32-\/bit integer value to encode. \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,50 @@
+\doxysection{record.\+h}
+\hypertarget{record_8h_source}{}\label{record_8h_source}\index{include/tagfilterdb/record.h@{include/tagfilterdb/record.h}}
+\mbox{\hyperlink{record_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ TAGFILTERDB\_RECORD}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ TAGFILTERDB\_RECORD}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacetagfilterdb}{tagfilterdb}}\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}}\ =\ 1024;\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classtagfilterdb_1_1DataRecord}{DataRecord}}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ data\_[\mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}}]\ =\ \{0\};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord_af600011131048be5d49f49791752b2b8}{DataRecord}}(\textcolor{keyword}{const}\ std::string\&\ data)\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.size()\ >\ \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}})\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Data\ exceeds\ record\ size\ limit."{}});}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ std::memcpy(data\_,\ data.c\_str(),\ data.size());}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord_a82b841d93e162ba33d3a717b78fa14ff}{DataRecord}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord_a4098ec80337a76e6778b5fbf3a0464aa}{Serialize}}(std::ostream\&\ out)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ out.write(data\_,\ \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}});}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord}{DataRecord}}\ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord_a755cb9abc26024571da4addfdcc34e85}{Deserialize}}(std::istream\&\ in)\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord}{DataRecord}}\ record;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ in.read(record.data\_,\ \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}});}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ record;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classtagfilterdb_1_1DataRecord_a3e17d5a9b39bd2f46cd8f5327483ef6c}{Print}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ std::string(data\_,\ strnlen(data\_,\ \mbox{\hyperlink{namespacetagfilterdb_aa6a74bd8ce857967da41f9582f42c32d}{RECORD\_SIZE}}))\ <<\ std::endl;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00039\ \ \ \ \ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

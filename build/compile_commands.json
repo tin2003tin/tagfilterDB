@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/siriwid/new/build",
+  "command": "/usr/bin/g++  -I/home/siriwid/new/include -g -std=gnu++11 -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/siriwid/new/tagfilterdb/test.cpp",
+  "file": "/home/siriwid/new/tagfilterdb/test.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
+},
+{
+  "directory": "/home/siriwid/new/build",
+  "command": "/usr/bin/g++  -I/home/siriwid/new/include -g -std=gnu++11 -o CMakeFiles/MyProject.dir/src/main.cpp.o -c /home/siriwid/new/src/main.cpp",
+  "file": "/home/siriwid/new/src/main.cpp",
+  "output": "CMakeFiles/MyProject.dir/src/main.cpp.o"
+}
+]
