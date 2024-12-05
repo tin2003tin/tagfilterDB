@@ -37,6 +37,7 @@
 #include "arena.h"
 
 #include <array>
+#include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -296,7 +297,7 @@ class BBManager {
         return oss.str();
     }
 
-    void Print(BB &b) {
+    void Print(BB &b) const {
         std::cout << toString(b) << std::endl;
     }
 

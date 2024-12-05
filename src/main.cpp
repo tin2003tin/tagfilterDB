@@ -1,5 +1,5 @@
-#include "tagfilterdb/speedTest.h"
+#include "tagfilterdb/sp_example/example2.h"
 
 int main() {
-    SpeedTest();
+    sp_example2();
 }

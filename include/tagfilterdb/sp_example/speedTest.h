@@ -1,3 +1,12 @@
+// ==========
+// This code demonstrates the performance testing of spatial index operations using 
+// an R-tree and vector-based approaches. It focuses on searching for overlaps, 
+// containment, and coverage in a spatial data set. The program compares the 
+// speed of these search operations between a vector-based method and an R-tree-based 
+// method for different spatial queries. The code also tracks memory usage during 
+// the insertion of spatial data and provides detailed timing for each search type.
+// ========== 
+
 #pragma once
 
 #define SPI_MOVE_COUNT
@@ -33,6 +42,10 @@ public:
 
     std::string ToString() const override {
         return s;
+    }
+
+    bool operator==(Interface *other) override {
+        return s == ((Test*) other)->s;
     }
 };
 
