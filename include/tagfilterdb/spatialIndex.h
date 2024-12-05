@@ -44,6 +44,8 @@
 #include <stddef.h>
 #include <iostream>
 
+// #define SPI_MOVE_COUNT
+
 namespace tagfilterdb {
 
 struct SpatialIndexOptions {
@@ -55,8 +57,21 @@ struct SpatialIndexOptions {
 class Interface {
     public :
     virtual Interface* Align(Arena *arena) = 0;
-    virtual std::string ToString() = 0;
+    virtual std::string ToString() const = 0;
     virtual ~Interface() {}
+};
+
+struct SpICallBackValue {
+    const BBManager::BB* bb;
+    const Interface** data;
+};
+
+class SpICallBack {
+  public:
+    #if defined(SPI_MOVE_COUNT)
+    virtual bool Move() = 0;
+    #endif 
+    virtual bool Process(SpICallBackValue value) = 0;
 };
 
 class SpatialIndex {
@@ -161,17 +176,48 @@ class SpatialIndex {
         Branch subNode(&bbm);
         subNode.m_box = bbm.Copy(b);
         subNode.m_child = nullptr;
-        Interface* dataArena = data->Align(m_arena);
-        subNode.m_data = dataArena;
+        subNode.m_data = data;
 
         insertBranch(subNode, &m_root);
         m_size++;                 
         return true;  
     }
 
+    void SearchOverlap(BB &bb, SpICallBack* callback) {
+        if (callback == nullptr) {
+            return;
+        }
+
+        recursivelySearchOverlap(bb, m_root, callback);
+    }
+
+    void SearchUnder(BB &bb, SpICallBack* callback) {
+        if (callback == nullptr) {
+            return;
+        }
+
+        recursivelySearchUnder(bb, m_root, callback);
+    }
+
+    void SearchCover(BB &bb, SpICallBack* callback) {
+        if (callback == nullptr) {
+            return;
+        }
+
+        recursivelySearchCover(bb, m_root, callback);
+    }
+
     void Print() {
         BB t_b = bbm.CreateBB({{0,0},{0,0}});                      
         RecursivelyPrint(m_root, &t_b);
+    }
+
+    size_t Size() const {
+        return m_size;
+    }
+
+    BBManager* GetBBManager() {
+        return &bbm;
     }
 
     private:
@@ -490,6 +536,84 @@ class SpatialIndex {
             // Recursively print for child nodes
             RecursivelyPrint(p_node->m_branches[i].m_child,
                             &p_node->m_branches[i].m_box);
+        }
+    }
+
+    void recursivelySearchOverlap(BB &bb, Node *p_node, SpICallBack* callback) {
+        if (p_node == nullptr) {
+            return;
+        }
+        #if defined(SPI_MOVE_COUNT)
+            callback->Move();
+        #endif 
+        for (int i = 0; i < p_node->m_csize; i++) {
+            if (bbm.IsOverlap(p_node->m_branches[i].m_box, bb)) {
+                if (p_node->isLeaf()) {
+                    SpICallBackValue cv;
+                    cv.bb = &p_node->m_branches[i].m_box;
+                    const Interface* const_data = p_node->m_branches[i].m_data;
+                    cv.data = &const_data;
+                    bool conti = callback->Process(cv);
+                    
+                    if (!conti) {
+                        break;
+                    }
+                } else {
+                    recursivelySearchOverlap(bb, p_node->m_branches[i].m_child, callback);
+                }
+            }
+        }
+    }
+
+    void recursivelySearchUnder(BB &bb, Node *p_node, SpICallBack* callback) {
+        if (p_node == nullptr) {
+            return;
+        }
+        #if defined(SPI_MOVE_COUNT)
+            callback->Move();
+        #endif 
+        for (int i = 0; i < p_node->m_csize; i++) {
+            if (bbm.ContainsRange(p_node->m_branches[i].m_box, bb)) {
+                if (p_node->isLeaf()) {
+                    SpICallBackValue cv;
+                    cv.bb = &p_node->m_branches[i].m_box;
+                    const Interface* const_data = p_node->m_branches[i].m_data;
+                    cv.data = &const_data;
+                    bool conti = callback->Process(cv);
+
+                    if (!conti) {
+                        break;
+                    }
+                } else {
+                    recursivelySearchUnder(bb, p_node->m_branches[i].m_child, callback);
+                }
+            }
+        }
+    }
+
+    void recursivelySearchCover(BB &bb, Node *p_node, SpICallBack* callback) {
+        if (p_node == nullptr) {
+            return;
+        }
+        #if defined(SPI_MOVE_COUNT)
+            callback->Move();
+        #endif 
+        for (int i = 0; i < p_node->m_csize; i++) {
+            if (p_node->isLeaf() && bbm.ContainsRange(bb, p_node->m_branches[i].m_box)) {
+                    SpICallBackValue cv;
+                    cv.bb = &p_node->m_branches[i].m_box;
+                    const Interface* const_data = p_node->m_branches[i].m_data;
+                    cv.data = &const_data;
+                    bool conti = callback->Process(cv);
+                   
+                    if (!conti) {
+                        return; 
+                    }
+            }
+
+            if (!p_node->isLeaf() && bbm.IsOverlap(p_node->m_branches[i].m_box, bb)) {
+                recursivelySearchCover(bb, p_node->m_branches[i].m_child, callback);
+            }
         }
     }
 

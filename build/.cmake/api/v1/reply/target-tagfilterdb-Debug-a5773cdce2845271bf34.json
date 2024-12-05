@@ -104,7 +104,11 @@
 				6,
 				7,
 				8,
-				9
+				9,
+				10,
+				11,
+				12,
+				13
 			]
 		}
 	],
@@ -119,6 +123,11 @@
 		{
 			"backtrace" : 3,
 			"path" : "include/tagfilterdb/arena.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 3,
+			"path" : "include/tagfilterdb/broundingbox.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -143,6 +152,11 @@
 		},
 		{
 			"backtrace" : 3,
+			"path" : "include/tagfilterdb/memtable.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 3,
 			"path" : "include/tagfilterdb/murmurHash.h",
 			"sourceGroupIndex" : 1
 		},
@@ -159,6 +173,16 @@
 		{
 			"backtrace" : 3,
 			"path" : "include/tagfilterdb/skiplist.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 3,
+			"path" : "include/tagfilterdb/spatialIndex.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 3,
+			"path" : "include/tagfilterdb/spi_example.h",
 			"sourceGroupIndex" : 1
 		}
 	],

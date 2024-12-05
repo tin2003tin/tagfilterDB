@@ -72,6 +72,9 @@
         "csignal": "cpp",
         "list": "cpp",
         "regex": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "charconv": "cpp",
+        "chrono": "cpp",
+        "format": "cpp"
     }
 }

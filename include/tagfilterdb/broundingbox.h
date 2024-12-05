@@ -188,13 +188,15 @@ class BBManager {
         return b.m_axis[a_axis].second;
     }
 
-    bool ContainsRange(BB b, const std::vector<BB::EDGE> &r_point) const {
-        for (std::size_t i_axis = 0; i_axis < r_point.size(); ++i_axis) {
-            if (r_point[i_axis].first < b.m_axis[i_axis].first ||
-                r_point[i_axis].second > b.m_axis[i_axis].second)
+    bool ContainsRange(const BB& self, const BB& other) const {
+        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
+            if (self.m_axis[i_axis].first > other.m_axis[i_axis].first || 
+                self.m_axis[i_axis].second < other.m_axis[i_axis].second) {
+                // If 'self' does not fully contain 'other' in this axis
                 return false;
+            }
         }
-        return true;
+        return true; // 'self' contains 'other' in all dimensions
     }
 
     void Reset(BB& b, RangeType min = 0,

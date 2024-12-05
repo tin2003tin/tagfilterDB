@@ -1,6 +1,7 @@
 CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
- /usr/include/stdc-predef.h /usr/include/c++/13/iostream \
- /usr/include/c++/13/bits/requires_hosted.h \
+ /usr/include/stdc-predef.h \
+ /home/siriwid/new/include/tagfilterdb/speedTest.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -159,7 +160,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
  /usr/include/c++/13/bits/vector.tcc /usr/include/c++/13/array \
  /usr/include/c++/13/compare /usr/include/c++/13/limits \
  /usr/include/c++/13/sstream /usr/include/c++/13/bits/sstream.tcc \
- /home/siriwid/new/include/tagfilterdb/arena.h \
+ /home/siriwid/new/include/tagfilterdb/memtable.h \
  /home/siriwid/new/include/tagfilterdb/spatialIndex.h \
  /home/siriwid/new/include/tagfilterdb/broundingbox.h \
  /usr/include/c++/13/algorithm /usr/include/c++/13/bits/stl_algo.h \
@@ -167,5 +168,10 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
  /usr/include/c++/13/bits/stl_heap.h \
  /usr/include/c++/13/bits/uniform_int_dist.h \
  /usr/include/c++/13/bits/stl_tempbuf.h \
+ /home/siriwid/new/include/tagfilterdb/arena.h \
+ /home/siriwid/new/include/tagfilterdb/spatialIndex.h \
  /home/siriwid/new/include/tagfilterdb/random.h \
- /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h
+ /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
+ /usr/include/c++/13/ratio /usr/include/c++/13/ctime \
+ /usr/include/c++/13/bits/parse_numbers.h
