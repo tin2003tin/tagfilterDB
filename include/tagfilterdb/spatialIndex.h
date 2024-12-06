@@ -36,6 +36,8 @@
 
 #include "broundingbox.h"
 #include "arena.h"
+#include "filemanager.h"
+#include "page.h"
 
 #include <algorithm>
 #include <vector>
@@ -43,15 +45,26 @@
 #include <limits>
 #include <stddef.h>
 #include <iostream>
+#include <queue>
+#include <bitset>
+
+// constexpr size_t PAGE_SIZE = 4096;   // Fixed page size
+// constexpr size_t META_SIZE = 20;    // Page ID (8) + Checksum (4) + Bitmap (8)
+// constexpr size_t MAX_CHILD = 5;     // Example MaxChild
+// constexpr size_t DIMENSION = 3;     // Example Dimension
+// constexpr size_t NODE_SIZE = 20 + (DIMENSION * 16 + 8) * MAX_CHILD;
+// using bitset = std::bitset<64>;
 
 // #define SPI_MOVE_COUNT
 
 namespace tagfilterdb {
 
 struct SpatialIndexOptions {
-    size_t DIMANSION = 2;
-    size_t MAX_CHILD = 4; 
+    size_t DIMENSION = 2;
+    size_t MAX_CHILD = 8; 
     size_t MIN_CHILD = MAX_CHILD / 2;
+    size_t PAGE_MAX_BYTES = 4096;
+    size_t PAGE_MAX_NODES = 64;
 };
 
 class Interface {
@@ -91,24 +104,23 @@ class SpatialIndex {
     struct ListNode;
 
     struct Node {
-        size_t m_height; ///< Height of the node in the tree.
-
-        Branch* m_branch; ///< Array of branchs.
+        int m_height; 
         int m_csize;
 
-        Node() : m_height(-1), m_branch(nullptr), m_csize(0) {}
+        long m_page;
+        int m_slot;
+
+        Branch* m_branch; ///< Array of branchs.
+
+        Node() : m_height(-1), m_branch(nullptr), m_csize(0), m_page(-1), m_slot(-1) {}
 
         Node(int a_height , SpatialIndexOptions &op, Arena *arena)
-        : m_height(a_height), m_branch(nullptr), m_csize(0) {
+        : m_height(a_height), m_branch(nullptr), m_csize(0), m_page(-1), m_slot(-1) {
             if (arena && op.MAX_CHILD > 0) {
                 m_branch = (Branch *)arena->AllocateAligned(op.MAX_CHILD * sizeof(Branch));
             }
         }
 
-        /**
-         * @brief Check if the node is a leaf.
-         * @return True if the node is a leaf (height is 0), false otherwise.
-         */
         bool isLeaf() const { return m_height == 0; }
     };
 
@@ -169,7 +181,7 @@ class SpatialIndex {
     };
 
     public: 
-    SpatialIndex(SpatialIndexOptions &op, Arena* arena) : m_op(op), m_arena(arena), bbm(BBManager(op.DIMANSION,arena)) {
+    SpatialIndex(SpatialIndexOptions &op, Arena* arena) : m_op(op), m_arena(arena), bbm(BBManager(op.DIMENSION,arena)) {
         m_root = newNode(0); 
         m_size = 0; 
     }
@@ -224,8 +236,155 @@ class SpatialIndex {
         recursivelyPrint(m_root, &t_b);
     }
 
+    void Save() {
+        tagfilterdb::PageManager pageManger(m_op.PAGE_MAX_BYTES, m_op.PAGE_MAX_NODES);
+        flush(&pageManger);  // Call flush to fill the page data
+
+        pageManger.PrintPageInfo();
+
+        // Node node(0, m_op, m_arena); 
+        // for (int i = 0 ; i < pageManger.Size(); i++) {
+        //     int offset = 0;  
+        //     Page* page = pageManger.getPage(i + 1);
+
+        //     std::cout << "=================== Page" << page->GetPageId() 
+        //               << "===================" <<std::endl;
+            
+        //     while (offset < (m_op.PAGE_MAX_BYTES/ getNodeSize()) * getNodeSize()) {
+        //         // Deserialize the node properties from the page
+        //         std::memcpy(&node.m_height, page->GetData(offset), sizeof(node.m_height));
+        //         offset += sizeof(node.m_height);
+
+        //         std::memcpy(&node.m_csize, page->GetData(offset), sizeof(node.m_csize));
+        //         offset += sizeof(node.m_csize);
+
+        //         std::memcpy(&node.m_page, page->GetData(offset), sizeof(node.m_page));
+        //         offset += sizeof(node.m_page);
+
+        //         std::memcpy(&node.m_slot, page->GetData(offset), sizeof(node.m_slot));
+        //         offset += sizeof(node.m_slot);
+
+        //         std::vector<std::pair<int,int>> childOffset(node.m_csize);
+        //         for (int i = 0; i < node.m_csize; i++) {
+        //             node.m_branch[i].m_box = bbm.CreateBB();
+        //             for (int d = 0; d < m_op.DIMENSION; d++) {
+        //                 std::memcpy(&node.m_branch[i].m_box.m_axis[d].first, page->GetData(offset), sizeof(node.m_branch[i].m_box.m_axis[d].first));
+        //                 offset += sizeof(node.m_branch[i].m_box.m_axis[d].first);
+                        
+        //                 std::memcpy(&node.m_branch[i].m_box.m_axis[d].second, page->GetData(offset), sizeof(node.m_branch[i].m_box.m_axis[d].second));
+        //                 offset += sizeof(node.m_branch[i].m_box.m_axis[d].second);
+        //             }
+
+        //             std::memcpy(&childOffset[i].first, page->GetData(offset), sizeof(long));
+        //             offset += sizeof(long);
+        //             std::memcpy(&childOffset[i].second, page->GetData(offset), sizeof(int));
+        //             offset += sizeof(int);
+        //         }
+
+        //         // Fill empty space if the node has fewer children than the maximum
+        //         for (int i = node.m_csize + 1; i <= m_op.MAX_CHILD; i++) {
+        //             offset += sizeof(RangeType) * 2 * m_op.DIMENSION;
+        //             offset += sizeof(long) + sizeof(int);
+        //         }
+
+        //         // Print the deserialized node's values
+        //         std::cout << "Current Offset: " << offset << std::endl;
+        //         std::cout << "Node - Height: " << node.m_height << ", CSize: " << node.m_csize 
+        //                 << ", PageID: " << node.m_page << ", Offset: " << node.m_slot << std::endl;
+
+        //         // Print the bounding boxes for each branch
+        //         for (int i = 0; i < node.m_csize; i++) {
+        //             std::cout << bbm.toString(node.m_branch[i].m_box) << " PageID: " 
+        //                 << childOffset[i].first << " ,Offset: " <<  childOffset[i].second << std::endl;
+        //         }
+        //     }
+
+        // }
+    }
+
+    size_t getNodeSize() {
+        return 20 + (sizeof(long) * 2 * m_op.DIMENSION + 12) * m_op.MAX_CHILD;
+    }
+
+   void flush(PageManager* pageManager) { 
+        int node_size = getNodeSize();
+        char nodeSlot[node_size]; 
+
+        auto p = pageManager->Assign(1, node_size);
+        m_root->m_page = p.first;
+        m_root->m_slot = p.second;
+
+        std::queue<Node*> q;
+        q.push(m_root);  // Start with the root node
+
+        while (!q.empty()) {
+            int offset = 0; 
+            Node* node = q.front();
+            q.pop();
+
+            // Serialize node properties into the page buffer at the current offset
+            std::memcpy(nodeSlot + offset, &node->m_height, sizeof(node->m_height));
+            offset += sizeof(node->m_height);
+            
+            std::memcpy(nodeSlot + offset, &node->m_csize, sizeof(node->m_csize));
+            offset += sizeof(node->m_csize);
+
+            std::memcpy(nodeSlot + offset, &node->m_page, sizeof(node->m_page));
+            offset += sizeof(node->m_page);
+
+            std::memcpy(nodeSlot + offset, &node->m_slot, sizeof(node->m_slot));
+            offset += sizeof(node->m_slot);
+
+            // Iterate through the branches of the node and serialize the bounding boxes
+            for (int i = 0; i < node->m_csize; i++) {
+                for (int j = 0; j < m_op.DIMENSION; j++) {
+                    std::memcpy(nodeSlot + offset, &node->m_branch[i].m_box.m_axis[j].first, sizeof(RangeType));
+                    offset += sizeof(RangeType);
+
+                    std::memcpy(nodeSlot + offset, &node->m_branch[i].m_box.m_axis[j].second, sizeof(RangeType));
+                    offset += sizeof(RangeType);
+                }
+
+                if (node->m_branch[i].m_child != nullptr) {
+                    auto a = pageManager->Assign(node->m_page, node_size);
+                    node->m_branch[i].m_child->m_page = a.first;
+                    node->m_branch[i].m_child->m_slot = a.second; 
+                    q.push(node->m_branch[i].m_child);
+
+                    std::memcpy(nodeSlot + offset, &node->m_branch[i].m_child->m_page, sizeof(long));
+                    offset += sizeof(node->m_branch[i].m_child->m_page);
+
+                    std::memcpy(nodeSlot + offset, &node->m_branch[i].m_child->m_slot, sizeof(int));
+                    offset += sizeof(node->m_branch[i].m_child->m_slot);
+                } else {
+                    std::memset(nodeSlot + offset, -1, sizeof(long));
+                    offset += sizeof(node->m_branch[i].m_child->m_page);
+
+                    std::memset(nodeSlot + offset, -1, sizeof(int));
+                    offset += sizeof(node->m_branch[i].m_child->m_slot);
+                }
+            }
+            // Fill empty space if the node has fewer children than the maximum
+            for (int i = node->m_csize + 1; i <= m_op.MAX_CHILD; i++) {
+                std::memset(nodeSlot + offset, 0, sizeof(RangeType) * 2 * m_op.DIMENSION);
+                offset += sizeof(RangeType) * 2 * m_op.DIMENSION;
+
+                std::memset(nodeSlot + offset, 0, sizeof(long) + sizeof(int));
+                offset += sizeof(long) + sizeof(int);
+            }
+
+        Page* p = pageManager->getPage(node->m_page);
+        p->SetData(p->GetOffset(node->m_slot, node_size),nodeSlot, node_size);
+        }
+    }
+
+
     size_t Size() const {
         return m_size;
+    }
+
+    int Height() const {
+        return m_root->m_height;
     }
 
     BBManager* GetBBManager() {
@@ -233,7 +392,6 @@ class SpatialIndex {
     }
 
     private:
-
     Node* newNode(size_t a_height = -1) {
         char* node_memory = m_arena->AllocateAligned(sizeof(Node));
         Node* node = new (node_memory) Node(a_height, m_op, m_arena);
@@ -411,6 +569,7 @@ class SpatialIndex {
         }
         return bestIndex;
     }
+
     void splitNode(Branch &r_subNode, Node *p_node, Node** nodeBuffer) {
         assert(p_node);
         assert(p_node->m_csize == m_op.MAX_CHILD);
@@ -460,8 +619,8 @@ class SpatialIndex {
         }                                        
 
         // Initialize group assignments with the chosen seeds
-        AssignGroup(seed0, 0, t_overflowBuffer[seed0].m_box, t_groupAssign);
-        AssignGroup(seed1, 1, t_overflowBuffer[seed1].m_box, t_groupAssign);
+        assignGroup(seed0, 0, t_overflowBuffer[seed0].m_box, t_groupAssign);
+        assignGroup(seed1, 1, t_overflowBuffer[seed1].m_box, t_groupAssign);
 
         firstTime = true;       // Flag for first iteration
         int chosen = -1;       // Index of the chosen Branch for assignment
@@ -519,7 +678,7 @@ class SpatialIndex {
             // Ensure we found a valid choice
             assert(!firstTime);
             // Assign the chosen Branch to the better group
-            AssignGroup(chosen, betterGroup, t_overflowBuffer[chosen].m_box,
+            assignGroup(chosen, betterGroup, t_overflowBuffer[chosen].m_box,
                         t_groupAssign);
         }
 
@@ -536,7 +695,7 @@ class SpatialIndex {
             // Assign remaining nodes to the determined group
             for (int i = 0; i < t_groupAssign.m_groupAssign.size(); i++) {
                 if (t_groupAssign.m_groupAssign[i] == -1) {
-                    AssignGroup(i, group, t_overflowBuffer[i].m_box, t_groupAssign);
+                    assignGroup(i, group, t_overflowBuffer[i].m_box, t_groupAssign);
                 }
             }
         }
@@ -577,7 +736,7 @@ class SpatialIndex {
      * @param r_box The bounding box of the group.
      * @param r_groupAssign The assignment structure to update.
      */
-    void AssignGroup(int a_index, int a_group, BB &r_box,
+    void assignGroup(int a_index, int a_group, BB &r_box,
                      GroupAssign &r_groupAssign) {
         assert(a_index < r_groupAssign.m_groupAssign.size());
         assert(a_group < 2);

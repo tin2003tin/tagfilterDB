@@ -1,9 +1,13 @@
-#include "tagfilterdb/sp_example/example1.h"
-// #include "tagfilterdb/sp_example/example2.h"
-// #include "tagfilterdb/sp_example/speedTest.h"
+#include <bitset>
+#include <vector>
+#include <cstring>
+#include <iostream>
+#include <cassert>
+#include <memory>
+#include "tagfilterdb/sp_example/example3.h"
 
 int main() {
-    sp_example1();
-    // sp_example2();
-    // SpeedTest();
+    sp_example3();
 }
+
+

@@ -75,6 +75,8 @@
         "cinttypes": "cpp",
         "charconv": "cpp",
         "chrono": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "shared_mutex": "cpp",
+        "queue": "cpp"
     }
 }

@@ -122,50 +122,52 @@ int sp_example2() {
         m.InsertSpiral(locVE, &loc);
     }
 
-    // Print the spatial index structure
+    // // Print the spatial index structure
     m.GetSPI()->Print();
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
-    std::cout << "============ Remove All ===============" << std::endl;
+    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    // std::cout << "============ Remove All ===============" << std::endl;
 
-    for (auto& loc : locations) {
-        auto locVE = manager->CreateBB(loc.getLocation());
-         m.GetSPI()->Remove(locVE, &loc);
-    }
+    // for (auto& loc : locations) {
+    //     auto locVE = manager->CreateBB(loc.getLocation());
+    //      m.GetSPI()->Remove(locVE, &loc);
+    // }
     
-    m.GetSPI()->Print();
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    // m.GetSPI()->Print();
+    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 
-    std::cout << "============= Add All =================" << std::endl;
+    // std::cout << "============= Add All =================" << std::endl;
       
-    for (auto& loc : locations) {
-        auto locVE = manager->CreateBB(loc.getLocation());
-        m.InsertSpiral(locVE, &loc);
-    }
+    // for (auto& loc : locations) {
+    //     auto locVE = manager->CreateBB(loc.getLocation());
+    //     m.InsertSpiral(locVE, &loc);
+    // }
 
-    m.GetSPI()->Print();
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    // m.GetSPI()->Print();
+    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
     
-    std::cout << "========== Remove Home, 1 =============" << std::endl;
-    // After Remove Home
-    auto locVE = manager->CreateBB(locations[0].getLocation());
-    m.GetSPI()->Remove(locVE, &locations[0]);
+    // std::cout << "========== Remove Home, 1 =============" << std::endl;
+    // // After Remove Home
+    // auto locVE = manager->CreateBB(locations[0].getLocation());
+    // m.GetSPI()->Remove(locVE, &locations[0]);
 
-    m.GetSPI()->Print();
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    // m.GetSPI()->Print();
+    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 
-    std::cout << "========== Remove Library, 5 =============" << std::endl;
+    // std::cout << "========== Remove Library, 5 =============" << std::endl;
 
-    // After Remove Library
-    locVE = manager->CreateBB(locations[4].getLocation());
-    m.GetSPI()->Remove(locVE, &locations[4]);
+    // // After Remove Library
+    // locVE = manager->CreateBB(locations[4].getLocation());
+    // m.GetSPI()->Remove(locVE, &locations[4]);
 
-    m.GetSPI()->Print();
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    // m.GetSPI()->Print();
+    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+
+    m.GetSPI()->Save();
 
     return 0;
 }
