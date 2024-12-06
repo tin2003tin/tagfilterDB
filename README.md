@@ -1,14 +1,16 @@
 # tagfilterdb
 
-**tagfilterdb** is a high-performance server database designed to handle **multi-dimensional data** efficiently. It leverages a powerful **R-tree** indexing system for spatial data and integrates a smart **caching mechanism** to provide faster data retrieval. Ideal for applications involving dynamic and location-based data (such as geographic information, real-time sensor data, and IoT applications), **tagfilterdb** enables **fast querying**, **scalability**, and **seamless data management** at scale.
+**tagfilterdb** is a high-performance server database designed to efficiently handle **multi-dimensional data**. It leverages a robust **R-tree** indexing system for spatial data, ensuring optimized spatial queries such as range queries, nearest-neighbor searches, and complex spatial relationships. Additionally, tagfilterdb supports **non-spiral indexing** for non-spatial data, such as **tags**, which enables fast, ordered queries and flexible filtering.
+
+By integrating a smart **caching mechanism,** the database improves data retrieval speeds, especially for applications with dynamic, location-based data (e.g., geographic information, real-time sensor data, IoT applications). This architecture allows **tagfilterdb** to provide **fast querying**, **scalability**, and **seamless data management** at scale, making it an ideal choice for high-demand environments.
 
 ## Key Features
 
-### 1. **R-tree Indexing for Spatial Data**
-The core of **tagfilterdb** relies on the **R-tree indexing system**, a robust data structure that is specifically designed for handling spatial data. The benefits include:
-- **Efficient spatial queries**: With support for range queries, nearest-neighbor searches, and complex spatial relationships, R-tree enables fast lookups and optimized queries.
-- **Dynamic data management**: Easily handle frequent insertions and deletions, making it ideal for applications where data changes regularly (e.g., real-time geographical data).
-- **Scalability**: R-tree indexing grows with your data, ensuring high performance even as the dataset expands over time.
+### 1. **Indexing for Spatial and Non-Spatial Data**
+tagfilterdb uses R-tree indexing for spatial data and a Skip List for non-spatial data. This combination provides:
+- **Efficient spatial queries**: R-tree handles spatial queries, while the skip list offers fast search and insertion for ordered data.
+- **Dynamic data management**: Both structures support frequent updates and deletions with minimal overhead.
+- **Scalability**: The system scales efficiently with growing data, maintaining high performance for both spatial and non-spatial queries.
 
 ### 2. **Caching for Enhanced Performance**
 **tagfilterdb** employs an advanced **caching mechanism** that stores frequently accessed data in memory for quick retrieval. This approach minimizes the need for repetitive disk I/O and significantly enhances performance, especially in high-demand scenarios.
@@ -46,19 +48,22 @@ The **tagfilterdb** architecture consists of several interdependent components, 
 - Users can assign metadata tags (e.g., "restaurant," "hospital," "museum") to spatial data.
 - **Tag-based filtering** enables users to quickly find data relevant to specific use cases, e.g., finding all "restaurants" within a certain geographic range.
 
-### 2. **R-tree Indexing**
+### 2. **R-tree Indexing for Spiral MemTable**
 - **R-tree** is used to efficiently index and organize spatial data, enabling fast retrieval and updates.
 - Optimized for both **static** and **dynamic** data, with excellent performance in high-volume, frequently updated data environments.
 
-### 3. **Caching Layer**
+### 3. **Skip List Integration for Non-Spiral MemTable**
+- To enhance tagfilterdb's MemTable performance, a skip list has been integrated for efficient handling of non-spiral data. A skip list is a probabilistic data structure that provides fast search, insertion, and deletion in logarithmic time, making it a suitable choice for in-memory storage systems where frequent updates and dynamic data are common.
+
+### 4. **Caching Layer**
 - The system features an intelligent **in-memory caching layer**, storing frequently accessed data to minimize latency.
 - Optimizes both **data retrieval** and **query performance**, allowing faster responses for high-demand applications.
 
-### 4. **Server-side Operations**
+### 5. **Server-side Operations**
 - The system is built for **multi-client** server-side operations, where multiple clients can concurrently query and update data.
 - Supports RESTful APIs and other interfaces for interacting with the database.
 
-### 5. **Customizable Compiler Support**
+### 6. **Customizable Compiler Support**
 - Custom Functions: Tailor data storage, retrieval, and query operations with user-defined logic.
 - Compiler Hooks: Modify key operations such as indexing or filtering to better suit specific use cases.
 - Adjustable System Parameters: Fine-tune database behavior and performance by customizing internal parameters.
@@ -67,14 +72,17 @@ The **tagfilterdb** architecture consists of several interdependent components, 
 
 The development of **tagfilterdb** will follow these steps:
 
-1. **Complete the R-tree Implementation**: Finalize the R-tree data structure and ensure it supports efficient insertions, deletions, and spatial queries.
-2. **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism (**LRU Cache**) to store frequently accessed data.
-3. **Develop Metadata Management System**: Implement a system for tracking metadata such as record counts, cache usage, and other properties to optimize database performance.
-4. **Design and Implement Server API**: Build a RESTful API for clients to interact with the server, including operations like adding data, querying spatial regions, and filtering based on metadata tags.
-5.  **Compiler Integration** Implement support for customizable compiler (**LR Compiler**) functions to allow users to define and optimize database operations and parameters for specific use cases.
-6. **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
-7. **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
-8. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
+1. **Finalize R-tree Data Structure**: Complete the R-tree implementation with support for efficient insertions, deletions, and spatial queries. Ensure the data structure is optimized for file writing and retrieval.
+2. **Implement Skip List for Non-Spatial Data**: Design and implement a Skip List for efficient storage and querying of non-spatial, ordered data. This will complement the R-tree indexing system.
+3. **MemTable Implementation**: Develop a MemTable to store recently written data in memory before flushing to disk. This allows for faster writes and can be used in conjunction with WAL for reliable storage.
+4. **Write-Ahead Logging (WAL)**: Implement WAL to ensure durability and consistency. All changes are first written to a log before being applied to the MemTable and eventually flushed to disk.
+5. **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism, such as an LRU Cache, to store frequently accessed data and reduce read latency.
+6. **Develop Metadata Management System**: Implement a system for tracking metadata such as record counts, cache usage, and other properties to optimize database performance.
+7. **Design and Implement Server API**: Build a RESTful API for clients to interact with the server, including operations like adding data, querying spatial regions, and filtering based on metadata tags.
+8.  **Compiler Integration** Implement support for customizable compiler (**LR Compiler**) functions to allow users to define and optimize database operations and parameters for specific use cases.
+9. **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
+10. **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
+11. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
 
 ## Installation and Setup
 
@@ -88,7 +96,4 @@ Ensure you have the following installed:
 
 ### Clone the Repository
 Clone the repository to your local machine:
-```bash
-git clone https://github.com/tin2003tin/tagfilterdb.git
-cd tagfilterdb
->>>>>>> main-v3
+
