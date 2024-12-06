@@ -52,14 +52,14 @@ public:
 
 int sp_example3() {
     SpatialIndexOptions op;
-    op.DIMENSION = 3;
+    op.DIMENSION = 2;
     op.MAX_CHILD = 8;
     op.MIN_CHILD = 4;
-    op.PAGE_MAX_BYTES = 1024 * 4;
+    op.PAGE_MAX_BYTES = 1024 * 8;
     op.PAGE_MAX_NODES = 64;
 
     MemTable m(op);
-    size_t size = 100;
+    size_t size = 100000;
     size_t range = 100000;
 
     auto manager = m.GetSPI()->GetBBManager();
