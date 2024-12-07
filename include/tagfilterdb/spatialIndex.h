@@ -228,7 +228,7 @@ class SpatialIndex {
         Node node(0, op_, arena_); 
         for (int i = 0 ; i < pageManger.Size(); i++) {
             int offset = 0;  
-            Page* page = pageManger.getPage(i + 1);
+            PageNode* page = pageManger.getPage(i + 1);
 
             std::cout << "=================== Page " << page->GetPageId() 
                       << " ===================" <<std::endl;
@@ -356,7 +356,7 @@ class SpatialIndex {
                 offset += sizeof(long) + sizeof(int);
             }
 
-        Page* p = pageManager->getPage(node->page_);
+        PageNode* p = pageManager->getPage(node->page_);
         p->SetData(node->offset_, bufferNode);
         }
     }
