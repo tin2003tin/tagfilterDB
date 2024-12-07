@@ -57,10 +57,10 @@ template <class RangeType = double, class AreaType = double>
                   "AreaType must be floating-point type");
     friend BBManager;
   public:
-    using EDGE = std::pair<RangeType, RangeType>;
+    using Edge = std::pair<RangeType, RangeType>;
     using BB = BoundingBox<RangeType, AreaType>; 
 
-    EDGE* dims_; ///< Stores the bounds for each dimension
+    Edge* dims_; ///< Stores the bounds for each dimension
 
     BoundingBox() {
         dims_ = nullptr;
@@ -85,8 +85,8 @@ template <class RangeType = double, class AreaType = double>
     void setup(size_t dimension, Arena *arena) {
         assert(dimension > 0);
         assert(arena != nullptr);
-        char* ptr = arena->AllocateAligned(sizeof(EDGE) * dimension);
-        dims_ = (EDGE*) ptr;
+        char* ptr = arena->AllocateAligned(sizeof(Edge) * dimension);
+        dims_ = (Edge*) ptr;
     }
 };
 
@@ -119,7 +119,7 @@ class BBManager {
         return box;
     }
 
-    BB CreateBox(std::vector<BB::EDGE> a_vec) {
+    BB CreateBox(std::vector<BB::Edge> a_vec) {
         if (a_vec.size() > dimension_) {
             a_vec.resize(dimension_);
         }
@@ -158,7 +158,7 @@ class BBManager {
         return true;
     }
    
-    bool SetAxis(BB& box,int a_axis, BB::EDGE a_edge) {
+    bool SetAxis(BB& box,int a_axis, BB::Edge a_edge) {
             if (a_axis < 0 || a_axis > dimension_) {
                 return false;
             }
@@ -167,7 +167,7 @@ class BBManager {
             return true;
     }
 
-    BB::EDGE Get(BB& box, size_t a_axis) const {
+    BB::Edge Get(BB& box, size_t a_axis) const {
        if (a_axis < 0 || a_axis > dimension_) {
             return {};
         }

@@ -4,10 +4,10 @@
 #include <iostream>
 #include <cassert>
 #include <memory>
-#include "tagfilterdb/cache_example.h"
+#include "tagfilterdb/sp_example/example2.h"
 
 int main() {
-    cache_example();
+    sp_example2();
 }
 
 

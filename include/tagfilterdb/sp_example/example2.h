@@ -14,9 +14,7 @@
 #include <iostream>
 
 using namespace tagfilterdb;
-using VE = std::vector<BBManager::BB::EDGE>;
-using namespace tagfilterdb;
-using VE = std::vector<BBManager::BB::EDGE>;
+using VE = std::vector<BBManager::BB::Edge>;
 
 class Location : public Interface {
     std::string id;
@@ -67,8 +65,8 @@ public:
 
     VE getLocation() const {
         return {
-            BBManager::BB::EDGE{x_min, x_max},
-            BBManager::BB::EDGE{y_min, y_max}
+            BBManager::BB::Edge{x_min, x_max},
+            BBManager::BB::Edge{y_min, y_max}
         };
     }
 };

@@ -176,7 +176,7 @@ namespace tagfilterdb {
         ~PageNodeManager() {
             for (auto& p : pages) {
                 delete []p.page_;
-                delete []p.bitSet_.data;
+                delete []p.bitSet_.data_;
             }
         }
 
