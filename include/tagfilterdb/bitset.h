@@ -6,28 +6,37 @@
 
 class Bitset {
 public:
-    char* data;       // Pointer to the raw bitmap data (byte array)
-    size_t size;      // Number of bits
+    char* data_;       // Pointer to the raw bitmap data_ (byte array)
+    size_t size_;      // Number of bits
 
-    Bitset(size_t bits) : size(bits) {
-        data = new char[(bits + 7) / 8]();
+    Bitset() {
+        data_ = nullptr;
+    }
+
+    void Setup(size_t bits) {
+        size_ = bits;
+        data_ = new char[(bits + 7) / 8]();
+    }
+
+    Bitset(size_t bits) : size_(bits) {
+        data_ = new char[(bits + 7) / 8]();
     }
 
     void set(size_t index) {
-        data[index / 8] |= (1 << (index % 8));
+        data_[index / 8] |= (1 << (index % 8));
     }
 
     void clear(size_t index) {
-        data[index / 8] &= ~(1 << (index % 8));
+        data_[index / 8] &= ~(1 << (index % 8));
     }
 
     bool isSet(size_t index) const {
-        return data[index / 8] & (1 << (index % 8));
+        return data_[index / 8] & (1 << (index % 8));
     }
 
     size_t count() const {
         size_t bitCount = 0;
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size_; ++i) {
             if (isSet(i)) {
                 ++bitCount;
             }
@@ -37,7 +46,7 @@ public:
 
     std::string toString() const {
         std::string result;
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size_; ++i) {
             result += isSet(i) ? '1' : '0';
             if ((i + 1) % 8 == 0) {
                 result += ' ';  // Add a space every 8 bits

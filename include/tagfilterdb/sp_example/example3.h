@@ -55,11 +55,10 @@ int sp_example3() {
     op.DIMENSION = 2;
     op.MAX_CHILD = 8;
     op.MIN_CHILD = 4;
-    op.PAGE_MAX_BYTES = 1024 * 8;
-    op.PAGE_MAX_NODES = 64;
+    op.PAGE_MAX_BYTES = 1024 * 4;
 
     MemTable m(op);
-    size_t size = 100000;
+    size_t size = 100;
     size_t range = 100000;
 
     auto manager = m.GetSPI()->GetBBManager();
@@ -78,7 +77,7 @@ int sp_example3() {
         double e = r.Uniform(range);
         double f = r.Uniform(range);
 
-        auto bb = manager->CreateBB({{std::min(a, b), std::max(a, b)}, 
+        auto bb = manager->CreateBox({{std::min(a, b), std::max(a, b)}, 
                                     {std::min(c, d), std::max(c, d)},
                                     {std::min(e, f), std::max(e, f)}});
         m.InsertSpiral(bb, &t);

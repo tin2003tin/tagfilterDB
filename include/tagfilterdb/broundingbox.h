@@ -60,10 +60,10 @@ template <class RangeType = double, class AreaType = double>
     using EDGE = std::pair<RangeType, RangeType>;
     using BB = BoundingBox<RangeType, AreaType>; 
 
-    EDGE* m_axis; ///< Stores the bounds for each dimension
+    EDGE* dims_; ///< Stores the bounds for each dimension
 
     BoundingBox() {
-        m_axis = nullptr;
+        dims_ = nullptr;
     }
 
     BoundingBox(size_t dimension, Arena *arena) {
@@ -71,11 +71,11 @@ template <class RangeType = double, class AreaType = double>
     }
 
     BoundingBox(BB &&other) noexcept
-        : m_axis(std::move(other.m_axis)) {}
+        : dims_(std::move(other.dims_)) {}
 
     BB& operator=(BB &&other) noexcept {
         if (this != &other) {
-            m_axis = std::move(other.m_axis);
+            dims_ = std::move(other.dims_);
         }
         return *this;
     }
@@ -86,7 +86,7 @@ template <class RangeType = double, class AreaType = double>
         assert(dimension > 0);
         assert(arena != nullptr);
         char* ptr = arena->AllocateAligned(sizeof(EDGE) * dimension);
-        m_axis = (EDGE*) ptr;
+        dims_ = (EDGE*) ptr;
     }
 };
 
@@ -99,31 +99,31 @@ class BBManager {
 
     friend BB;
     private: 
-        size_t m_dimension;
-        Arena* m_arena;
+        size_t dimension_;
+        Arena* arena_;
 
     public:    
-    BBManager(size_t d, Arena* arena) : m_dimension(d), m_arena(arena) {
-        assert(m_dimension > 0);
-        assert(m_arena != nullptr);
+    BBManager(size_t d, Arena* arena) : dimension_(d), arena_(arena) {
+        assert(dimension_ > 0);
+        assert(arena_ != nullptr);
     }
     
-    BB Copy(BB& b) {
-        BB t(m_dimension, m_arena);
-        CopyTo(b, t);
+    BB Copy(BB& box) {
+        BB t(dimension_, arena_);
+        CopyTo(box, t);
         return t;
     }
 
-    BB CreateBB() {
-        BB b(m_dimension, m_arena);
-        return b;
+    BB CreateBox() {
+        BB box(dimension_, arena_);
+        return box;
     }
 
-    BB CreateBB(std::vector<BB::EDGE> a_vec) {
-        if (a_vec.size() > m_dimension) {
-            a_vec.resize(m_dimension);
+    BB CreateBox(std::vector<BB::EDGE> a_vec) {
+        if (a_vec.size() > dimension_) {
+            a_vec.resize(dimension_);
         }
-        BB b = CreateBB();
+        BB b = CreateBox();
         for (std::size_t i_axis = 0; i_axis < a_vec.size(); i_axis++) {
             SetAxis(b, i_axis, a_vec[i_axis].first, a_vec[i_axis].second);
         }
@@ -132,67 +132,67 @@ class BBManager {
 
     void CopyTo(const BB &self, const BB &other) {
         if (&self != &other) {
-            for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-                other.m_axis[i_axis] = self.m_axis[i_axis];
+            for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+                other.dims_[i_axis] = self.dims_[i_axis];
             }
         }
     }
 
     bool Equal(const BB &self, const BB &other) {
-        for (std::size_t i_axis = 0; i_axis < m_dimension; i_axis++)
-            if (self.m_axis[i_axis].first != other.m_axis[i_axis].first ||
-                self.m_axis[i_axis].second != other.m_axis[i_axis].second)
+        for (std::size_t i_axis = 0; i_axis < dimension_; i_axis++)
+            if (self.dims_[i_axis].first != other.dims_[i_axis].first ||
+                self.dims_[i_axis].second != other.dims_[i_axis].second)
                 return false;
 
         return true;
     }
 
-    bool SetAxis(BB& b, int a_axis, RangeType a_start, RangeType a_end) {
-        if (a_axis < 0 || a_axis > m_dimension) {
+    bool SetAxis(BB& box, int a_axis, RangeType a_start, RangeType a_end) {
+        if (a_axis < 0 || a_axis > dimension_) {
             return false;
         }
         if (a_start > a_end) {
             return false;
         }
-        b.m_axis[a_axis] = std::make_pair(a_start, a_end);
+        box.dims_[a_axis] = std::make_pair(a_start, a_end);
         return true;
     }
    
-    bool SetAxis(BB& b,int a_axis, BB::EDGE a_edge) {
-            if (a_axis < 0 || a_axis > m_dimension) {
+    bool SetAxis(BB& box,int a_axis, BB::EDGE a_edge) {
+            if (a_axis < 0 || a_axis > dimension_) {
                 return false;
             }
 
-            b.m_axis[a_axis] = a_edge;
+            box.dims_[a_axis] = a_edge;
             return true;
     }
 
-    BB::EDGE Get(BB& b, size_t a_axis) const {
-       if (a_axis < 0 || a_axis > m_dimension) {
+    BB::EDGE Get(BB& box, size_t a_axis) const {
+       if (a_axis < 0 || a_axis > dimension_) {
             return {};
         }
-        return b.m_axis[a_axis];
+        return box.dims_[a_axis];
     }
 
     
-    double Min(BB& b,size_t a_axis) const {
-        if (a_axis < 0 || a_axis > m_dimension) {
+    double Min(BB& box,size_t a_axis) const {
+        if (a_axis < 0 || a_axis > dimension_) {
             return 0;
         }
-        return b.m_axis[a_axis].first;
+        return box.dims_[a_axis].first;
     }
 
-    double Max(BB& b,size_t a_axis) const {
-        if (a_axis < 0 || a_axis > m_dimension) {
+    double Max(BB& box,size_t a_axis) const {
+        if (a_axis < 0 || a_axis > dimension_) {
             return 0;
         }
-        return b.m_axis[a_axis].second;
+        return box.dims_[a_axis].second;
     }
 
     bool ContainsRange(const BB& self, const BB& other) const {
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            if (self.m_axis[i_axis].first > other.m_axis[i_axis].first || 
-                self.m_axis[i_axis].second < other.m_axis[i_axis].second) {
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            if (self.dims_[i_axis].first > other.dims_[i_axis].first || 
+                self.dims_[i_axis].second < other.dims_[i_axis].second) {
                 // If 'self' does not fully contain 'other' in this axis
                 return false;
             }
@@ -200,26 +200,26 @@ class BBManager {
         return true; // 'self' contains 'other' in all dimensions
     }
 
-    void Reset(BB& b, RangeType min = 0,
+    void Reset(BB& box, RangeType min = 0,
                RangeType max = std::numeric_limits<RangeType>::max()) {
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            b.m_axis[i_axis].first = min;
-            b.m_axis[i_axis].second = max;
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            box.dims_[i_axis].first = min;
+            box.dims_[i_axis].second = max;
         }
     }
 
-    double Area(BB& b) const {
+    double Area(BB& box) const {
         AreaType area = static_cast<AreaType>(1.0);
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            area *= (b.m_axis[i_axis].second - b.m_axis[i_axis].first);
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            area *= (box.dims_[i_axis].second - box.dims_[i_axis].first);
         }
         return area;
     }
 
     bool IsOverlap(const BB &self, const BB &other) const {
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            if (!(self.m_axis[i_axis].first < other.m_axis[i_axis].second) ||
-                !(other.m_axis[i_axis].first < self.m_axis[i_axis].second))
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            if (!(self.dims_[i_axis].first < other.dims_[i_axis].second) ||
+                !(other.dims_[i_axis].first < self.dims_[i_axis].second))
                 return false;
         }
 
@@ -228,11 +228,11 @@ class BBManager {
 
     AreaType OverlapArea(const BB &self, const BB &other) {
         AreaType area = static_cast<AreaType>(1.0);
-        for (std::size_t i_axis = 0; area && i_axis < m_dimension; ++i_axis) {
-            const RangeType t_x1 = self.m_axis[i_axis].first;
-            const RangeType t_x2 = self.m_axis[i_axis].second;
-            const RangeType t_y1 = other.m_axis[i_axis].first;
-            const RangeType t_y2 = other.m_axis[i_axis].second;
+        for (std::size_t i_axis = 0; area && i_axis < dimension_; ++i_axis) {
+            const RangeType t_x1 = self.dims_[i_axis].first;
+            const RangeType t_x2 = self.dims_[i_axis].second;
+            const RangeType t_y1 = other.dims_[i_axis].first;
+            const RangeType t_y2 = other.dims_[i_axis].second;
 
             if (t_x1 < t_y1) {
                 if (t_y1 < t_x2) {
@@ -257,41 +257,41 @@ class BBManager {
     }
 
     BB Intersection(const BB &self, const BB &other) {
-        BB t_intersect = CreateBB();
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            t_intersect.m_axis[i_axis].first =
-                std::max(self.m_axis[i_axis].first, other.m_axis[i_axis].first);
-            t_intersect.m_axis[i_axis].second = std::min(
-                self.m_axis[i_axis].second, other.m_axis[i_axis].second);
+        BB t_intersect = CreateBox();
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            t_intersect.dims_[i_axis].first =
+                std::max(self.dims_[i_axis].first, other.dims_[i_axis].first);
+            t_intersect.dims_[i_axis].second = std::min(
+                self.dims_[i_axis].second, other.dims_[i_axis].second);
         }
         return t_intersect;
     }
 
     BB Union(const BB &self, const BB &other) {
-        BB t_unionBox = CreateBB();
-        for (std::size_t i_axis = 0; i_axis < m_dimension; ++i_axis) {
-            t_unionBox.m_axis[i_axis].first =
-                std::min(self.m_axis[i_axis].first, other.m_axis[i_axis].first);
-            t_unionBox.m_axis[i_axis].second = std::max(
-                self.m_axis[i_axis].second, other.m_axis[i_axis].second);
+        BB t_unionBox = CreateBox();
+        for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            t_unionBox.dims_[i_axis].first =
+                std::min(self.dims_[i_axis].first, other.dims_[i_axis].first);
+            t_unionBox.dims_[i_axis].second = std::max(
+                self.dims_[i_axis].second, other.dims_[i_axis].second);
         }
         return t_unionBox;
     }
 
     BB Universe(RangeType min = 0,
              RangeType max = std::numeric_limits<int>::max()) {
-        BB t_bounds = CreateBB();
+        BB t_bounds = CreateBox();
         Reset(t_bounds, min, max);
         return t_bounds;
     }
 
-    std::string toString(const BB& b) const {
+    std::string toString(const BB& box) const {
         std::ostringstream oss;
         oss << "[";
-        for (std::size_t i = 0; i < m_dimension; ++i) {
+        for (std::size_t i = 0; i < dimension_; ++i) {
             if (i > 0)
                 oss << ", ";
-            oss << "(" << b.m_axis[i].first << ", " << b.m_axis[i].second << ")";
+            oss << "(" << box.dims_[i].first << ", " << box.dims_[i].second << ")";
         }
         oss << "]";
         return oss.str();

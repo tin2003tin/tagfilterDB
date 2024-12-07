@@ -93,7 +93,7 @@ public:
     void Sample(BBManager* bbm) const {
         std::cout << "Sample Callback Results:" << std::endl;
         for (int i = 0; i < 5 && i < v.size(); i++) {
-            std::cout << bbm->toString(*v[i].bb) << (*v[i].data)->ToString() << std::endl;
+            std::cout << bbm->toString(*v[i].box) << (*v[i].data)->ToString() << std::endl;
         }
     }
 };
@@ -118,7 +118,7 @@ int sp_example2() {
     };
 
     for (auto& loc : locations) {
-        auto locVE = manager->CreateBB(loc.getLocation());
+        auto locVE = manager->CreateBox(loc.getLocation());
         m.InsertSpiral(locVE, &loc);
     }
 

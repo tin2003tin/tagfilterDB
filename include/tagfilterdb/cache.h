@@ -83,13 +83,13 @@ class LRUCache {
      */
     class CacheMux {
         protected:
-        std::mutex* _mux;
+        std::mutex* mux_;
         CacheMux(std::mutex* mux) {
-            this->_mux = mux;
-            _mux->lock();
+            this->mux_ = mux;
+            mux_->lock();
         }
         ~CacheMux() {
-            _mux->unlock();
+            mux_->unlock();
         }
 
         friend LRUCache;
@@ -101,11 +101,11 @@ class LRUCache {
      */
     class BucketNode {
         protected:
-        BucketNode* m_next; ///< Pointer to the next node in the bucket.
-        BucketNode* m_lNext; ///< Pointer to the next node in the LRU list.
-        BucketNode* m_lPrev; ///< Pointer to the previous node in the LRU list.
+        BucketNode* next_; ///< Pointer to the next node in the bucket.
+        BucketNode* lNext_; ///< Pointer to the next node in the LRU list.
+        BucketNode* lPrev_; ///< Pointer to the previous node in the LRU list.
 
-        BucketNode() : m_next(nullptr), m_lNext(nullptr), m_lPrev(nullptr) {}
+        BucketNode() : next_(nullptr), lNext_(nullptr), lPrev_(nullptr) {}
         virtual ~BucketNode() = default;
 
         friend LRUCache;
@@ -118,9 +118,9 @@ class LRUCache {
     class Referenceable
     {
         protected:
-        size_t m_ref; ///< Reference count for the node.
+        size_t ref_; ///< Reference count for the node.
 
-        Referenceable() : m_ref(1) {}
+        Referenceable() : ref_(1) {}
 
         friend LRUCache;
     };
@@ -131,13 +131,13 @@ class LRUCache {
      */
     class BucketValueNode final : public BucketNode, public Referenceable, public BaseNode {
         protected:
-        std::string m_key; ///< The key of the cache item.
-        uint32_t m_hash;
-        Value m_value; ///< The value of the cache item.
-        size_t m_charge; ///< The charge (size) of the cache item.
+        std::string key_; ///< The key of the cache item.
+        uint32_t hash_;
+        Value value_; ///< The value of the cache item.
+        size_t charge_; ///< The charge (size) of the cache item.
 
         BucketValueNode(std::string key, Value value, size_t charge,uint32_t hash) : 
-        m_key(key), m_value(value), m_charge(charge), m_hash(hash) {
+        key_(key), value_(value), charge_(charge), hash_(hash) {
     }       
         public:
         /**
@@ -146,7 +146,7 @@ class LRUCache {
          */
         Value getValue() {
             assert(this);
-            return m_value; 
+            return value_; 
         }
 
          /**
@@ -155,25 +155,25 @@ class LRUCache {
          */
         std::string getKey() {
             assert(this);
-            return m_key;
+            return key_;
         }
 
         friend LRUCache;
     };
     private: 
-    BucketNode* m_data; ///< Array of bucket nodes to store the cache data.
-    size_t m_cap; ///< The capacity of the cache.
-    size_t m_size; ///< The current size of the cache.
-    size_t m_total_charge; ///< The total charge available for the cache.
-    size_t m_total_usage; ///< The total usage of cache space.
+    BucketNode* data_; ///< Array of bucket nodes to store the cache data.
+    size_t cap_; ///< The capacity of the cache.
+    size_t size_; ///< The current size of the cache.
+    size_t total_charge_; ///< The total charge available for the cache.
+    size_t total_usage_; ///< The total usage of cache space.
 
-    BucketNode* m_inUsed_head; ///< Head of the LRU "in-use" list.
-    BucketNode* m_inUsed_tail; ///< Tail of the LRU "in-use" list.
+    BucketNode* inUsed_head_; ///< Head of the LRU "in-use" list.
+    BucketNode* inUsed_tail_; ///< Tail of the LRU "in-use" list.
 
-    BucketNode* m_outdated_head; ///< Head of the LRU "outdated" list.
-    BucketNode* m_outdated_tail; ///< Tail of the LRU "outdated" list.
+    BucketNode* outdated_head_; ///< Head of the LRU "outdated" list.
+    BucketNode* outdated_tail_; ///< Tail of the LRU "outdated" list.
     
-    std::mutex m_mux; ///< Mutex used to synchronize cache access.
+    std::mutex mux_; ///< Mutex used to synchronize cache access.
 
     public: 
     
@@ -197,19 +197,19 @@ class LRUCache {
      * @brief Destructor that cleans up the allocated memory.
      */
     ~LRUCache() { 
-        for (size_t i = 0 ; i < m_cap; i++) {
-            BucketNode* curr = m_data[i].m_next;
+        for (size_t i = 0 ; i < cap_; i++) {
+            BucketNode* curr = data_[i].next_;
             while (curr != nullptr) {
-                BucketNode* next = curr->m_next;
+                BucketNode* next = curr->next_;
                 delete curr;
                 curr = next;
             }
         }
-        delete []m_data;
-        delete m_outdated_head;
-        delete m_outdated_tail;
-        delete m_inUsed_head;
-        delete m_inUsed_tail;
+        delete []data_;
+        delete outdated_head_;
+        delete outdated_tail_;
+        delete inUsed_head_;
+        delete inUsed_tail_;
     } 
 
     /**
@@ -217,7 +217,7 @@ class LRUCache {
      * @param charge The new total charge for the cache.
      */
     void SetCharge(size_t charge) {
-        m_total_charge = charge;
+        total_charge_ = charge;
     }
 
     /** 
@@ -241,55 +241,55 @@ class LRUCache {
      * @return A pointer to the inserted cache node.
      */
     BucketValueNode* Insert(std::string key, Value value,uint32_t hash, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        if (charge > m_total_charge) {
+        if (charge > total_charge_) {
             return nullptr;
         }
         assert(charge > 0);
 
-        CacheMux m(&m_mux);
+        CacheMux m(&mux_);
 
         if (isExpand()) {
-            expand(m_cap * LRUConfig::DEFAULT_CAHCE_EXPAND);
+            expand(cap_ * LRUConfig::DEFAULT_CAHCE_EXPAND);
         }
 
         BucketValueNode* newNode =  new BucketValueNode(key,value,charge,hash);
 
-        size_t index = hash % m_cap;
-        BucketNode* prev = &m_data[index];
+        size_t index = hash % cap_;
+        BucketNode* prev = &data_[index];
 
-        while (prev != nullptr && prev->m_next != nullptr)
+        while (prev != nullptr && prev->next_ != nullptr)
         {
-            if (((BucketValueNode* )(prev->m_next))->m_key == key) {
+            if (((BucketValueNode* )(prev->next_))->key_ == key) {
                 break;
             }
-            prev = prev->m_next;
+            prev = prev->next_;
         }
-        if (prev->m_next == nullptr) {
-            prev->m_next = newNode;
-            m_size++;
+        if (prev->next_ == nullptr) {
+            prev->next_ = newNode;
+            size_++;
         } else {
             // The key already existed
-            newNode->m_next = prev->m_next->m_next;
+            newNode->next_ = prev->next_->next_;
 
-            removeList(prev->m_next);
-            m_total_usage -= ((BucketValueNode* )(prev->m_next))->m_charge;
-            delete prev->m_next;
+            removeList(prev->next_);
+            total_usage_ -= ((BucketValueNode* )(prev->next_))->charge_;
+            delete prev->next_;
 
-            prev->m_next = newNode;
+            prev->next_ = newNode;
         }
 
         // Remove in OutDated List if excess a total charge
-        while (m_total_usage + charge > m_total_charge 
-               && m_outdated_tail->m_lPrev != m_outdated_head) {
-            bool s = removeNode(((BucketValueNode* )(m_outdated_head->m_lNext))->m_key);
+        while (total_usage_ + charge > total_charge_ 
+               && outdated_tail_->lPrev_ != outdated_head_) {
+            bool s = removeNode(((BucketValueNode* )(outdated_head_->lNext_))->key_);
             assert(s);
         }
 
-        appendToList(newNode, m_inUsed_tail);
-        m_total_usage += charge;
+        appendToList(newNode, inUsed_tail_);
+        total_usage_ += charge;
 
-        assert(m_total_usage > 0);
-        assert(m_total_usage <= m_total_charge);
+        assert(total_usage_ > 0);
+        assert(total_usage_ <= total_charge_);
         ref(newNode);
         return newNode;
     }
@@ -300,7 +300,7 @@ class LRUCache {
      * @return True if the item was successfully removed, false otherwise.
      */
     bool Remove(std::string key) {
-       CacheMux m(&m_mux);
+       CacheMux m(&mux_);
        return removeNode(key);
     }
 
@@ -310,17 +310,17 @@ class LRUCache {
      * @return A pointer to the cache node if found, nullptr otherwise.
      */
     BucketValueNode* Get(std::string key) {
-        CacheMux m(&m_mux);
+        CacheMux m(&mux_);
 
         uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        size_t index = hash % m_cap;
-        BucketValueNode* curr = (BucketValueNode*)  m_data[index].m_next;
+        size_t index = hash % cap_;
+        BucketValueNode* curr = (BucketValueNode*)  data_[index].next_;
         while (curr != nullptr) {
-            if (curr->m_key == key) {
+            if (curr->key_ == key) {
                 ref(curr);
                 return curr;
             }
-            curr = (BucketValueNode*) curr->m_next;
+            curr = (BucketValueNode*) curr->next_;
         }
         return nullptr;
     }
@@ -329,11 +329,11 @@ class LRUCache {
      * @brief Prunes the cache by removing all outdated nodes.
      */
     void Prune() {
-        BucketNode* curr = m_outdated_head->m_lNext;
-        while (curr != m_outdated_tail) {
-            BucketNode* next = curr->m_lNext;
-            assert((((BucketValueNode *) curr)->m_ref == 1));
-            bool s = removeNode(((BucketValueNode *)curr)->m_key);
+        BucketNode* curr = outdated_head_->lNext_;
+        while (curr != outdated_tail_) {
+            BucketNode* next = curr->lNext_;
+            assert((((BucketValueNode *) curr)->ref_ == 1));
+            bool s = removeNode(((BucketValueNode *)curr)->key_);
             assert(s);
             curr = next;
         }
@@ -353,13 +353,13 @@ class LRUCache {
      * @brief Prints the current state of the cache.
      */
     void Print() const {
-        for (size_t i = 0; i < m_cap; i++) {
+        for (size_t i = 0; i < cap_; i++) {
             std::cout << i << " ";
-            BucketValueNode* curr = (BucketValueNode*)  m_data[i].m_next;
+            BucketValueNode* curr = (BucketValueNode*)  data_[i].next_;
             while (curr != nullptr)
             {
-                std::cout << "("<< curr->m_key << ", " << curr->m_value << ", " << curr->m_charge<< ", " << curr->m_ref <<  ") ";
-                curr =  (BucketValueNode*) curr->m_next;
+                std::cout << "("<< curr->key_ << ", " << curr->value_ << ", " << curr->charge_<< ", " << curr->ref_ <<  ") ";
+                curr =  (BucketValueNode*) curr->next_;
             }
             std::cout << std::endl;
         }
@@ -370,7 +370,7 @@ class LRUCache {
      * @return The total charge.
      */
     size_t TotalCharge() const {
-        return m_total_charge;
+        return total_charge_;
     }
 
      /**
@@ -378,20 +378,20 @@ class LRUCache {
      * @return The total usage.
      */
     size_t TotalUsage() const {
-        return m_total_usage;
+        return total_usage_;
     }
 
      /**
      * @brief Prints the nodes in the "outdated" list.
      */
     void PrintOutDated() const {
-        BucketNode* curr = m_outdated_head->m_lNext;
+        BucketNode* curr = outdated_head_->lNext_;
         std::cout << "OutDated: ";
-        while (curr != m_outdated_tail)
+        while (curr != outdated_tail_)
         {
             BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->m_key << ", "  << node->m_value << ") ";
-            curr = curr->m_lNext;
+            std::cout << "(" << node->key_ << ", "  << node->value_ << ") ";
+            curr = curr->lNext_;
         }
         std::cout << std::endl;
     }
@@ -400,13 +400,13 @@ class LRUCache {
      * @brief Prints the nodes in the "in-use" list.
      */
      void PrintInUsed() const {
-        BucketNode* curr = m_inUsed_head->m_lNext;
+        BucketNode* curr = inUsed_head_->lNext_;
         std::cout << "InUsed: ";
-        while (curr != m_inUsed_tail)
+        while (curr != inUsed_tail_)
         {
             BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->m_key << ", "  << node->m_value << ") ";
-            curr = curr->m_lNext;
+            std::cout << "(" << node->key_ << ", "  << node->value_ << ") ";
+            curr = curr->lNext_;
         }
         std::cout << std::endl;
     }
@@ -416,10 +416,10 @@ class LRUCache {
      */
     void Detail() const {
         std::cout << "Detail:" << std::endl;
-        std::cout << "- Capacity: " << m_cap << std::endl;
-        std::cout << "- Size: " << m_size << std::endl;
-        std::cout << "- Total Charge: " << m_total_charge << std::endl;
-        std::cout << "- Total Usage: " << m_total_usage << std::endl;
+        std::cout << "- Capacity: " << cap_ << std::endl;
+        std::cout << "- Size: " << size_ << std::endl;
+        std::cout << "- Total Charge: " << total_charge_ << std::endl;
+        std::cout << "- Total Usage: " << total_usage_ << std::endl;
     }
 
      /**
@@ -431,7 +431,7 @@ class LRUCache {
         if (node == nullptr) {
             return Value();
         }
-        return ((BucketValueNode *) node)->m_value;
+        return ((BucketValueNode *) node)->value_;
     }
 
     /**
@@ -443,7 +443,7 @@ class LRUCache {
         if (node == nullptr) {
             return "";
         }
-        return node->m_key;
+        return node->key_;
     }
 
 
@@ -452,49 +452,49 @@ class LRUCache {
             assert(cap > 0);
             assert(total_charge > 0);
 
-            m_data = new BucketNode[cap];
-            m_cap = cap;
-            m_size = 0;
-            m_total_charge = total_charge;
-            m_total_usage = 0;
+            data_ = new BucketNode[cap];
+            cap_ = cap;
+            size_ = 0;
+            total_charge_ = total_charge;
+            total_usage_ = 0;
 
-            m_outdated_head = new BucketNode;
-            m_outdated_tail = new BucketNode;
-            m_outdated_head->m_lNext = m_outdated_tail;
-            m_outdated_head->m_lPrev = m_outdated_tail;
-            m_outdated_tail->m_lNext = m_outdated_head;
-            m_outdated_tail->m_lPrev = m_outdated_head;
+            outdated_head_ = new BucketNode;
+            outdated_tail_ = new BucketNode;
+            outdated_head_->lNext_ = outdated_tail_;
+            outdated_head_->lPrev_ = outdated_tail_;
+            outdated_tail_->lNext_ = outdated_head_;
+            outdated_tail_->lPrev_ = outdated_head_;
 
-            m_inUsed_head = new BucketNode;
-            m_inUsed_tail = new BucketNode;
-            m_inUsed_head->m_lNext = m_inUsed_tail;
-            m_inUsed_head->m_lPrev = m_inUsed_tail;
-            m_inUsed_tail->m_lNext = m_inUsed_head;
-            m_inUsed_tail->m_lPrev = m_inUsed_head;
+            inUsed_head_ = new BucketNode;
+            inUsed_tail_ = new BucketNode;
+            inUsed_head_->lNext_ = inUsed_tail_;
+            inUsed_head_->lPrev_ = inUsed_tail_;
+            inUsed_tail_->lNext_ = inUsed_head_;
+            inUsed_tail_->lPrev_ = inUsed_head_;
         }
 
         void ref(BucketValueNode *refNode) {
-            assert(refNode->m_ref >= 1);
-            refNode->m_ref++;
-            if (refNode->m_ref == 2) {
+            assert(refNode->ref_ >= 1);
+            refNode->ref_++;
+            if (refNode->ref_ == 2) {
                  removeList(refNode);
-                appendToList(refNode, m_inUsed_tail);
+                appendToList(refNode, inUsed_tail_);
             }
         }
 
         void unref(BucketValueNode *refNode) {
-            assert(refNode->m_ref >= 1);
-            refNode->m_ref--;
-            if (refNode->m_ref == 1) {
+            assert(refNode->ref_ >= 1);
+            refNode->ref_--;
+            if (refNode->ref_ == 1) {
                 removeList(refNode);
-                appendToList(refNode, m_outdated_tail);
-            } else if (refNode->m_ref == 0) {
-                removeNode(refNode->m_key);
+                appendToList(refNode, outdated_tail_);
+            } else if (refNode->ref_ == 0) {
+                removeNode(refNode->key_);
             }
         }
 
         bool isExpand() {
-            return m_cap * LRUConfig::DEFAULT_CACHE_RATIO <  m_size;
+            return cap_ * LRUConfig::DEFAULT_CACHE_RATIO <  size_;
         }
 
         bool isBucketValueNode(BucketNode* node) {
@@ -504,44 +504,44 @@ class LRUCache {
         void expand(size_t newCap) {
             BucketNode* newLoc = new BucketNode[newCap];    
             // rehash
-            for (size_t i = 0 ; i < m_cap; i++) {
-                BucketValueNode* curr = (BucketValueNode*) m_data[i].m_next;
+            for (size_t i = 0 ; i < cap_; i++) {
+                BucketValueNode* curr = (BucketValueNode*) data_[i].next_;
                 while (curr != nullptr) {
-                    BucketValueNode* next = (BucketValueNode*)  curr->m_next;
-                    curr->m_next = nullptr;
-                    size_t index = support::MurmurHash::Hash(curr->m_key.data(),curr->m_key.size(),0) % newCap;  
-                    if (newLoc[index].m_next == nullptr) {
-                        newLoc[index].m_next = curr;
+                    BucketValueNode* next = (BucketValueNode*)  curr->next_;
+                    curr->next_ = nullptr;
+                    size_t index = support::MurmurHash::Hash(curr->key_.data(),curr->key_.size(),0) % newCap;  
+                    if (newLoc[index].next_ == nullptr) {
+                        newLoc[index].next_ = curr;
                     } else {
-                        BucketNode* b = newLoc[index].m_next;
-                        while (b->m_next != nullptr)
+                        BucketNode* b = newLoc[index].next_;
+                        while (b->next_ != nullptr)
                         {
-                            b= b->m_next;
+                            b= b->next_;
                         }
-                        b->m_next = curr;
+                        b->next_ = curr;
                     }
                     curr = next;
                 }
             }
-            delete[] m_data;
-            m_data = newLoc;
-            m_cap = newCap;
+            delete[] data_;
+            data_ = newLoc;
+            cap_ = newCap;
         }
 
         bool removeNode(std::string key) {
-            size_t index = support::MurmurHash::Hash(key.data(),key.size(),0) % m_cap;  
-            BucketValueNode* curr = (BucketValueNode*)  m_data[index].m_next;
-            BucketNode* prev = &m_data[index];
-            while (curr != nullptr && curr->m_key != key) {
+            size_t index = support::MurmurHash::Hash(key.data(),key.size(),0) % cap_;  
+            BucketValueNode* curr = (BucketValueNode*)  data_[index].next_;
+            BucketNode* prev = &data_[index];
+            while (curr != nullptr && curr->key_ != key) {
                     prev = curr;
-                    curr = (BucketValueNode*)  curr->m_next;
+                    curr = (BucketValueNode*)  curr->next_;
             } 
             if (curr == nullptr) {
                 return false;
             }
-            m_total_usage -= curr->m_charge; 
-            m_size--;
-            prev->m_next = curr->m_next;
+            total_usage_ -= curr->charge_; 
+            size_--;
+            prev->next_ = curr->next_;
             removeList(curr);
             delete curr;
             return true;
@@ -549,25 +549,25 @@ class LRUCache {
 
         void appendToList(BucketNode* node, BucketNode* tail) {
             assert(node != nullptr);
-            BucketNode* prev = tail->m_lPrev;
-            node->m_lNext = tail;
-            node->m_lPrev = prev;
-            prev->m_lNext = node;
-            tail->m_lPrev = node;
+            BucketNode* prev = tail->lPrev_;
+            node->lNext_ = tail;
+            node->lPrev_ = prev;
+            prev->lNext_ = node;
+            tail->lPrev_ = node;
         }
 
         void removeList(BucketNode* node) {
             assert(node != nullptr);
-            if (node->m_lNext == nullptr && node->m_lPrev == nullptr) {
+            if (node->lNext_ == nullptr && node->lPrev_ == nullptr) {
                 return;
             }
-            BucketNode* next = node->m_lNext;                
-            BucketNode* prev = node->m_lPrev;
-            prev->m_lNext = next;
-            next->m_lPrev = prev;
+            BucketNode* next = node->lNext_;                
+            BucketNode* prev = node->lPrev_;
+            prev->lNext_ = next;
+            next->lPrev_ = prev;
 
-            node->m_lNext = nullptr;
-            node->m_lPrev = nullptr;
+            node->lNext_ = nullptr;
+            node->lPrev_ = nullptr;
         }
 };
 
@@ -602,7 +602,7 @@ class ShareLRUCache {
     private :
     LRUCache<Value>* m_caches; ///< Array of LRUCache instances.
     size_t m_count; ///< Number of LRUCache instances.
-    size_t m_total_charge; ///< Total charge shared among caches.
+    size_t total_charge_; ///< Total charge shared among caches.
 
      static uint32_t Shard(uint32_t hash) { return hash >> (32 - ShareLRUConfig::DEFAULT_SHARECACHE_BIT); }
 
@@ -618,7 +618,7 @@ class ShareLRUCache {
         for (size_t i = 0 ; i < m_count; i++) {
         m_caches[i].SetCharge((charge + m_count - 1) / m_count);
         }
-        m_total_charge = charge;
+        total_charge_ = charge;
     }  
 
     /**
@@ -689,7 +689,7 @@ class ShareLRUCache {
      * @brief Prints detailed information about the shared cache and its individual caches.
      */
     void Detail() {
-        std::cout << "Total Charge: " << m_total_charge << std::endl; 
+        std::cout << "Total Charge: " << total_charge_ << std::endl; 
         std::cout << "Total Usage: " << TotalUsage() << std::endl; 
         for (size_t i = 0 ; i < m_count; i++) {
             std::cout <<"Cache: " << i + 1 << " =====" << std::endl;

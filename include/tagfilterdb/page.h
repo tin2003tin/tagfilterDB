@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 namespace tagfilterdb {
-    class PageManager;
+    class PageNodeManager;
     constexpr size_t MINIMUM_FILE_BYTES = 1; 
 
     using PageIDType = long;
@@ -16,31 +16,48 @@ namespace tagfilterdb {
 
     class Page {
     private:
-        PageIDType PageId_;            ///< Identifier for the page.
-        Bitset bitSet_;  ///< Bitmap for tracking free/used slots.
+        PageIDType PageId_;       ///< Identifier for the page.
+        Bitset bitSet_;           ///< Bitmap for tracking free/used slots.
         char* page_;              ///< Pointer to the raw page data.
 
         CheckSumType checksum_;      ///< Checksum for verifying page integrity.
 
-        size_t maxBytes_;
+        size_t nodeSize_;
         size_t maxNode_;
+        size_t maxPageBytes_;
 
-        friend PageManager;
+        friend PageNodeManager;
     public:
         /// Constructor
-        Page(long pageId, size_t maxBytes, size_t maxNode) : PageId_(pageId), checksum_(0), 
-            maxBytes_(maxBytes), maxNode_(maxNode), bitSet_(maxNode)  {
-            page_ = new char[maxBytes_];
-            std::memset(page_, 0, maxBytes_); ///< Initialize all bytes to zero.
+        Page(long pageId, size_t maxPageBytes, size_t nodeSize_) : 
+            PageId_(pageId), checksum_(0), 
+            maxPageBytes_(maxPageBytes), nodeSize_(nodeSize_) {
+            page_ = new char[maxPageBytes];
+            std::memset(page_, 0, maxPageBytes); 
+
+            setup();
+        }
+
+        void setup() {
+            size_t pageIDSize = sizeof(PageIDType);
+            size_t CheckSumSize = sizeof(CheckSumType);
+            maxNode_ = maxPageBytes_ / nodeSize_;
+            size_t bitsetSize = (maxNode_ + 7) / 8;
+            if (maxPageBytes_ - maxNode_ * nodeSize_ < 
+                pageIDSize + CheckSumSize + bitsetSize) {
+                    maxNode_--;
+            }
+            bitSet_.Setup(maxNode_);
         }
 
         size_t getMetaDataSize() const {
-            return sizeof(PageIDType) + sizeof(CheckSumType) + (maxNode_ + 7) / 8;
+           
+            return  sizeof(PageIDType) + sizeof(CheckSumType) + (maxNode_ + 7) / 8;
         }
 
         /// Find the first free offset using the bitmap
-        int findFreeSlot(size_t size) const {
-            for (size_t i = 0; i < maxNode_ && i < (maxBytes_ - getMetaDataSize()) / size; ++i) {
+        int findFreeSlot() const {
+            for (size_t i = 0; i < maxNode_ && i < (maxPageBytes_ - getMetaDataSize()) / nodeSize_; ++i) {
                 if (!bitSet_.isSet(i)) {
                     return i;
                 }
@@ -73,20 +90,20 @@ namespace tagfilterdb {
         }
 
         /// Set data in the page at a specific offset
-        void SetData(size_t offset, const char* data, size_t size) {
-            if (offset + size > maxBytes_ - getMetaDataSize()) {
+        void SetData(size_t offset, const char* data) {
+            if (offset + nodeSize_ > maxPageBytes_ - getMetaDataSize()) {
                 throw std::out_of_range("Data exceeds page bounds.");
             }
-            std::memcpy(page_ + offset, data, size);
+            std::memcpy(page_ + offset, data, nodeSize_);
             UpdateChecksum(); ///< Recompute checksum after modifying data.
         }
 
         /// Get data from the page at a specific offset
-        void GetData(size_t offset, char* buffer, size_t size) const {
-            if (offset + size > maxBytes_ - getMetaDataSize()) {
+        void GetData(size_t offset, char* buffer) const {
+            if (offset + nodeSize_ > maxPageBytes_ - getMetaDataSize()) {
                 throw std::out_of_range("Data exceeds page bounds.");
             }
-            std::memcpy(buffer, page_ + offset, size);
+            std::memcpy(buffer, page_ + offset, nodeSize_);
         }
 
         char* GetData(size_t offset) {
@@ -96,7 +113,7 @@ namespace tagfilterdb {
         /// Compute the checksum for the page
         uint32_t ComputeChecksum() const {
             std::hash<std::string> hasher;  // Use std::string instead of std::string_view
-            return static_cast<uint32_t>(hasher(std::string(page_, maxBytes_ - getMetaDataSize())));  // Convert to std::string
+            return static_cast<uint32_t>(hasher(std::string(page_, maxPageBytes_ - getMetaDataSize())));  // Convert to std::string
         }
 
         /// Update the checksum
@@ -116,8 +133,8 @@ namespace tagfilterdb {
         }
 
         /// Calculate the byte offset for a given slot index and slot size
-        size_t GetOffset(size_t slot, size_t slotSize) const {
-            return (slot) * slotSize;
+        size_t GetSlot(size_t offset) const {
+            return (offset) / nodeSize_;
         }
 
         /// Get the page ID
@@ -136,26 +153,27 @@ namespace tagfilterdb {
         }
     };
 
-    class PageManager {
+    class PageNodeManager {
     private:
         std::vector<Page> pages;    ///< Vector to store all the pages.
-        size_t maxBytes_;
-        size_t maxNode_;
 
+        size_t nodeSize_;
+        size_t maxPageBytes_;
+        
         long nextPageId_;           ///< Page ID for the next page to be allocated.
     friend Page;
     public:
         /// Constructor
-        PageManager(size_t maxBytes, size_t maxNode) : nextPageId_(1), maxNode_(maxNode) {  // Start with page ID 1.
+        PageNodeManager(size_t maxBytes, size_t nodeSize) : nextPageId_(1), nodeSize_(nodeSize) {  // Start with page ID 1.
             if (maxBytes < MINIMUM_FILE_BYTES) {
                 maxBytes = MINIMUM_FILE_BYTES;
             }
-            maxBytes_ = maxBytes;
+            maxPageBytes_ = maxBytes;
 
-            pages.push_back(Page(nextPageId_, maxBytes_, maxNode_));  // Initialize the first page.
+            pages.push_back(Page(nextPageId_, maxPageBytes_, nodeSize_));  // Initialize the first page.
         }
 
-        ~PageManager() {
+        ~PageNodeManager() {
             for (auto& p : pages) {
                 delete []p.page_;
                 delete []p.bitSet_.data;
@@ -163,17 +181,17 @@ namespace tagfilterdb {
         }
 
         /// Allocate a page
-        Page* AllocatePage(long pageID, size_t size) {
+        Page* AllocatePage(long pageID) {
             // If the requested pageID is larger than the current pages, we must add a new page.
             if (pageID > pages.size()) {
-                pages.push_back(Page(pageID, maxBytes_, maxNode_));  // Create a new page
+                pages.push_back(Page(pageID, maxPageBytes_, nodeSize_));  // Create a new page
                 nextPageId_ = pageID + 1;  // Update the nextPageId_ for future allocations
             }
 
             // Loop through the pages to find the first available page with free slots
             while (pageID <= pages.size()) {
                 Page& targetPage = pages[pageID - 1];
-                if (targetPage.findFreeSlot(size) != -1) { // Check if there's a free slot
+                if (targetPage.findFreeSlot() != -1) { // Check if there's a free slot
                     return &targetPage;
                 }
                 // If no free slots, increment the pageID
@@ -181,26 +199,25 @@ namespace tagfilterdb {
             }
 
             // If no available page found, create a new page and update nextPageId_
-            pages.push_back(Page(++nextPageId_, maxBytes_, maxNode_));
+            pages.push_back(Page(++nextPageId_, maxPageBytes_, nodeSize_));
             return &pages.back();
         }
 
-        /// Assign a free slot in a page
-        std::pair<long, int> Assign(long pageID, size_t size) {
-            Page* page = AllocatePage(pageID, size);  // Ensure page exists or is created
+        std::pair<long, int> Assign(long pageID) {
+            Page* page = AllocatePage(pageID);  
 
-            int slot = page->findFreeSlot(size);    // Find the first free slot
-            page->allocateSlot(slot);           // Allocate that slot
+            int slot = page->findFreeSlot();    
+            page->allocateSlot(slot);       
+            int offset = slot * nodeSize_;
 
-            return {page->GetPageId(), slot};   // Return the page ID and slot number
+            return {page->GetPageId(), offset};  
         }
 
-        /// Get a page by its ID
         Page* getPage(long pageID) {
             if (pageID <= pages.size()) {
-                return &pages[pageID - 1];  // Return the page if it exists
+                return &pages[pageID - 1];  
             }
-            return nullptr;  // Return nullptr if the page does not exist
+            return nullptr;
         }
 
         /// Print information about all pages

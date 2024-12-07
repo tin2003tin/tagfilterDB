@@ -27,8 +27,8 @@
  */
 
 
-#ifndef STORAGE_LEVELDB_UTIL_ARENA_H_
-#define STORAGE_LEVELDB_UTIL_ARENA_H_
+#ifndef TAGFILTERDB_ARENA_H_
+#define TAGFILTERDB_ARENA_H_
 
 #include <atomic>
 #include <cassert>
@@ -91,12 +91,6 @@ inline char* Arena::Allocate(size_t bytes) {
   return AllocateFallback(bytes);
 }
 
-}  // namespace leveldb
-
-
-
-namespace tagfilterdb {
-
 static const int kBlockSize = 4096;
 
 Arena::Arena()
@@ -156,7 +150,7 @@ char* Arena::AllocateNewBlock(size_t block_bytes) {
 
 }  // namespace leveldb
 
-#endif  // STORAGE_LEVELDB_UTIL_ARENA_H_
+#endif  // TAGFILTERDB_ARENA_H_
 
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
