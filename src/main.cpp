@@ -60,13 +60,15 @@ std::pair<long,int> Move(PageHeapManager* pageManager, int m) {
 }
 
 
-void RandomTestCase(PageHeapManager& pageManager, int numOperations) {
-    std::srand(0); // Seed randomness
+void RandomTestCase(int seed, PageHeapManager& pageManager, int numOperations) {
+    std::srand(seed); // Seed randomness
 
     for (int i = 0; i < numOperations; ++i) {
-        int operation = std::rand() % 2; // 0: Add record, 1: Free record
 
-        if (operation == 0) {
+        int operation = std::rand() % 3; // 0: Add record, 1: Free record
+
+        if (operation != 0) {
+            std::cout << "Trying to add.....\n";
             // Add a random record
             json data;
             data["name"] = "User " + std::to_string(i + 1);
@@ -77,6 +79,7 @@ void RandomTestCase(PageHeapManager& pageManager, int numOperations) {
             std::string jsonString = data.dump();
         std::cout << "Added: " << jsonString << " " << jsonString.size() << "\n";
         } else {
+             std::cout << "Trying to delete.....\n";
             // Free a random record using the iterator
             auto iter = pageManager.begin();
             int count = pageManager.TotalCount();
@@ -87,6 +90,7 @@ void RandomTestCase(PageHeapManager& pageManager, int numOperations) {
 
             int rn = std::rand();
             int skip =  rn % count; // Random record to free
+            std::cout << "Skip: "<<  skip << std::endl; 
             for (int j = 0; j < skip && iter != pageManager.end(); ++j) {
                 ++iter;
             }
@@ -97,55 +101,18 @@ void RandomTestCase(PageHeapManager& pageManager, int numOperations) {
                 std::cout << "Freed record at PageID: " << loc.first << ", Offset: " << loc.second << "\n";
             }
         }
-        pageManager.PrintPageInfo();
     }
+
+    pageManager.PrintPageInfo();
 }
 
 int main() {
-    PageHeapManager pageManager(1024 * 4); // Initialize PageHeapManager with 4KB pages
+    int numOperations = 6315;
 
-    int numOperations = 100; // Total number of operations to simulate
-
-    RandomTestCase(pageManager, numOperations);
-
+    PageHeapManager pageManager(1024 * 4);
+    RandomTestCase(5, pageManager, numOperations);
     std::cout << "\n=== Final Scan ===\n";
     Scan(&pageManager);
 
     return 0;
 }
-
-// int main() {
-//     PageHeapManager pageManager(1024 * 4);
-
-// for (int i = 0; i < 100; ++i) {
-//     if (i == 6247) {
-//         int temp = 0;
-//         temp++;
-//     }
-//         json data;
-//         data["name"] = "User " +  std::to_string(i+1);
-//         data["age"] = 20 + i;
-//         data["gpx"] = 3.0 + (i * 0.1);
-
-//         SetJson(&pageManager, data);
-//     }
-
-// //    auto m = Move(&pageManager, 85);
-// //    pageManager.FreeData(m.first, m.second);
-
-//    auto m = Move(&pageManager, 0);
-//    pageManager.FreeData(m.first, m.second);
-
-//    Scan(&pageManager); 
-
-//     json data;
-//     data["name"] = "Tin";
-//     data["age"] = 21;
-
-//     std::cout << "==========================\n";
-//     SetJson(&pageManager, data);
-
-//     Scan(&pageManager); 
-
-//    return 0;
-// }

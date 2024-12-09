@@ -14,14 +14,17 @@ namespace tagfilterdb {
     class PageHeapManager;
     constexpr size_t MINIMUM_FILE_BYTES = 1; 
     constexpr int MIN_SIZE = 2 + 4;
+    constexpr int FREE_LIST_SIZE = 50;
 
     using PageIDType = long;
     using OffsetType = int;
     
+    #pragma pack(1)
     struct Flag {
         bool flagAssigned;
         bool flagIsAppend;
     };
+    #pragma pack()
 
    struct JsonRecord {
         Flag flag_;
@@ -64,23 +67,25 @@ namespace tagfilterdb {
         size_t maxPageBytes_;
         OffsetType lastOffset_;
 
-        int dataCount_;
+        int blockSpace_;
+        int blockCount_;
 
         friend PageHeapManager;
     public:
-        int getMetaDataSize(int dataCount) {
-            return sizeof(PageIDType)                                   // for PageIDType
-                + sizeof(listSize)                                      // for List Size
-                + (sizeof(OffsetType) + sizeof(int)) *((dataCount)/ 2)  // for offsets of free space (worst case is half of the data)
-                + sizeof(OffsetType)                                    // for lastOffset
-                + sizeof(dataCount_)                                    // for dataCount
+        int getMetaDataSize() {
+            return sizeof(PageIDType)                                    // for PageIDType
+                + sizeof(listSize)                                       // for List Size
+                + (sizeof(OffsetType) + sizeof(int)) *((FREE_LIST_SIZE)) // for offsets of free space (worst case is half of the data)
+                + sizeof(OffsetType)                                     // for lastOffset
+                + sizeof(blockSpace_)                                    // for dataCount
+                + sizeof(blockCount_)  
                 ; 
         }
 
         PageHeap(PageIDType pageId, size_t maxPageBytes) : 
             PageId_(pageId), 
-            maxPageBytes_(maxPageBytes), dataCount_(0),
-            listSize(0) {
+            maxPageBytes_(maxPageBytes), blockSpace_(0),
+            listSize(0), blockCount_(0) {
             page_ = new char[maxPageBytes];
             std::memset(page_, 0, maxPageBytes); 
             lastOffset_ = 0;
@@ -90,7 +95,7 @@ namespace tagfilterdb {
             freeListH_->prev_ = freeListH_;
 
             // Init First Free List with Size = MaxBytes - MetaData
-            FreeList* firstList = new FreeList(0,maxPageBytes_ - getMetaDataSize(dataCount_),
+            FreeList* firstList = new FreeList(0, maxPageBytes_ - getMetaDataSize(),
                                                 freeListH_,freeListH_);
 
             freeListH_->next_ = firstList;
@@ -110,18 +115,22 @@ namespace tagfilterdb {
         }
 
         bool isFull() {
-            return lastOffset_ == maxPageBytes_ - getMetaDataSize(dataCount_);
+            return lastOffset_ - maxPageBytes_ - getMetaDataSize() < MIN_SIZE;
         }
 
-        OffsetType End() {
-            return maxPageBytes_ - getMetaDataSize(dataCount_);
+        OffsetType EndBlocks() {
+            return maxPageBytes_ - getMetaDataSize();
         }
         
         Flag LoadFlag(OffsetType offset) {
             Flag flag;
+            char buffer;
 
-            ReadAndUpdateOffset(offset, &flag.flagAssigned, sizeof(flag.flagAssigned));
-            ReadAndUpdateOffset(offset, &flag.flagIsAppend, sizeof(flag.flagIsAppend));
+            ReadAndUpdateOffset(offset, &buffer, 1);
+            flag.flagAssigned = static_cast<bool>(buffer);
+
+            ReadAndUpdateOffset(offset, &buffer, 1);
+            flag.flagIsAppend = static_cast<bool>(buffer);
 
             return flag;
         }
@@ -161,6 +170,7 @@ namespace tagfilterdb {
         // Mark the block as free
         Flag flag = LoadFlag(offset);
         if (!flag.flagAssigned) return;  // Already free, skip
+        blockCount_--;
   
         bool flagAssigned = false;
         SetData(offset, &flagAssigned, sizeof(flagAssigned));
@@ -197,7 +207,7 @@ namespace tagfilterdb {
 
                 delete current;
                 listSize--;
-                dataCount_ -= 2;
+                blockSpace_ -= 2;
             } else {
                 if (current->offset_ == lastOffset_) {
                     lastOffset_ = offset;
@@ -205,8 +215,7 @@ namespace tagfilterdb {
 
                 current->offset_ = offset;
                 current->blockSize_ += freedBlockSize;
-               
-                dataCount_ -= 1;
+                blockSpace_ -= 1;
                 int acutalSize = current->blockSize_ - 6; 
                 SetData(current->offset_ + 2, &acutalSize, sizeof(int));
             }
@@ -216,7 +225,7 @@ namespace tagfilterdb {
 
         if (isMergeLeft) {
             int acutalSize = current->prev_->blockSize_ - 6; 
-            dataCount_ -= 1;
+            blockSpace_ -= 1;
             SetData(current->prev_->offset_ + 2, &acutalSize, sizeof(int));
             return;
         }
@@ -232,7 +241,7 @@ namespace tagfilterdb {
 
     void SetData(size_t offset, const void* data, int dataSize) {
             int tempOffset = offset;
-            if (offset + dataSize > maxPageBytes_ - getMetaDataSize(dataCount_)) {
+            if (offset + dataSize > EndBlocks()) {
                 throw std::out_of_range("Data exceeds page bounds.");
             }
             std::memcpy(page_ + offset, data, dataSize);
@@ -242,23 +251,22 @@ namespace tagfilterdb {
         assert(datablockSize >= MIN_SIZE);
         assert(node->blockSize_ >= datablockSize);
         assert(node);
-
+        blockCount_++;
         std::memcpy(page_ + node->offset_, datablock, datablockSize);
 
         if (node->offset_ == lastOffset_) {
                 lastOffset_ += datablockSize;
-                dataCount_++;
+                blockSpace_++;
                 node->offset_ = lastOffset_;
-                node->blockSize_ = maxPageBytes_ - getMetaDataSize(dataCount_) - lastOffset_;
+                node->blockSize_ = EndBlocks() - lastOffset_;
                 return;
             }
         if (node->blockSize_ - datablockSize > 0) {
                 node->offset_ += datablockSize;
                 node->blockSize_ = node->blockSize_ - datablockSize;
                 
-                int acutalSize = node->blockSize_ - 6;
-                bool isAssigned = false;
-                SetData(node->offset_ + 2, &acutalSize, sizeof(int));
+                blockSpace_++;
+                
             } else {
                 node->prev_->next_ = node->next_;
                 node->next_->prev_ = node->prev_;
@@ -270,15 +278,14 @@ namespace tagfilterdb {
     }
 
     void ReadData(OffsetType offset, void* buffer, int dataSize) {
-            int temp = maxPageBytes_ - getMetaDataSize(dataCount_);
-            if (offset + dataSize > maxPageBytes_ - getMetaDataSize(dataCount_)) {
+            if (offset + dataSize > EndBlocks()) {
                 throw std::out_of_range("Data exceeds page bounds.");
             }
             std::memcpy(buffer, page_ + offset, dataSize);
     }
 
     void ReadAndUpdateOffset(OffsetType& offset, void* buffer, int dataSize) {
-            if (offset + dataSize > maxPageBytes_ - getMetaDataSize(dataCount_)) {
+            if (offset + dataSize > EndBlocks()) {
                 throw std::out_of_range("Data exceeds page bounds.");
             }
             std::memcpy(buffer, page_ + offset, dataSize);
@@ -341,6 +348,7 @@ namespace tagfilterdb {
             // Advance to the next valid record
             void operator++() {
                 PageHeap* page = pm_->getPage(pageID_);
+                assert(page);
                 bool isAppend = false;  
                 while (true) {
                     // Load the flag for the current offset
@@ -351,11 +359,10 @@ namespace tagfilterdb {
                         isAppend = true;
                         pageID_++;
                         if (pageID_ > pm_->pages.size()) {
-                            offset_ = -1; // Mark as end of data
-                            return;
+                            assert(false);
                         }
                         page = pm_->getPage(pageID_);
-
+                        assert(page);
                         offset_ = 0;
                     } else {
                         break;
@@ -384,6 +391,7 @@ namespace tagfilterdb {
             // Skip over free and unassigned blocks
             void skipUnassigned() {
                 PageHeap* page = pm_->getPage(pageID_);
+                assert(page);
                 if (offset_ == page->lastOffset_) {
                     if (pageID_ + 1 <= pm_->Size()) {
                         pageID_++;
@@ -393,7 +401,7 @@ namespace tagfilterdb {
                     return;
                 }
                 auto curr = page->freeListH_->next_;
-                while (curr != page->freeListH_ && offset_ <= curr->offset_ ) {
+                while (curr != page->freeListH_ && offset_ >= curr->offset_ ) {
                     if (offset_ == curr->offset_) {
                         offset_ += curr->blockSize_;
                         if (offset_ == page->lastOffset_) {
@@ -472,20 +480,21 @@ namespace tagfilterdb {
     bool RecursivelyAddRecord(int startOffset, long index, const void* record, 
                               OffsetType offset, int recordSize, bool isAppendable) {
         auto node = pages[index].freeListH_->next_;
-        if (node->offset_ != startOffset) {
-            return false;
+        while (true) {
+            if (node == pages[index].freeListH_ || startOffset < node->offset_) {
+                return false;
+            }
+            if (startOffset == node->offset_) {
+                break;
+            }
+            node = node->next_;
         }
         if (node->blockSize_ < MIN_SIZE) {
             return false;
         }
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
-        int diff = pages[index].getMetaDataSize(pages[index].dataCount_ + 1) - 
-                       pages[index].getMetaDataSize(pages[index].dataCount_);
-        if (!isAppendable) {
-            diff = 0;
-        }
-        if(node->blockSize_ - diff >= blockSize) {
+        if(node->blockSize_ >= blockSize) {
             const char* partialRecord = static_cast<const char*>(record) + offset;
             char* dataBlock = Block(flag,partialRecord, recordSize);
             pages[index].AddDataBlockAt(node, dataBlock, blockSize);
@@ -493,20 +502,16 @@ namespace tagfilterdb {
             return true;
         }
 
-        if (node->blockSize_ - diff < MIN_SIZE) {
-            return false;   
-        }
-
         if (!isAppendable) {
             return false;
         }
 
         int nextIndex = getNextPageIndex(index);
-        int splitSize = recordSize - BlockToDataSize(node->blockSize_) + diff;
-        if (RecursivelyAddRecord(0, nextIndex, record, 0 + BlockToDataSize(node->blockSize_ - diff), splitSize, true)) {
+        int splitSize = recordSize - BlockToDataSize(node->blockSize_);
+        if (RecursivelyAddRecord(0, nextIndex, record, 0 + BlockToDataSize(node->blockSize_), splitSize, true)) {
                     flag.flagIsAppend = true;
-                    char* dataBlock = Block(flag, record, BlockToDataSize(node->blockSize_ - diff));
-                    pages[index].AddDataBlockAt(node, dataBlock, node->blockSize_ - diff);
+                    char* dataBlock = Block(flag, record, BlockToDataSize(node->blockSize_));
+                    pages[index].AddDataBlockAt(node, dataBlock, node->blockSize_);
                     delete []dataBlock;
                     return true;
         } else {
@@ -517,6 +522,7 @@ namespace tagfilterdb {
     std::pair<char*, int> GetData(long pageID, int offset) {
         assert(pageID <= pages.size());
         PageHeap* page = getPage(pageID);
+        assert(page);
         assert(offset < page->lastOffset_);
 
         int totalSize = 0;
@@ -525,6 +531,7 @@ namespace tagfilterdb {
         // Collect all data blocks
         while (pageID <= pages.size()) {
             PageHeap* page = getPage(pageID);
+            assert(page);
             Flag flag = page->LoadFlag(offset);
             assert(flag.flagAssigned);
 
@@ -560,6 +567,7 @@ namespace tagfilterdb {
 
     void FreeData(long pageID, int offset) {
         PageHeap* page = getPage(pageID);
+        assert(page);
         Flag flag = page->LoadFlag(offset);
         assert(flag.flagAssigned);
 
@@ -597,7 +605,7 @@ namespace tagfilterdb {
     int TotalCount() {
         int count = 0;
         for (auto e : pages) {
-            count += e.dataCount_;
+            count += e.blockCount_;
         }
         return count;
     }
@@ -607,10 +615,11 @@ namespace tagfilterdb {
             for (int i = 0; i < pages.size(); i++) {
                 std::cout << "Page: " << i + 1 << std::endl;
                 pages[i].PrintFree();
-                std::cout << pages[i].dataCount_ << std::endl;
+                std::cout << "BlockCount: " << pages[i].blockCount_
+                          << " BlockSpace: " <<  pages[i].blockSpace_ << std::endl;
             }
-             std::cout << "===============\n";
-        }
+            std::cout << "===============\n";
+    }
 
         size_t Size() const {
             return pages.size();
