@@ -505,7 +505,7 @@ namespace tagfilterdb {
             return true;
         }
 
-        if (node->offset_ + node->blockSize_ != pages[index].lastOffset_) {
+        if (node->offset_ != pages[index].lastOffset_) {
             return false;
         }
 
@@ -516,7 +516,7 @@ namespace tagfilterdb {
         int nextIndex = getNextPageIndex(index);
         int splitSize = recordSize - BlockToDataSize(node->blockSize_);
         if (RecursivelyAddRecord(pages[nextIndex].freeListH_->next_, nextIndex, record,
-                             0 + BlockToDataSize(node->blockSize_), splitSize, true, false)) {
+                             offset + BlockToDataSize(node->blockSize_), splitSize, true, false)) {
                     flag.flagIsAppend = true;
                     const char* partialRecord = static_cast<const char*>(record) + offset;
                     char* dataBlock = Block(flag, partialRecord, BlockToDataSize(node->blockSize_));
@@ -537,7 +537,6 @@ namespace tagfilterdb {
         int totalSize = 0;
         std::vector<std::pair<PageHeap*, int>> dataBlocks;
 
-        // Collect all data blocks
         while (pageID <= pages.size()) {
             PageHeap* page = getPage(pageID);
             assert(page);
@@ -553,8 +552,8 @@ namespace tagfilterdb {
                 break;
             }
 
-            pageID += 1; // Move to the next page
-            offset = 0;  // Start from the beginning of the next page
+            pageID += 1; 
+            offset = 0; 
         }
 
         // Allocate buffer for the entire data

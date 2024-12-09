@@ -62,7 +62,7 @@ BlockAddress Move(PageHeapManager* pageManager, int m) {
 }
 
 
-void RandomTestCase(int seed, PageHeapManager& pageManager, int numOperations) {
+void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) {
     std::srand(seed); // Seed randomness
 
     for (int i = 0; i < numOperations; ++i) {
@@ -108,10 +108,10 @@ void RandomTestCase(int seed, PageHeapManager& pageManager, int numOperations) {
 }
 
 int heap_test1() {
-int numOperations = 10000;
+    int numOperations = 50000;
     for (int i = 0; i < 2; i ++) {
         PageHeapManager pageManager(1024 * 4);
-        RandomTestCase(i, pageManager, numOperations);
+        RandomTestCase1(i, pageManager, numOperations);
         std::cout << "\n=== Final Scan ===\n";
         Scan(&pageManager);
     }
