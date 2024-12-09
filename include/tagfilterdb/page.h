@@ -10,7 +10,6 @@
 
 namespace tagfilterdb {
     class PageNodeManager;
-    constexpr size_t MINIMUM_FILE_BYTES = 1; 
 
     using PageIDType = long;
     using CheckSumType = uint32_t;

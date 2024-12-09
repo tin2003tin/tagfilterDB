@@ -67,14 +67,14 @@ class TestSearchAllCallBack : public SpICallBack {
 
     void Sample(BBManager* bbm) const {
         for (int i = 0; i < 5 && i < v.size(); i++) {
-            std::cout << bbm->toString(*v[i].bb) << std::endl;       
+            std::cout << bbm->toString(*v[i].box) << std::endl;       
         }
     }
 };
 
 void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
     TestSearchAllCallBack callback;
-    auto query_bb = m.GetSPI()->GetBBManager()->CreateBB(query_v);
+    auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchOverlap: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
 
     // Test vector-based search (searching for overlap)
@@ -109,7 +109,7 @@ void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Tes
 
 void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
     TestSearchAllCallBack callback;
-    auto query_bb = m.GetSPI()->GetBBManager()->CreateBB(query_v);
+    auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchContain: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
 
     // Test vector-based search (searching for containment)
@@ -144,7 +144,7 @@ void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>
 
 void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
     TestSearchAllCallBack callback;
-    auto query_bb = m.GetSPI()->GetBBManager()->CreateBB(query_v);
+    auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchCover: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
 
     // Test vector-based search (searching for "under")
@@ -187,7 +187,7 @@ int SpeedTest() {
 
     auto manager = m.GetSPI()->GetBBManager();
     VE chula_locate = {{100,200},{100,200}};
-    auto bb = manager->CreateBB(chula_locate);
+    auto bb = manager->CreateBox(chula_locate);
     Test chula = Test("Chula");
     m.InsertSpiral(bb, &chula);
     v.push_back({manager->Copy(bb), chula});
@@ -199,7 +199,7 @@ int SpeedTest() {
         double c = r.Uniform(range);
         double d = r.Uniform(range);
 
-        auto bb = manager->CreateBB({{std::min(a, b), std::max(a, b)}, {std::min(c, d), std::max(c, d)}});
+        auto bb = manager->CreateBox({{std::min(a, b), std::max(a, b)}, {std::min(c, d), std::max(c, d)}});
         m.InsertSpiral(bb, &t);
         v.push_back({manager->Copy(bb), t});
     }
