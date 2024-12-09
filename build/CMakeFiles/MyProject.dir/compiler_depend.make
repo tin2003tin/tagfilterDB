@@ -4,6 +4,7 @@
 CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
   /home/siriwid/new/include/json.hpp \
   /home/siriwid/new/include/tagfilterdb/bitset.h \
+  /home/siriwid/new/include/tagfilterdb/heap_test/heap_test1.h \
   /home/siriwid/new/include/tagfilterdb/pageH.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
@@ -423,9 +424,7 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/move.h:
 
-/usr/include/c++/13/ostream:
-
-/usr/include/x86_64-linux-gnu/bits/types.h:
+/usr/include/c++/13/bits/memoryfwd.h:
 
 /usr/include/c++/13/bits/valarray_array.h:
 
@@ -445,14 +444,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/backward/binders.h:
 
-/usr/include/c++/13/ext/aligned_buffer.h:
-
-/usr/include/locale.h:
-
-/usr/include/c++/13/bits/utility.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
 /home/siriwid/new/include/tagfilterdb/bitset.h:
 
 /usr/include/c++/13/bits/basic_ios.tcc:
@@ -460,8 +451,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/mask_array.h:
 
 /usr/include/c++/13/bits/alloc_traits.h:
-
-/usr/include/c++/13/bits/concept_check.h:
 
 /usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
@@ -472,6 +461,16 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/basic_ios.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
+
+/usr/include/c++/13/bits/allocated_ptr.h:
+
+/usr/include/c++/13/bit:
+
+/usr/include/c++/13/bits/basic_string.tcc:
+
+/usr/include/c++/13/bits/enable_special_members.h:
+
+/usr/include/c++/13/bits/stream_iterator.h:
 
 /usr/include/c++/13/bits/codecvt.h:
 
@@ -486,16 +485,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/c++/13/bits/invoke.h:
-
-/usr/include/c++/13/bits/allocated_ptr.h:
-
-/usr/include/c++/13/bit:
-
-/usr/include/c++/13/bits/basic_string.tcc:
-
-/usr/include/c++/13/bits/enable_special_members.h:
-
-/usr/include/c++/13/bits/stream_iterator.h:
 
 /usr/include/c++/13/bits/locale_facets_nonio.tcc:
 
@@ -514,6 +503,12 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
 /usr/include/alloca.h:
+
+/usr/include/c++/13/bits/concept_check.h:
+
+/home/siriwid/new/include/tagfilterdb/heap_test/heap_test1.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h:
 
 /usr/include/c++/13/bits/stl_raw_storage_iter.h:
 
@@ -547,9 +542,21 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /home/siriwid/new/src/main.cpp:
 
+/usr/include/c++/13/cwctype:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h:
+
+/usr/include/c++/13/bits/forward_list.tcc:
+
+/home/siriwid/new/include/tagfilterdb/pageH.h:
+
 /usr/include/assert.h:
 
 /usr/include/c++/13/backward/auto_ptr.h:
+
+/usr/include/c++/13/ostream:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
 
 /usr/include/c++/13/bits/cxxabi_forced.h:
 
@@ -593,12 +600,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 
 /usr/include/c++/13/bits/istream.tcc:
 
-/usr/include/c++/13/cwctype:
-
-/home/siriwid/new/include/tagfilterdb/pageH.h:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h:
-
 /usr/include/c++/13/bits/cpp_type_traits.h:
 
 /usr/include/c++/13/cassert:
@@ -606,8 +607,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/forward_list.h:
 
 /usr/include/string.h:
-
-/usr/include/c++/13/bits/memoryfwd.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
@@ -622,6 +621,14 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/c++/13/bits/locale_classes.tcc:
 
 /usr/include/c++/13/bits/locale_facets_nonio.h:
+
+/usr/include/c++/13/ext/aligned_buffer.h:
+
+/usr/include/locale.h:
+
+/usr/include/c++/13/bits/utility.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
 /usr/include/c++/13/ext/alloc_traits.h:
 
@@ -784,10 +791,6 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: /home/siriwid/new/src/main.cpp \
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
-
-/usr/include/c++/13/bits/forward_list.tcc:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h:
 
 /usr/include/math.h:
 

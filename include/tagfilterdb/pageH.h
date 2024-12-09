@@ -18,6 +18,7 @@ namespace tagfilterdb {
 
     using PageIDType = long;
     using OffsetType = int;
+    using BlockAddress = std::pair<PageIDType,OffsetType>;
     
     #pragma pack(1)
     struct Flag {
@@ -163,13 +164,13 @@ namespace tagfilterdb {
             }
         }
 
-      void Free(OffsetType offset) {
+      int Free(OffsetType offset) {
         if (offset >= lastOffset_) {
-            return;
+            return 0;
         }
         // Mark the block as free
         Flag flag = LoadFlag(offset);
-        if (!flag.flagAssigned) return;  // Already free, skip
+        if (!flag.flagAssigned) return 0;  // Already free, skip
         blockCount_--;
   
         bool flagAssigned = false;
@@ -220,14 +221,14 @@ namespace tagfilterdb {
                 SetData(current->offset_ + 2, &acutalSize, sizeof(int));
             }
                 
-            return;
+            return freedBlockSize;
         }
 
         if (isMergeLeft) {
             int acutalSize = current->prev_->blockSize_ - 6; 
             blockSpace_ -= 1;
             SetData(current->prev_->offset_ + 2, &acutalSize, sizeof(int));
-            return;
+            return freedBlockSize;
         }
 
         // Add a new free block
@@ -237,6 +238,7 @@ namespace tagfilterdb {
         current->prev_->next_ = newFreeBlock;
         current->prev_ = newFreeBlock;
         listSize++;
+        return freedBlockSize;
     }
 
     void SetData(size_t offset, const void* data, int dataSize) {
@@ -270,7 +272,7 @@ namespace tagfilterdb {
             } else {
                 node->prev_->next_ = node->next_;
                 node->next_->prev_ = node->prev_;
-
+                // TODO: 
                 delete node;   
 
                 listSize--;
@@ -308,9 +310,9 @@ namespace tagfilterdb {
 
         void PrintFree() {
             FreeList* curr = freeListH_->next_;
-
+            std::cout << "Free Space:" << std::endl;
             while (curr != freeListH_) {
-                std::cout << "Page: " << PageId_ << " Offset: "<<  curr->offset_ << " Size: " << curr->blockSize_ << std::endl;
+                std::cout << "- Page: " << PageId_ << " Offset: "<<  curr->offset_ << " Size: " << curr->blockSize_ << std::endl;
 
                 curr = curr->next_;
             }
@@ -325,10 +327,11 @@ namespace tagfilterdb {
         size_t maxPageBytes_;
         
         long nextPageId_;           ///< Page ID for the next page to be allocated.
-    friend PageHeap;
+    
 
     public:
-        
+        friend PageHeap;
+
         class Iterator {
             PageHeapManager* pm_;
             int pageID_;
@@ -382,8 +385,7 @@ namespace tagfilterdb {
                return !(*this == other);
             }
 
-            // Dereference operator to get current position
-            std::pair<int, int> operator*() const {
+            BlockAddress operator*() const {
                 return {pageID_, offset_};
             }
 
@@ -460,40 +462,41 @@ namespace tagfilterdb {
         return dataBlock - 2 - sizeof(int); 
     }
 
-    void AddRecord(const char* record, int recordSize) {
+    BlockAddress AddRecord(const char* record, int recordSize) {
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
         int index = 0;
+        int assignedOffset = -1;
         while (true) {
-            auto node = pages[index].FindFree(blockSize); 
+            PageHeap::FreeList* node = pages[index].FindFree(blockSize); 
+            assignedOffset = node->offset_;
             bool isAppendable = false;
             if (node == pages[index].freeListH_->prev_) {
                 isAppendable = true;
             }
-            if (RecursivelyAddRecord(node->offset_,index,record,0,recordSize, isAppendable)) {
+            if (RecursivelyAddRecord(node,index,record,0,recordSize, isAppendable, true)) {
                 break;
             }
             index = getNextPageIndex(index);
         }
+        assert(assignedOffset >= 0);
+        return {index + 1, assignedOffset};
     }
 
-    bool RecursivelyAddRecord(int startOffset, long index, const void* record, 
-                              OffsetType offset, int recordSize, bool isAppendable) {
-        auto node = pages[index].freeListH_->next_;
-        while (true) {
-            if (node == pages[index].freeListH_ || startOffset < node->offset_) {
-                return false;
+    bool RecursivelyAddRecord(PageHeap::FreeList* node, long index, const void* record, 
+                              OffsetType offset, int recordSize, bool isAppendable, bool isFirst) {
+        if (!isFirst)  {
+            if (node->offset_ != 0) {
+                return false;   
             }
-            if (startOffset == node->offset_) {
-                break;
-            }
-            node = node->next_;
-        }
+        } 
+       
         if (node->blockSize_ < MIN_SIZE) {
             return false;
         }
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
+
         if(node->blockSize_ >= blockSize) {
             const char* partialRecord = static_cast<const char*>(record) + offset;
             char* dataBlock = Block(flag,partialRecord, recordSize);
@@ -502,15 +505,21 @@ namespace tagfilterdb {
             return true;
         }
 
+        if (node->offset_ + node->blockSize_ != pages[index].lastOffset_) {
+            return false;
+        }
+
         if (!isAppendable) {
             return false;
         }
 
         int nextIndex = getNextPageIndex(index);
         int splitSize = recordSize - BlockToDataSize(node->blockSize_);
-        if (RecursivelyAddRecord(0, nextIndex, record, 0 + BlockToDataSize(node->blockSize_), splitSize, true)) {
+        if (RecursivelyAddRecord(pages[nextIndex].freeListH_->next_, nextIndex, record,
+                             0 + BlockToDataSize(node->blockSize_), splitSize, true, false)) {
                     flag.flagIsAppend = true;
-                    char* dataBlock = Block(flag, record, BlockToDataSize(node->blockSize_));
+                    const char* partialRecord = static_cast<const char*>(record) + offset;
+                    char* dataBlock = Block(flag, partialRecord, BlockToDataSize(node->blockSize_));
                     pages[index].AddDataBlockAt(node, dataBlock, node->blockSize_);
                     delete []dataBlock;
                     return true;
@@ -565,7 +574,7 @@ namespace tagfilterdb {
         return {buffer, totalSize};
     }
 
-    void FreeData(long pageID, int offset) {
+    int FreeData(long pageID, int offset) {
         PageHeap* page = getPage(pageID);
         assert(page);
         Flag flag = page->LoadFlag(offset);
@@ -574,7 +583,9 @@ namespace tagfilterdb {
         if (flag.flagIsAppend) {
             FreeData(pageID + 1, 0);
         }
-        page->Free(offset);
+        int freedBlockSize = page->Free(offset);
+        assert(freedBlockSize > 0);
+        return BlockToDataSize(freedBlockSize);
     }
 
     long getNextPageIndex(long index) {
@@ -613,10 +624,10 @@ namespace tagfilterdb {
     void PrintPageInfo() {
         std::cout << "===============\n";
             for (int i = 0; i < pages.size(); i++) {
-                std::cout << "Page: " << i + 1 << std::endl;
+                std::cout << "Page:" << i + 1 << std::endl;
                 pages[i].PrintFree();
                 std::cout << "BlockCount: " << pages[i].blockCount_
-                          << " BlockSpace: " <<  pages[i].blockSpace_ << std::endl;
+                          << ", BlockSpace: " <<  pages[i].blockSpace_ << std::endl;
             }
             std::cout << "===============\n";
     }
