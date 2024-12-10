@@ -8,7 +8,7 @@ using json = nlohmann::json;
 void GenerateLargeData(json& data, int seed) {
     for (int i = 0; i < 50; ++i) {
         data["large_key_" + std::to_string(seed) + "_" + std::to_string(i)] = {
-        {"nested_key_1", "Large data string " + std::to_string(i)},
+            {"nested_key_1", "Large data string " + std::to_string(i)},
             {"nested_key_2", seed * i},
             {"nested_array", {i, i + 1, i + 2, i + 3, i + 4}},
             {"nested_object", {
@@ -94,11 +94,10 @@ void RandomTestCase2(int seed, PageHeapManager& pageManager, int numOperations) 
 
 int main() {
     // for (int i = 0; i < 1; i++) {
-    //     int rn = std::rand() % 10000; 
-    //     ShareLRUCache<PageHeap> cache;
-    //     PageHeapManager pageManager(1024 * 4, &cache);
+    //     int rn = std::rand() % 1000; 
+    //     PageHeapManager pageManager(1024 * 4);
     //     RandomTestCase1(i, pageManager, rn);
-    //     // pageManager.PrintPageInfo();
+    //     pageManager.PrintPageInfo();
     //     Scan(&pageManager);
     //     std::cout << "finished: " << i << std::endl;
     //     pageManager.Save();
@@ -106,9 +105,9 @@ int main() {
     ShareLRUCache<PageHeap> cache;
     PageHeapManager pageManager(1024 * 4, &cache);
     pageManager.Load();
-    // pageManager.LoadAtPage(1);
-    // pageManager.LoadAtPage(2);
-    // pageManager.PrintPageInfo();
+    pageManager.LoadAtPage(1);
+    pageManager.LoadAtPage(2);
+    pageManager.PrintPageInfo();
     Scan(&pageManager);
 
     return 0;

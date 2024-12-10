@@ -144,7 +144,7 @@ class LRUCache {
          * @brief Returns the value stored in the cache node.
          * @return The value of the cache item.
          */
-        Value getValue() {
+        Value& getValue() {
             assert(this);
             return value_; 
         }
@@ -735,10 +735,10 @@ class ShareLRUCache {
      * @param bnode The cache node.
      * @return The value of the cache item.
      */
-    static Value GetValue(BaseNode* bnode) {
-        if (bnode == nullptr) {
-            return Value();
-        }
+    static Value& GetValue(BaseNode* bnode) {
+        // if (bnode == nullptr) {
+        //     return Value();
+        // }
          typename LRUCache<Value>::BucketValueNode* node = 
             static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);
         return node->getValue();

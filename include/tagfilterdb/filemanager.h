@@ -15,7 +15,6 @@ namespace tagfilterdb {
     constexpr size_t FILE_SIZE = 1024 * 1024; // 1 MB for each file
     constexpr size_t METADATA_SIZE = sizeof(size_t); // Metadata stores the number of records
 
-
     class FileManager {
         std::string baseFilename_;
         size_t recordsPerFile_ = FILE_SIZE / RECORD_SIZE;

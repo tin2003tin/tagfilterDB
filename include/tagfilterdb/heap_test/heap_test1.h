@@ -38,18 +38,20 @@ json GetJson(PageHeapManager* pageManager, int PageID, int offset) {
 
 
 void Scan(PageHeapManager *pageManager) {
-    
+    if (pageManager->Size() == 0) {
+        return;
+    }
     auto iter = pageManager->begin();
     auto endIter = pageManager->end();
 
     while (iter != pageManager->end()) {
         auto result = GetJson(pageManager, (*iter).first,(*iter).second);
-        // std::cout << "Retrieved JSON: " << result.dump(4) << std::endl;
+        std::cout << "Retrieved JSON: " << result.dump(4) << std::endl;
         ++iter;
     }
 
     // for (int i = 1 ; i <= pageManager->Size(); i++) {
-    //     pageManager->getPage(i)->PrintFree();
+    //     pageManager->getPage(i)->Print Free();
     // }
 }
 
@@ -68,7 +70,7 @@ void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) 
     for (int i = 0; i < numOperations; ++i) {
         int operation = std::rand() % 3; // 0: Add record, 1: Free record
         if (operation != 0) {
-            std::cout << "Trying to add.....\n";
+            // std::cout << "Trying to add.....\n";
             // Add a random record
             json data;
             data["name"] = "User " + std::to_string(i + 1);
@@ -76,16 +78,16 @@ void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) 
             data["gpx"] = 2.0 + ((std::rand() % 200) / 100.0); // Random GPA between 2.0 and 4.0
 
             BlockAddress blockAddress = SetJson(&pageManager, data);
-            std::string jsonString = data.dump();
-            std::cout << "Added: " << jsonString << ", Size " << jsonString.size() << "\n";
-            std::cout << "At Page: " << blockAddress.first << ", Offset: " << blockAddress.second << "\n";
+            // std::string jsonString = data.dump();
+            // std::cout << "Added: " << jsonString << ", Size " << jsonString.size() << "\n";
+            // std::cout << "At Page: " << blockAddress.first << ", Offset: " << blockAddress.second << "\n";
         } else {
-             std::cout << "Trying to delete.....\n";
+            //  std::cout << "Trying to delete.....\n";
             // Free a random record using the iterator
             auto iter = pageManager.begin();
             int count = pageManager.TotalCount();
             if (count == 0) {
-                std::cerr << "No records available to free.\n";
+                // std::cerr << "No records available to free.\n";
                 continue; // Skip freeing
             }
 
@@ -93,7 +95,7 @@ void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) 
 
             int rn = std::rand();
             int skip =  rn % count; // Random record to free
-            std::cout << "Skip: "<<  skip << std::endl; 
+            // std::cout << "Skip: "<<  skip << std::endl; 
             if (i == 601) {
 
                 int temp = 0;
@@ -111,8 +113,8 @@ void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) 
             if (iter != pageManager.end()) {
                 auto loc = *iter;
                 int freedSize = pageManager.FreeBlock(loc.first, loc.second);
-                std::cout << "Freed record at PageID: " << loc.first << ", Offset: " << loc.second << "\n";
-                std::cout << "Freed Size: " << freedSize << std::endl;;
+                // std::cout << "Freed record at PageID: " << loc.first << ", Offset: " << loc.second << "\n";
+                // std::cout << "Freed Size: " << freedSize << std::endl;;
             }
         }
         // pageManager.PrintPageInfo();
@@ -122,9 +124,10 @@ void RandomTestCase1(int seed, PageHeapManager& pageManager, int numOperations) 
 int heap_test1() {
     int numOperations = 10000;
     for (int i = 0; i < 1; i ++) {
-        PageHeapManager pageManager(1024 * 4);
+        ShareLRUCache<PageHeap> cache;
+        PageHeapManager pageManager(1024 * 4,&cache);
         RandomTestCase1(9, pageManager, numOperations);
-        std::cout << "\n=== Final Scan ===\n";
+        // std::cout << "\n=== Final Scan ===\n";
         Scan(&pageManager);
     }
 

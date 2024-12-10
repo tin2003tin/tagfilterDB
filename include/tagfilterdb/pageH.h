@@ -7,6 +7,9 @@
 #include <stdexcept>
 #include <vector>
 #include <functional>
+#include <fstream>
+#include <map>
+#include "tagfilterdb/cache.h"
 
 #include "json.hpp"
 
@@ -16,7 +19,11 @@ namespace tagfilterdb {
     class PageHeapManager;
     constexpr size_t MINIMUM_FILE_BYTES = 1; 
     constexpr int MIN_SIZE = 2 + 4;
-    constexpr int FREE_LIST_SIZE = 5;
+    constexpr int FREE_LIST_SIZE = 10;
+    constexpr int MAXIMUM_FILE_BYTES = 1024 * 4;
+    constexpr long MAXINUM_CACHE_CHARGE = 1024*4* 100; // can cache 100 Page !!  
+
+    const std::string PAGEHEAP_FILENAME = "fileHeap.txt";
 
     using PageIDType = long;
     using OffsetType = int;
@@ -28,25 +35,6 @@ namespace tagfilterdb {
         bool flagIsAppend;
     };
     #pragma pack()
-
-   struct JsonRecord {
-        Flag flag_;
-        int size_;
-        std::string jsonStream_;
-
-        JsonRecord() : flag_(), size_(0), jsonStream_() {}
-
-        void AddStream(const char* stream, int size) {
-            if (stream != nullptr && size > 0) {
-                jsonStream_.append(stream, size);
-                size_ += size;
-            }
-        }
-
-        json ParseJson() {
-            return json::parse(jsonStream_);
-        }
-    };
 
     class PageHeap {
 
@@ -130,27 +118,39 @@ namespace tagfilterdb {
         };
 
         int getMetaDataSize() {
-            return sizeof(PageIDType)                                    // for PageIDType
-                + sizeof(listSize_)                                       // for List Size
-                + (sizeof(OffsetType) + sizeof(int)) *((FREE_LIST_SIZE)) // for offsets of free space (worst case is half of the data)
-                + sizeof(OffsetType)                                     // for lastOffset
-                + sizeof(blockSpace_)                                    // for dataCount
-                + sizeof(blockCount_)  
+            return sizeof(PageIDType)                                     // for PageIDType
+                + sizeof(listSize_)                                       // for ListSize
+                + (sizeof(OffsetType) + sizeof(int)) *FREE_LIST_SIZE      // for offsets of free space (worst case is half of the data)
+                + sizeof(OffsetType)                                      // for lastOffset
+                + sizeof(blockSpace_)                                     // for blockSpace
+                + sizeof(blockCount_)                                     // for blockCount 
                 ; 
+        }
+
+        PageHeap() = default;
+
+        PageHeap(size_t maxPageBytes) : 
+            PageId_(0), 
+            maxPageBytes_(maxPageBytes), blockSpace_(0),
+            listSize_(0), blockCount_(0), 
+            lastOffset_(0) {
+            setup();
+
+            FreeList* firstList = new FreeList(0, maxPageBytes_ - getMetaDataSize(),
+                                                freeListH_,freeListH_);
+
+            freeListH_->next_ = firstList;
+            freeListH_->prev_ = firstList;
+            listSize_++;
         }
 
         PageHeap(PageIDType pageId, size_t maxPageBytes) : 
             PageId_(pageId), 
             maxPageBytes_(maxPageBytes), blockSpace_(0),
-            listSize_(0), blockCount_(0) {
-            page_ = new char[maxPageBytes];
-            std::memset(page_, 0, maxPageBytes); 
-            lastOffset_ = 0;
+            listSize_(0), blockCount_(0),
+            lastOffset_(0) {
 
-            freeListH_ = new FreeList(0,0, nullptr, nullptr);
-            freeListH_->next_ = freeListH_;
-            freeListH_->prev_ = freeListH_;
-
+            setup();
             // Init First Free List with Size = MaxBytes - MetaData
             FreeList* firstList = new FreeList(0, maxPageBytes_ - getMetaDataSize(),
                                                 freeListH_,freeListH_);
@@ -158,6 +158,13 @@ namespace tagfilterdb {
             freeListH_->next_ = firstList;
             freeListH_->prev_ = firstList;
             listSize_++;
+        }
+
+        void setup() {
+            page_ = new char[EndBlocks()];
+            freeListH_ = new FreeList(0,0, nullptr, nullptr);
+            freeListH_->next_ = freeListH_;
+            freeListH_->prev_ = freeListH_;
         }
 
         FreeList* FindFree(int dataSize) {
@@ -329,11 +336,117 @@ namespace tagfilterdb {
             }
             std::memcpy(buffer, page_ + offset, dataSize);
             offset += dataSize;
+    }
+
+    char* SerializeMetaData() {
+        // Compute metadata size and allocate memory
+        int metaDataSize = getMetaDataSize();
+        char* metaData = new char[metaDataSize];
+        int offset = 0;
+
+        // Serialize fixed-size metadata
+        std::memcpy(metaData + offset, &PageId_, sizeof(PageIDType));
+        offset += sizeof(PageIDType);
+        std::memcpy(metaData + offset, &lastOffset_, sizeof(int));
+        offset += sizeof(int);
+        std::memcpy(metaData + offset, &blockSpace_, sizeof(int));
+        offset += sizeof(int);
+        std::memcpy(metaData + offset, &blockCount_, sizeof(int));
+        offset += sizeof(int);
+        std::memcpy(metaData + offset, &listSize_, sizeof(int));
+        offset += sizeof(int);
+
+        // Serialize free list metadata
+        FreeList* curr = freeListH_->next_;
+        while (curr != freeListH_) {
+            if (offset + sizeof(OffsetType) + sizeof(int) > metaDataSize) {
+                delete[] metaData;
+                throw std::runtime_error("Metadata size calculation error");
+            }
+
+            std::memcpy(metaData + offset, &curr->offset_, sizeof(OffsetType));
+            offset += sizeof(OffsetType);
+            std::memcpy(metaData + offset, &curr->blockSize_, sizeof(int));
+            offset += sizeof(int);
+            curr = curr->next_;
         }
 
-        Iterator Begin() {
-            return Iterator(this);
+        // Sanity check: Ensure offset matches metaDataSize
+        if (offset + 8 * (FREE_LIST_SIZE - listSize_) != metaDataSize) {
+            delete[] metaData;
+            throw std::runtime_error("Mismatch between metadata size and serialization offset");
         }
+
+        return metaData;
+    }
+
+
+    void Write(std::ostream& out) {
+        char* metaData = SerializeMetaData();
+        out.write(metaData, getMetaDataSize());
+        delete []metaData;
+        out.write(page_, EndBlocks());
+    }
+
+    void LoadMetadataOnly(std::istream& in) {
+         // Allocate memory for metadata
+        char* metaData = new char[getMetaDataSize()];
+        in.read(metaData, getMetaDataSize());
+        if (!in) {
+            delete[] metaData;
+            throw std::runtime_error("Failed to read page metadata.");
+        }
+
+        int offset = 0;
+
+        std::memcpy(&PageId_, metaData + offset, sizeof(PageIDType));
+        offset += sizeof(PageIDType);
+
+        std::memcpy(&lastOffset_, metaData + offset, sizeof(int));
+        offset += sizeof(int);
+
+        std::memcpy(&blockSpace_, metaData + offset, sizeof(int));
+        offset += sizeof(int);
+
+        std::memcpy(&blockCount_, metaData + offset, sizeof(int));
+        offset += sizeof(int);
+
+        std::memcpy(&listSize_, metaData + offset, sizeof(int));
+        offset += sizeof(int);
+
+        FreeList* prev = freeListH_;
+        for (int i = 0; i < listSize_; ++i) {
+            OffsetType offsetVal;
+            int blockSize;
+
+            std::memcpy(&offsetVal, metaData + offset, sizeof(OffsetType));
+            offset += sizeof(OffsetType);
+
+            std::memcpy(&blockSize, metaData + offset, sizeof(int));
+            offset += sizeof(int);
+
+            FreeList* newNode = new FreeList(offsetVal, blockSize, nullptr, nullptr);
+            prev->next_ = newNode;
+            newNode->prev_ = prev;
+            prev = newNode;
+        }
+
+        prev->next_ = freeListH_;
+        freeListH_->prev_ = prev;
+        delete[] metaData;
+    }
+
+    void Load(std::istream& in) {
+        LoadMetadataOnly(in);
+        in.read(page_, EndBlocks());
+        if (!in) {
+            throw std::runtime_error("Failed to read page data.");
+        }
+    }
+
+    Iterator Begin() {
+            return Iterator(this);
+    }
 
         Iterator End() {
              return Iterator(this, lastOffset_);
@@ -363,12 +476,13 @@ namespace tagfilterdb {
     class PageHeapManager {
         
     private:
-        std::vector<PageHeap> pages;    ///< Vector to store all the pages.
+        std::map<int, PageHeap> pages_;    ///< Vector to store all the pages.
+
+        ShareLRUCache<PageHeap>* cache_;
 
         size_t maxPageBytes_;
         
         long lastPageId_;           ///< Page ID for the next page to be allocated.
-    
 
     public:
         friend PageHeap;
@@ -402,7 +516,7 @@ namespace tagfilterdb {
                     if (flag.flagIsAppend) {
                         isAppend = true;
                         pageID_++;
-                        if (pageID_ > pm_->pages.size()) {
+                        if (pageID_ > pm_->LastPageID()) {
                             assert(false);
                         }
                         page = pm_->getPage(pageID_);
@@ -464,18 +578,18 @@ namespace tagfilterdb {
         friend Iterator;
 
     public:
-        PageHeapManager(size_t maxBytes) : lastPageId_(1) {  
+        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap>* cache) 
+            : lastPageId_(0), cache_(cache), maxPageBytes_(maxBytes)
+        {
+            assert(cache);
             if (maxBytes < MINIMUM_FILE_BYTES) {
                 maxBytes = MINIMUM_FILE_BYTES;
             }
-            maxPageBytes_ = maxBytes;
-
-            pages.push_back(PageHeap(lastPageId_, maxPageBytes_));  
         }
 
         ~PageHeapManager() {
-            for (auto& p : pages) {
-                delete []p.page_;
+            for (auto& p : pages_) {
+                delete []p.second.page_;
             }
         }
 
@@ -520,7 +634,7 @@ namespace tagfilterdb {
             }
             // Create New page ?
             if (IsCreateNewPage(pageID)) {
-                // TODO Compact
+                // Compact !!
                  Compact(pageID);
                 CreateNewPage();
             }   
@@ -757,19 +871,27 @@ namespace tagfilterdb {
 
     void CreateNewPage() {
         lastPageId_++;
-        pages.push_back(PageHeap(lastPageId_, maxPageBytes_));  
+        pages_[lastPageId_] = PageHeap(lastPageId_, maxPageBytes_);  
     }
 
     long LastPageID() {
-        return pages.size();
+        return lastPageId_;
     }
 
     PageHeap* getPage(long pageID) {
         if (pageID <= LastPageID()) {
-            return &pages[pageID - 1];  
+            if (pages_.count(pageID)) {
+                return &pages_[pageID];
+            }  else {
+                LoadAtPage(pageID);
+                return &pages_[pageID];
+            }
+        } else { 
+            lastPageId_++;
+            pages_[lastPageId_] = PageHeap(lastPageId_, maxPageBytes_);
         }
-        assert(false);
-        return nullptr;
+        
+        return &pages_[pageID];
     }
 
     Iterator begin() {
@@ -777,35 +899,140 @@ namespace tagfilterdb {
     }
 
     Iterator end() {
-        int lastOffset = pages[pages.size() - 1].lastOffset_;
-        Iterator iter(this,pages.size(),lastOffset);
+        int lastOffset = getPage(lastPageId_)->lastOffset_;
+        Iterator iter(this,lastPageId_,lastOffset);
         return iter;
     }
 
     int TotalCount() {
         int count = 0;
-        for (auto e : pages) {
-            count += e.blockCount_;
-        }
+        for (int i = 0; i < lastPageId_; i++) {
+                count += getPage(i + 1)->blockCount_;
+        }    
         return count;
     }
 
     void PrintPageInfo() {
         std::cout << "===============\n";
-            for (int i = 0; i < pages.size(); i++) {
-                std::cout << "Page:" << i + 1  << ", BlockCount: " << pages[i].blockCount_
-                          << ", BlockSpace: " <<  pages[i].blockSpace_ << std::endl;
-                pages[i].PrintFree();
+            for (int i = 0; i < lastPageId_; i++) {
+                std::cout << "Page:" << i + 1  << ", BlockCount: " << pages_[i].blockCount_
+                          << ", BlockSpace: " <<  getPage(i +1)->blockSpace_ << std::endl;
+                getPage(i +1)->PrintFree();
             }
             std::cout << "===============\n";
     }
 
-        size_t Size() const {
-            return pages.size();
+    size_t Size() const {
+        return lastPageId_;
+    }
+
+    long GetNextPageId() const {
+        return lastPageId_;
+    }
+
+    void Save() {
+        std::ofstream out(PAGEHEAP_FILENAME,  std::ios::trunc);
+        if (!out) {
+            throw std::runtime_error("Failed to open file for saving.");
+        }
+        char lastPageId[sizeof(int)];
+        std::memcpy(lastPageId,&lastPageId_,sizeof(int));
+        out.write(lastPageId, sizeof(int));
+        for (int i = 1; i <= lastPageId_; i++) {
+            getPage(i)->Write(out);
+        }
+        out.close();
+    }
+
+    void Load() {
+        std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+        if (!in) {
+            throw std::runtime_error("Failed to open file for loading.");
         }
 
-        long GetNextPageId() const {
-            return lastPageId_;
+        in.read(reinterpret_cast<char*>(&lastPageId_), sizeof(int));
+        if (!in) {
+            throw std::runtime_error("Failed to read lastPageId from file.");
         }
+        in.close();
+    }
+
+
+    void LoadAllPage() {
+        std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+        if (!in) {
+            throw std::runtime_error("Failed to open file for loading pages.");
+        }
+
+        in.seekg(sizeof(int), std::ios::beg);
+
+        while (in.peek() != EOF) {
+            PageHeap newPage(maxPageBytes_);
+            try {
+                newPage.Load(in); 
+            } catch (const std::exception& e) {
+                throw std::runtime_error("Failed to load page data: " + std::string(e.what()));
+            }
+            pages_[newPage.PageId_] = std::move(newPage);
+        }
+        in.close();
+    }
+
+    void LoadAtPage(PageIDType pageID) {
+    if (pageID < 0 || pageID > lastPageId_) {
+        throw std::out_of_range("Invalid page index");
+    }
+    long pageIndex = pageID - 1;
+
+    std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+    if (!in) {
+        throw std::runtime_error("Failed to open file for loading.");
+    }
+
+    size_t pageOffset = sizeof(int) + (pageIndex * (maxPageBytes_));
+    in.seekg(pageOffset, std::ios::beg);
+    if (!in) {
+        throw std::runtime_error("Failed to seek to the specific page in the file.");
+    }
+
+        PageHeap loadedPage(maxPageBytes_);
+        try {
+            loadedPage.Load(in);
+        } catch (const std::exception& e) {
+            throw std::runtime_error("Failed to load the specified page: " + std::string(e.what()));
+        }
+
+        pages_[loadedPage.PageId_] =  std::move(loadedPage);
+
+        in.close();
+    }
+
+    PageHeap LoadPageMedata(PageIDType pageID) {
+    if (pageID < 0 || pageID > lastPageId_) {
+        throw std::out_of_range("Invalid page index");
+    }
+    long pageIndex = pageID - 1;
+
+    std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+    if (!in) {
+        throw std::runtime_error("Failed to open file for loading.");
+    }
+
+    size_t pageOffset = sizeof(int) + (pageIndex * (maxPageBytes_));
+    in.seekg(pageOffset, std::ios::beg);
+    if (!in) {
+        throw std::runtime_error("Failed to seek to the specific page in the file.");
+    }
+
+        PageHeap newPage;
+        try {
+            newPage.LoadMetadataOnly(in);
+        } catch (const std::exception& e) {
+            throw std::runtime_error("Failed to load the specified page: " + std::string(e.what()));
+        }
+
+        in.close();
+    }
+
     };
 }
