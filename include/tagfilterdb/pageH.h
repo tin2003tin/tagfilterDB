@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
+#include <functional>
+
 #include "json.hpp"
 
 using namespace nlohmann;
@@ -14,7 +16,7 @@ namespace tagfilterdb {
     class PageHeapManager;
     constexpr size_t MINIMUM_FILE_BYTES = 1; 
     constexpr int MIN_SIZE = 2 + 4;
-    constexpr int FREE_LIST_SIZE = 50;
+    constexpr int FREE_LIST_SIZE = 5;
 
     using PageIDType = long;
     using OffsetType = int;
@@ -63,7 +65,7 @@ namespace tagfilterdb {
         char* page_;   
 
         FreeList* freeListH_;
-        int listSize;        
+        int listSize_;        
 
         size_t maxPageBytes_;
         OffsetType lastOffset_;
@@ -73,9 +75,63 @@ namespace tagfilterdb {
 
         friend PageHeapManager;
     public:
+
+      class Iterator {
+            PageHeap* page_;
+            OffsetType offset_;
+
+        public:
+            // Constructors
+            Iterator(PageHeap* page)
+                : page_(page), offset_(0) {
+                skipFree();
+            }
+
+            Iterator(PageHeap* page, OffsetType offset)
+                : page_(page), offset_(offset) {
+            }
+
+            // Advance to the next valid record
+            void operator++() {
+                assert(page_);
+                
+                offset_ = page_->nextOffset(offset_);
+                skipFree();
+            }
+
+            // Compare iterators
+            bool operator==(const Iterator& other) const {
+                return offset_ == other.offset_;
+            }
+
+            bool operator!=(const Iterator& other) const {
+               return !(*this == other);
+            }
+
+            OffsetType operator*() const {
+                return offset_;
+            }
+
+        private:
+            void skipFree() {
+                assert(page_);
+                if (offset_ == page_->lastOffset_) {
+                    return;
+                }
+                auto curr = page_->freeListH_->next_;
+                while (curr != page_->freeListH_ && offset_ >= curr->offset_ ) {
+                    if (offset_ == curr->offset_) {
+                        offset_ += curr->blockSize_;
+                        return;
+                    }
+                    curr = curr->next_;
+                }
+            }
+        };
+
         int getMetaDataSize() {
             return sizeof(PageIDType)                                    // for PageIDType
-                + sizeof(listSize)                                       // for List Size
+                + sizeof(listSize_)                                       // for List Size
                 + (sizeof(OffsetType) + sizeof(int)) *((FREE_LIST_SIZE)) // for offsets of free space (worst case is half of the data)
                 + sizeof(OffsetType)                                     // for lastOffset
                 + sizeof(blockSpace_)                                    // for dataCount
@@ -86,7 +142,7 @@ namespace tagfilterdb {
         PageHeap(PageIDType pageId, size_t maxPageBytes) : 
             PageId_(pageId), 
             maxPageBytes_(maxPageBytes), blockSpace_(0),
-            listSize(0), blockCount_(0) {
+            listSize_(0), blockCount_(0) {
             page_ = new char[maxPageBytes];
             std::memset(page_, 0, maxPageBytes); 
             lastOffset_ = 0;
@@ -101,7 +157,7 @@ namespace tagfilterdb {
 
             freeListH_->next_ = firstList;
             freeListH_->prev_ = firstList;
-            listSize++;
+            listSize_++;
         }
 
         FreeList* FindFree(int dataSize) {
@@ -156,27 +212,14 @@ namespace tagfilterdb {
         OffsetType nextOffset(OffsetType offset) {
             Flag f = LoadFlag(offset);
             int dataSize = LoadSize(offset);
-            if (f.flagIsAppend) {
-                return offset + 2 + sizeof(PageIDType) + 
-                        sizeof(OffsetType)  + sizeof(int) + dataSize;
-            } else {
-                return offset + 2 + sizeof(int) + dataSize;
-            }
+            return offset + 2 + sizeof(int) + dataSize;
         }
 
-      int Free(OffsetType offset) {
+      void Free(OffsetType offset, int blockSize) {
         if (offset >= lastOffset_) {
-            return 0;
+            return;
         }
-        // Mark the block as free
-        Flag flag = LoadFlag(offset);
-        if (!flag.flagAssigned) return 0;  // Already free, skip
         blockCount_--;
-  
-        bool flagAssigned = false;
-        SetData(offset, &flagAssigned, sizeof(flagAssigned));
-
-        int freedBlockSize = getOffsetSize(offset);
 
         FreeList* current = freeListH_->next_;
 
@@ -190,11 +233,11 @@ namespace tagfilterdb {
         bool isMergeLeft = false;
         if (current->prev_ != freeListH_ &&
             current->prev_->offset_ + current->prev_->blockSize_ == offset) {
-            current->prev_->blockSize_ += freedBlockSize;
+            current->prev_->blockSize_ += blockSize;
             isMergeLeft = true;
         }
 
-        if (offset + freedBlockSize == current->offset_) {
+        if (offset + blockSize == current->offset_) {
             if (isMergeLeft) {
                 if (current->offset_ == lastOffset_) {
                     lastOffset_ = current->prev_->offset_;
@@ -202,12 +245,9 @@ namespace tagfilterdb {
                 current->prev_->blockSize_ += current->blockSize_;
                 current->prev_->next_ = current->next_;
                 current->next_->prev_ = current->prev_;
-                
-                int acutalSize = current->prev_->blockSize_ - 6; 
-                SetData(current->prev_->offset_ + 2, &acutalSize, sizeof(int));
 
                 delete current;
-                listSize--;
+                listSize_--;
                 blockSpace_ -= 2;
             } else {
                 if (current->offset_ == lastOffset_) {
@@ -215,30 +255,27 @@ namespace tagfilterdb {
                 }
 
                 current->offset_ = offset;
-                current->blockSize_ += freedBlockSize;
+                current->blockSize_ += blockSize;
                 blockSpace_ -= 1;
-                int acutalSize = current->blockSize_ - 6; 
-                SetData(current->offset_ + 2, &acutalSize, sizeof(int));
             }
                 
-            return freedBlockSize;
+            return;
         }
 
         if (isMergeLeft) {
             int acutalSize = current->prev_->blockSize_ - 6; 
             blockSpace_ -= 1;
-            SetData(current->prev_->offset_ + 2, &acutalSize, sizeof(int));
-            return freedBlockSize;
+            return;
         }
 
         // Add a new free block
         FreeList* newFreeBlock = nullptr;
-        newFreeBlock = new FreeList(offset,freedBlockSize,current,current->prev_);
+        newFreeBlock = new FreeList(offset,blockSize,current,current->prev_);
 
         current->prev_->next_ = newFreeBlock;
         current->prev_ = newFreeBlock;
-        listSize++;
-        return freedBlockSize;
+        listSize_++;
+        return;
     }
 
     void SetData(size_t offset, const void* data, int dataSize) {
@@ -275,7 +312,7 @@ namespace tagfilterdb {
                 // TODO: 
                 delete node;   
 
-                listSize--;
+                listSize_--;
         }
     }
 
@@ -294,8 +331,12 @@ namespace tagfilterdb {
             offset += dataSize;
         }
 
-        char* GetData(size_t offset) {
-            return page_ + offset;
+        Iterator Begin() {
+            return Iterator(this);
+        }
+
+        Iterator End() {
+             return Iterator(this, lastOffset_);
         }
 
         /// Get the page ID
@@ -310,7 +351,7 @@ namespace tagfilterdb {
 
         void PrintFree() {
             FreeList* curr = freeListH_->next_;
-            std::cout << "Free Space:" << std::endl;
+            std::cout << "ListSize: " << listSize_ << std::endl;
             while (curr != freeListH_) {
                 std::cout << "- Page: " << PageId_ << " Offset: "<<  curr->offset_ << " Size: " << curr->blockSize_ << std::endl;
 
@@ -326,7 +367,7 @@ namespace tagfilterdb {
 
         size_t maxPageBytes_;
         
-        long nextPageId_;           ///< Page ID for the next page to be allocated.
+        long lastPageId_;           ///< Page ID for the next page to be allocated.
     
 
     public:
@@ -423,13 +464,13 @@ namespace tagfilterdb {
         friend Iterator;
 
     public:
-        PageHeapManager(size_t maxBytes) : nextPageId_(1) {  
+        PageHeapManager(size_t maxBytes) : lastPageId_(1) {  
             if (maxBytes < MINIMUM_FILE_BYTES) {
                 maxBytes = MINIMUM_FILE_BYTES;
             }
             maxPageBytes_ = maxBytes;
 
-            pages.push_back(PageHeap(nextPageId_, maxPageBytes_));  
+            pages.push_back(PageHeap(lastPageId_, maxPageBytes_));  
         }
 
         ~PageHeapManager() {
@@ -465,25 +506,31 @@ namespace tagfilterdb {
     BlockAddress AddRecord(const char* record, int recordSize) {
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
-        int index = 0;
+        int pageID = 1;
         int assignedOffset = -1;
         while (true) {
-            PageHeap::FreeList* node = pages[index].FindFree(blockSize); 
+            PageHeap::FreeList* node = getPage(pageID)->FindFree(blockSize); 
             assignedOffset = node->offset_;
             bool isAppendable = false;
-            if (node == pages[index].freeListH_->prev_) {
+            if (node == getPage(pageID)->freeListH_->prev_) {
                 isAppendable = true;
             }
-            if (RecursivelyAddRecord(node,index,record,0,recordSize, isAppendable, true)) {
+            if (RecursivelyAddRecord(node,pageID,record,0,recordSize, isAppendable, true)) {
                 break;
             }
-            index = getNextPageIndex(index);
+            // Create New page ?
+            if (IsCreateNewPage(pageID)) {
+                // TODO Compact
+                 Compact(pageID);
+                CreateNewPage();
+            }   
+            pageID++;
         }
         assert(assignedOffset >= 0);
-        return {index + 1, assignedOffset};
+        return {pageID, assignedOffset};
     }
 
-    bool RecursivelyAddRecord(PageHeap::FreeList* node, long index, const void* record, 
+    bool RecursivelyAddRecord(PageHeap::FreeList* node, long pageID, const void* record, 
                               OffsetType offset, int recordSize, bool isAppendable, bool isFirst) {
         if (!isFirst)  {
             if (node->offset_ != 0) {
@@ -496,16 +543,16 @@ namespace tagfilterdb {
         }
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
-
+        
         if(node->blockSize_ >= blockSize) {
             const char* partialRecord = static_cast<const char*>(record) + offset;
             char* dataBlock = Block(flag,partialRecord, recordSize);
-            pages[index].AddDataBlockAt(node, dataBlock, blockSize);
+            getPage(pageID)->AddDataBlockAt(node, dataBlock, blockSize);
             delete []dataBlock;
             return true;
         }
 
-        if (node->offset_ != pages[index].lastOffset_) {
+        if (node->offset_ != getPage(pageID)->lastOffset_) {
             return false;
         }
 
@@ -513,23 +560,33 @@ namespace tagfilterdb {
             return false;
         }
 
-        int nextIndex = getNextPageIndex(index);
+        // If Create New Page 
+        if (IsCreateNewPage(pageID)) {
+            assert(node->offset_ == getPage(pageID)->lastOffset_);
+            // TODO: Compact reinsert !! 
+            CreateNewPage();
+            Compact(pageID);
+            return RecursivelyAddRecord(node, pageID, record, offset, recordSize, 
+                                        isAppendable, isFirst);
+        }
+
+        int nextPageID = pageID + 1;
         int splitSize = recordSize - BlockToDataSize(node->blockSize_);
-        if (RecursivelyAddRecord(pages[nextIndex].freeListH_->next_, nextIndex, record,
+        if (RecursivelyAddRecord(getPage(nextPageID)->freeListH_->next_, nextPageID, record,
                              offset + BlockToDataSize(node->blockSize_), splitSize, true, false)) {
-                    flag.flagIsAppend = true;
-                    const char* partialRecord = static_cast<const char*>(record) + offset;
-                    char* dataBlock = Block(flag, partialRecord, BlockToDataSize(node->blockSize_));
-                    pages[index].AddDataBlockAt(node, dataBlock, node->blockSize_);
-                    delete []dataBlock;
-                    return true;
+                flag.flagIsAppend = true;
+                const char* partialRecord = static_cast<const char*>(record) + offset;
+                char* dataBlock = Block(flag, partialRecord, BlockToDataSize(node->blockSize_));
+                getPage(pageID)->AddDataBlockAt(node, dataBlock, node->blockSize_);
+                delete []dataBlock;
+                return true;
         } else {
             return false;
         }
     }
 
     std::pair<char*, int> GetData(long pageID, int offset) {
-        assert(pageID <= pages.size());
+        assert(pageID <= LastPageID());
         PageHeap* page = getPage(pageID);
         assert(page);
         assert(offset < page->lastOffset_);
@@ -537,7 +594,7 @@ namespace tagfilterdb {
         int totalSize = 0;
         std::vector<std::pair<PageHeap*, int>> dataBlocks;
 
-        while (pageID <= pages.size()) {
+        while (pageID <= LastPageID()) {
             PageHeap* page = getPage(pageID);
             assert(page);
             Flag flag = page->LoadFlag(offset);
@@ -573,32 +630,145 @@ namespace tagfilterdb {
         return {buffer, totalSize};
     }
 
-    int FreeData(long pageID, int offset) {
+    int FreeBlock(PageIDType pageID, int offset) {
         PageHeap* page = getPage(pageID);
         assert(page);
         Flag flag = page->LoadFlag(offset);
         assert(flag.flagAssigned);
 
         if (flag.flagIsAppend) {
-            FreeData(pageID + 1, 0);
+            FreeBlock(pageID + 1, 0);
         }
-        int freedBlockSize = page->Free(offset);
-        assert(freedBlockSize > 0);
-        return BlockToDataSize(freedBlockSize);
+
+        int blockSize = BlockSize(page->LoadSize(offset));
+
+        FreeAt(pageID,offset,blockSize);
+        assert(blockSize > 0);
+
+        return BlockToDataSize(blockSize);
     }
 
-    long getNextPageIndex(long index) {
-        if (index + 1 >= pages.size()) {
-            nextPageId_++;
-            pages.push_back(PageHeap(nextPageId_, maxPageBytes_));  
+    void FreeAt(PageIDType pageID, OffsetType offset, int size) {
+        getPage(pageID)->Free(offset, size);
+        // Compact 
+        if (getPage(pageID)->listSize_ == FREE_LIST_SIZE) {
+            Compact(pageID);
         }
-        return index + 1;
+    }
+
+    void Compact(PageIDType pageID) {
+        if (getPage(pageID)->listSize_ == 1) {
+            return;
+        }
+        PageHeap::Iterator iter = getPage(pageID)->Begin();
+        OffsetType offset = 0;
+        auto end = getPage(pageID)->End();
+        while (iter != end) {
+            PageHeap::Iterator next = iter;
+            ++next;
+            Flag flag = getPage(pageID)->LoadFlag(*iter);
+            assert(flag.flagAssigned);
+
+            int size = getPage(pageID)->LoadSize(*iter);
+            
+            Flag newflag{true, false};
+            char* blockData = Block(newflag, 
+                        getPage(pageID)->page_ + *iter + 6, size);
+            getPage(pageID)->SetData(offset,blockData, BlockSize(size));
+            offset += BlockSize(size);
+
+            if (flag.flagIsAppend) {
+                assert(pageID + 1 <= LastPageID());
+                // Move next 
+                int leftspace = getPage(pageID)->EndBlocks() - offset; 
+                Flag nextFlag = getPage(pageID + 1)->LoadFlag(0);
+                assert(nextFlag.flagAssigned);
+
+                int nextSize = getPage(pageID + 1)->LoadSize(0);
+                if (leftspace >= nextSize) {
+                    // move all next block to this block
+                    getPage(pageID)->SetData(offset, getPage(pageID + 1)->page_ + 6, 
+                                              nextSize);
+                   
+                    int newSize = size + nextSize;
+                    getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
+                    offset += nextSize;
+
+                    FreeAt(pageID + 1, 0, BlockSize(nextSize));
+                } else {
+                    // move part that fit leftspace to this block
+                    getPage(pageID)->SetData(offset,getPage(pageID + 1)->page_ + 6, 
+                                              leftspace);
+                    int newSize = size + leftspace;
+                    getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
+                    bool isAppend = true;
+                    getPage(pageID)->SetData(offset - BlockSize(size) + 1,&isAppend, 1); 
+                    offset += leftspace;
+                    assert(offset == getPage(pageID)->EndBlocks());
+
+                    int leftSize = nextSize - leftspace;
+                    // left part set at offset 0 in its page with its flag 
+                    // free offset at 0 + the left part  blockSize 
+    
+                    getPage(pageID + 1)->SetData(0 + 6, getPage(pageID + 1)->page_ + 6 + leftspace, 
+                                              leftSize);
+                    getPage(pageID + 1)->SetData(0 + 2,&leftSize, sizeof(int)); 
+                    getPage(pageID + 1)->SetData(0 + 1,&newflag.flagIsAppend, sizeof(bool)); 
+
+                    FreeAt(pageID + 1, 0 + BlockSize(leftSize), nextSize - leftSize);
+                    
+                    // if the left part have append call compact with that page
+                    if (newflag.flagIsAppend) {
+                        Compact(pageID + 1);
+                    }
+                }
+            }
+
+            iter = next;
+        }   
+        // offset = lastOffset
+        getPage(pageID)->lastOffset_ = offset;
+        getPage(pageID)->blockSpace_ = getPage(pageID)->blockCount_;
+        auto curr = getPage(pageID)->freeListH_->next_;
+
+        // delete Free list except last one
+        while (curr != getPage(pageID)->freeListH_->prev_) {
+            auto next = curr->next_;
+            delete curr;
+            getPage(pageID)->listSize_--;
+            curr = next;
+        }
+
+        assert(getPage(pageID)->listSize_ == 1); 
+        curr->offset_ = offset; // lastOffset 
+        curr->blockSize_ = getPage(pageID)->EndBlocks() - offset;
+        curr->prev_ = getPage(pageID)->freeListH_;
+        curr->next_ = getPage(pageID)->freeListH_;
+        getPage(pageID)->freeListH_->next_ = curr;
+        getPage(pageID)->freeListH_->prev_ = curr;
+    }
+    
+    bool IsCreateNewPage(long pageID) {
+        if (pageID == LastPageID()) {
+            return true;
+        }
+        return false;
+    }
+
+    void CreateNewPage() {
+        lastPageId_++;
+        pages.push_back(PageHeap(lastPageId_, maxPageBytes_));  
+    }
+
+    long LastPageID() {
+        return pages.size();
     }
 
     PageHeap* getPage(long pageID) {
-        if (pageID <= pages.size()) {
+        if (pageID <= LastPageID()) {
             return &pages[pageID - 1];  
         }
+        assert(false);
         return nullptr;
     }
 
@@ -623,10 +793,9 @@ namespace tagfilterdb {
     void PrintPageInfo() {
         std::cout << "===============\n";
             for (int i = 0; i < pages.size(); i++) {
-                std::cout << "Page:" << i + 1 << std::endl;
-                pages[i].PrintFree();
-                std::cout << "BlockCount: " << pages[i].blockCount_
+                std::cout << "Page:" << i + 1  << ", BlockCount: " << pages[i].blockCount_
                           << ", BlockSpace: " <<  pages[i].blockSpace_ << std::endl;
+                pages[i].PrintFree();
             }
             std::cout << "===============\n";
     }
@@ -636,7 +805,7 @@ namespace tagfilterdb {
         }
 
         long GetNextPageId() const {
-            return nextPageId_;
+            return lastPageId_;
         }
     };
 }
