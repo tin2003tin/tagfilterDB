@@ -33,6 +33,8 @@
 #include <atomic>
 #include <cassert>
 #include <cstdlib>
+#include <mutex>
+#include <shared_mutex>
 
 #include "arena.h"
 #include "random.h"
@@ -56,6 +58,10 @@ class SkipList {
   bool Contains(const Key& key) const;
 
   bool Get(const Key& key, Value* value) const;
+  
+  Value& Get(const Key& key) const;
+  
+  void Remove(const Key& key);
 
   class Iterator {
    public:
@@ -112,6 +118,8 @@ class SkipList {
   std::atomic<int> max_height_;  
 
   Random rnd_;
+
+  mutable std::shared_mutex mutex_; 
 };
 
 // Implementation details follow
@@ -317,8 +325,7 @@ SKIPLIST_CLASS::SkipList(Comparator cmp, Arena* arena)
 
 SKIPLIST_TEMPLATE
 void SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
-  // TODO(opt): We can use a barrier-free variant of FindGreaterOrEqual()
-  // here since Insert() is externally synchronized.
+  std::unique_lock lock(mutex_);
   Node* prev[kMaxHeight];
   Node* x = FindGreaterOrEqual(key, prev);
 
@@ -330,13 +337,7 @@ void SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
     for (int i = GetMaxHeight(); i < height; i++) {
       prev[i] = head_;  
     }
-    // It is ok to mutate max_height_ without any synchronization
-    // with concurrent readers.  A concurrent reader that observes
-    // the new value of max_height_ will see either the old value of
-    // new level pointers from head_ (nullptr), or a new value set in
-    // the loop below.  In the former case the reader will
-    // immediately drop to the next level since nullptr sorts after all
-    // keys.  In the latter case the reader will use the new node.
+
     max_height_.store(height, std::memory_order_relaxed);
   }
 
@@ -351,6 +352,7 @@ void SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
 
 SKIPLIST_TEMPLATE
 bool SKIPLIST_CLASS::Contains(const Key& key) const {
+  std::shared_lock lock(mutex_);
   Node* x = FindGreaterOrEqual(key, nullptr);
   if (x != nullptr && Equal(key, x->key_)) {
     return true;
@@ -361,6 +363,7 @@ bool SKIPLIST_CLASS::Contains(const Key& key) const {
 
 SKIPLIST_TEMPLATE
 bool SKIPLIST_CLASS::Get(const Key& key, Value* value) const {
+  std::shared_lock lock(mutex_);
   Node* x = FindGreaterOrEqual(key, nullptr);
   if (x != nullptr && Equal(key, x->key_)) {
     *value = x->value_;  // If the key exists, retrieve its value
@@ -368,6 +371,41 @@ bool SKIPLIST_CLASS::Get(const Key& key, Value* value) const {
   } else {
     return false;  // If the key is not found, return false
   }
+}
+
+SKIPLIST_TEMPLATE
+Value& SKIPLIST_CLASS::Get(const Key& key) const {
+  std::shared_lock lock(mutex_);
+  Node* x = FindGreaterOrEqual(key, nullptr);
+  if (x != nullptr && Equal(key, x->key_)) {
+    return x->value_;
+  } else {
+    Value v;
+    return v;
+  }
+}
+
+SKIPLIST_TEMPLATE
+void SKIPLIST_CLASS::Remove(const Key& key) {
+  std::unique_lock lock(mutex_);
+  Node* prev[kMaxHeight];
+  Node* x = FindGreaterOrEqual(key, prev);
+
+  // If the key is not found, there's nothing to remove
+  if (x == nullptr || !Equal(key, x->key_)) {
+    return;
+  }
+
+  // Update the pointers of the previous nodes to bypass the node to be removed
+  for (int i = 0; i < GetMaxHeight(); i++) {
+    if (prev[i]->Next(i) != x) {
+      break;
+    }
+    prev[i]->SetNext(i, x->Next(i));
+  }
+
+  // Deallocate the node
+  delete x;  
 }
 
 }  

@@ -45,9 +45,9 @@
 #include <stddef.h>
 #include <iostream>
 #include <queue>
-#include <bitset>
 #include <stack>
-#include <functional>
+#include <mutex>
+#include <shared_mutex>
 
 // #define SPI_MOVE_COUNT
 
@@ -172,6 +172,7 @@ class SpatialIndex {
     }
 
     bool Insert(const BB &box, const Value& data) {
+        std::unique_lock lock(mutex_);
         Branch tempBranch(&bbm_);
         tempBranch.box_ = bbm_.Copy(box);
         tempBranch.child_ = nullptr;
@@ -182,11 +183,14 @@ class SpatialIndex {
         return true;  
     }
 
-    void Remove(const BB &box, Value data) {
-        removeBranch(box,data,&root_);
+    bool Remove(const BB &box, Value data) {
+        std::shared_lock lock(mutex_);
+        std::unique_lock lock(mutex_);
+        return removeBranch(box,data,&root_);
     }
 
     void SearchOverlap(const BB &box, SpICallBack<Value>* callback) {
+        std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
         }
@@ -195,6 +199,7 @@ class SpatialIndex {
     }
 
     void SearchUnder(BB &box, SpICallBack<Value>* callback) {
+        std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
         }
@@ -203,6 +208,7 @@ class SpatialIndex {
     }
 
     void SearchCover(BB &box, SpICallBack<Value>* callback) {
+        std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
         }
@@ -217,6 +223,7 @@ class SpatialIndex {
 
 
     void Save() {
+        std::unique_lock lock(mutex_);
         tagfilterdb::PageNodeManager pageManger(op_.PAGE_MAX_BYTES, getNodeSize());
         flush(&pageManger);  // Call flush to fill the page data
 
@@ -944,6 +951,8 @@ class SpatialIndex {
     std::size_t size_; ///< Number of elements in the index.
 
     Arena* arena_;
+
+    mutable std::shared_mutex mutex_; 
 };
 
 
