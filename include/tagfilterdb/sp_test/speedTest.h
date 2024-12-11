@@ -23,14 +23,14 @@
 using namespace tagfilterdb;
 using VE = std::vector<std::pair<BBManager::RangeType, BBManager::RangeType>>;
 
-class Test : public tagfilterdb::Interface {
+class Test {
 private:
     std::string s;
 
 public:
     Test(std::string s) : s(std::move(s)) {}
 
-    Interface* Align(Arena* arena) override {
+    Test* Align(Arena* arena) {
         char* obj_memory = arena->Allocate(sizeof(Test));
         char* str_memory = arena->Allocate(s.size() + 1);
         std::memcpy(str_memory, s.data(), s.size());
@@ -40,20 +40,16 @@ public:
         return new (obj_memory) Test(std::string(str_memory));
     }
 
-    std::string ToString() const override {
+    std::string ToString()  {
         return s;
-    }
-
-    bool operator==(Interface *other) override {
-        return s == ((Test*) other)->s;
     }
 };
 
-class TestSearchAllCallBack : public SpICallBack {
+class TestSearchAllCallBack : public SpICallBack<Test*> {
     public :
-    std::vector<SpICallBackValue> v;
+    std::vector<SpICallBackValue<Test*> > v;
     size_t move_count = 0;
-    bool Process(SpICallBackValue value) {
+    bool Process(SpICallBackValue<Test*>  value) {
         v.push_back(value);
         return true;
     }
@@ -72,7 +68,7 @@ class TestSearchAllCallBack : public SpICallBack {
     }
 };
 
-void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
+void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchOverlap: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -107,7 +103,7 @@ void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Tes
     callback.Sample(m.GetSPI()->GetBBManager());
 }
 
-void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
+void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchContain: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -142,7 +138,7 @@ void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>
     callback.Sample(m.GetSPI()->GetBBManager());
 }
 
-void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable& m) {
+void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchCover: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -181,7 +177,7 @@ void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>
 int SpeedTest() {
     SpatialIndexOptions op;
     std::vector<std::pair<BBManager::BB, Test>> v;
-    MemTable m(op);
+    MemTable<Test*>  m(op);
     size_t size = 100000;
     size_t range = 100000;
 
@@ -189,7 +185,7 @@ int SpeedTest() {
     VE chula_locate = {{100,200},{100,200}};
     auto bb = manager->CreateBox(chula_locate);
     Test chula = Test("Chula");
-    m.InsertSpiral(bb, &chula);
+    m.GetSPI()->Insert(bb, &chula);
     v.push_back({manager->Copy(bb), chula});
     Random r(100);
     for (size_t i = 0; i < size; i++) {
@@ -200,7 +196,7 @@ int SpeedTest() {
         double d = r.Uniform(range);
 
         auto bb = manager->CreateBox({{std::min(a, b), std::max(a, b)}, {std::min(c, d), std::max(c, d)}});
-        m.InsertSpiral(bb, &t);
+        m.GetSPI()->Insert(bb, &t);
         v.push_back({manager->Copy(bb), t});
     }
     std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;

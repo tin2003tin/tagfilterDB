@@ -24,14 +24,14 @@
 using namespace tagfilterdb;
 using VE = std::vector<std::pair<BBManager::RangeType, BBManager::RangeType>>;
 
-class Test : public tagfilterdb::Interface {
+class Test {
 private:
     std::string s;
 
 public:
     Test(std::string s) : s(std::move(s)) {}
 
-    Interface* Align(Arena* arena) override {
+    Test* Align(Arena* arena) {
         char* obj_memory = arena->Allocate(sizeof(Test));
         char* str_memory = arena->Allocate(s.size() + 1);
         std::memcpy(str_memory, s.data(), s.size());
@@ -41,12 +41,8 @@ public:
         return new (obj_memory) Test(std::string(str_memory));
     }
 
-    std::string ToString() const override {
+    std::string ToString()  {
         return s;
-    }
-
-    bool operator==(Interface *other) override {
-        return s == ((Test*) other)->s;
     }
 };
 
@@ -57,7 +53,7 @@ int sp_example3() {
     op.MIN_CHILD = 4;
     op.PAGE_MAX_BYTES = 1024 * 4;
 
-    MemTable m(op);
+    MemTable<Test*> m(op);
     size_t size = 100;
     size_t range = 100000;
 
@@ -80,7 +76,7 @@ int sp_example3() {
         auto bb = manager->CreateBox({{std::min(a, b), std::max(a, b)}, 
                                     {std::min(c, d), std::max(c, d)},
                                     {std::min(e, f), std::max(e, f)}});
-        m.InsertSpiral(bb, &t);
+        m.GetSPI()->Insert(bb, &t);
     }
     std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
     std::cout << "Total Height: " << m.GetSPI()->Height() << std::endl;

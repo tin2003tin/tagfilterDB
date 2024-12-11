@@ -11,6 +11,8 @@
 namespace tagfilterdb {
     class PageNodeManager;
 
+    constexpr int MINIMUM_FILE_NODE_BYTES = 1024*4;
+
     using PageIDType = long;
     using CheckSumType = uint32_t;
 
@@ -170,8 +172,8 @@ namespace tagfilterdb {
     public:
         /// Constructor
         PageNodeManager(size_t maxBytes, size_t nodeSize) : nextPageId_(1), nodeSize_(nodeSize) {  // Start with page ID 1.
-            if (maxBytes < MINIMUM_FILE_BYTES) {
-                maxBytes = MINIMUM_FILE_BYTES;
+            if (maxBytes < MINIMUM_FILE_NODE_BYTES) {
+                maxBytes = MINIMUM_FILE_NODE_BYTES;
             }
             maxPageBytes_ = maxBytes;
 

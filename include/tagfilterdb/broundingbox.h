@@ -108,7 +108,7 @@ class BBManager {
         assert(arena_ != nullptr);
     }
     
-    BB Copy(BB& box) {
+    BB Copy(const BB& box) {
         BB t(dimension_, arena_);
         CopyTo(box, t);
         return t;
@@ -167,7 +167,7 @@ class BBManager {
             return true;
     }
 
-    BB::Edge Get(BB& box, size_t a_axis) const {
+    BB::Edge Get(const BB& box, size_t a_axis) const {
        if (a_axis < 0 || a_axis > dimension_) {
             return {};
         }
@@ -175,14 +175,14 @@ class BBManager {
     }
 
     
-    double Min(BB& box,size_t a_axis) const {
+    double Min(const BB& box,size_t a_axis) const {
         if (a_axis < 0 || a_axis > dimension_) {
             return 0;
         }
         return box.dims_[a_axis].first;
     }
 
-    double Max(BB& box,size_t a_axis) const {
+    double Max(const BB& box,size_t a_axis) const {
         if (a_axis < 0 || a_axis > dimension_) {
             return 0;
         }
@@ -208,7 +208,7 @@ class BBManager {
         }
     }
 
-    double Area(BB& box) const {
+    double Area(const BB& box) const {
         AreaType area = static_cast<AreaType>(1.0);
         for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
             area *= (box.dims_[i_axis].second - box.dims_[i_axis].first);
