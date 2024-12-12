@@ -1,4 +1,4 @@
-# Install script for directory: /home/siriwid/new
+# Install script for directory: /home/tin2003tin/tagfilterDB
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/siriwid/new/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/tin2003tin/tagfilterDB/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

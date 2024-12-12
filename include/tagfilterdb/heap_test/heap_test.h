@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <cstring>
+#include "timer.h"
 
 #include <cstdlib>  // For rand() and srand()
 #include <ctime>    // For seeding rand()
@@ -105,14 +106,17 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
                 int temp = 0;
 
             }
-
-            for (int j = 0; j < skip && iter != pageManager->end(); ++j) {
+            { 
+                for (int j = 0; j < skip && iter != pageManager->end(); ++j) {
                 if (j == 78) {
 
                     int temp1 = 1;
                 }
                 ++iter;
             }
+            }
+            
+
 
             if (iter != pageManager->end()) {
                 auto loc = *iter;
@@ -234,7 +238,7 @@ void heap_test() {
     for (int i = 0; i < 10000; i++) {
         {
             int rn = std::rand() % 10000; 
-            ShareLRUCache<PageHeap*> cache;
+            ShareLRUCache<PageHeap> cache;
             std::vector<BlockAddress> sample;
             PageHeapManager pageManager(1024 * 4, &cache);
             RandomTestCase1(rn, &pageManager, rn, sample, 10);
@@ -244,7 +248,7 @@ void heap_test() {
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap*> cache;
+            ShareLRUCache<PageHeap> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);
@@ -255,7 +259,7 @@ void heap_test() {
         }
          {
             int rn = std::rand() % 2000; 
-            ShareLRUCache<PageHeap*> cache;
+            ShareLRUCache<PageHeap> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             RandomTestCase2(rn, pageManager, rn);
             // pageManager.PrintPageInfo();
@@ -264,7 +268,7 @@ void heap_test() {
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap*> cache;
+            ShareLRUCache<PageHeap> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);

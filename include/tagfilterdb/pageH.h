@@ -129,21 +129,6 @@ namespace tagfilterdb {
 
         PageHeap() = default;
 
-        PageHeap(size_t maxPageBytes) : 
-            PageId_(0), 
-            maxPageBytes_(maxPageBytes), blockSpace_(0),
-            listSize_(0), blockCount_(0), 
-            lastOffset_(0) {
-            setup();
-
-            FreeList* firstList = new FreeList(0, maxPageBytes_ - getMetaDataSize(),
-                                                freeListH_,freeListH_);
-
-            freeListH_->next_ = firstList;
-            freeListH_->prev_ = firstList;
-            listSize_++;
-        }
-
         PageHeap(PageIDType pageId, size_t maxPageBytes) : 
             PageId_(pageId), 
             maxPageBytes_(maxPageBytes), blockSpace_(0),
@@ -151,7 +136,17 @@ namespace tagfilterdb {
             lastOffset_(0) {
 
             setup();
-            // Init First Free List with Size = MaxBytes - MetaData
+            initFreeList();
+        }
+
+          void setup() {
+            page_ = new char[EndBlocks()];
+            freeListH_ = new FreeList(0,0, nullptr, nullptr);
+            freeListH_->next_ = freeListH_;
+            freeListH_->prev_ = freeListH_;
+        }
+
+        void initFreeList() {
             FreeList* firstList = new FreeList(0, maxPageBytes_ - getMetaDataSize(),
                                                 freeListH_,freeListH_);
 
@@ -160,11 +155,124 @@ namespace tagfilterdb {
             listSize_++;
         }
 
-        void setup() {
-            page_ = new char[EndBlocks()];
-            freeListH_ = new FreeList(0,0, nullptr, nullptr);
-            freeListH_->next_ = freeListH_;
-            freeListH_->prev_ = freeListH_;
+         ~PageHeap() {
+            delete []page_;
+            if (freeListH_ == nullptr) {
+                return;
+            }
+            auto curr = freeListH_->next_;
+            
+            while (curr != freeListH_) {
+                auto next = curr->next_;
+                delete curr;
+                curr = next;
+            }
+            delete freeListH_;
+        }
+
+        PageHeap(const PageHeap& other)
+            : PageId_(other.PageId_),
+            maxPageBytes_(other.maxPageBytes_),
+            blockSpace_(other.blockSpace_),
+            listSize_(other.listSize_),
+            blockCount_(other.blockCount_),
+            lastOffset_(other.lastOffset_) {
+            // Allocate new memory for the page
+            page_ = new char[maxPageBytes_];
+            std::copy(other.page_, other.page_ + maxPageBytes_, page_);
+            
+            // Deep copy the free list
+            if (other.freeListH_) {
+                freeListH_ = new FreeList(0, 0, nullptr, nullptr);
+                freeListH_->next_ = freeListH_;
+                freeListH_->prev_ = freeListH_;
+
+                auto currOther = other.freeListH_->next_;
+                auto currThis = freeListH_;
+
+                while (currOther != other.freeListH_) {
+                    auto newNode = new FreeList(currOther->offset_, currOther->blockSize_, freeListH_, currThis);
+                    currThis->next_ = newNode;
+                    currOther = currOther->next_;
+                    currThis = newNode;
+                }
+            }
+        }
+
+        PageHeap& operator=(const PageHeap& other) {
+            if (this == &other) return *this; // Self-assignment check
+
+            // Clean up existing resources
+            delete[] page_;
+            this->~PageHeap();
+
+            // Copy data
+            PageId_ = other.PageId_;
+            maxPageBytes_ = other.maxPageBytes_;
+            blockSpace_ = other.blockSpace_;
+            listSize_ = other.listSize_;
+            blockCount_ = other.blockCount_;
+            lastOffset_ = other.lastOffset_;
+
+            page_ = new char[maxPageBytes_];
+            std::copy(other.page_, other.page_ + maxPageBytes_, page_);
+
+            // Deep copy the free list
+            if (other.freeListH_) {
+                freeListH_ = new FreeList(0, 0, nullptr, nullptr);
+                freeListH_->next_ = freeListH_;
+                freeListH_->prev_ = freeListH_;
+
+                auto currOther = other.freeListH_->next_;
+                auto currThis = freeListH_;
+
+                while (currOther != other.freeListH_) {
+                    auto newNode = new FreeList(currOther->offset_, currOther->blockSize_, freeListH_, currThis);
+                    currThis->next_ = newNode;
+                    currOther = currOther->next_;
+                    currThis = newNode;
+                }
+            }
+
+            return *this;
+        }
+
+        PageHeap(PageHeap&& other) noexcept
+            : PageId_(other.PageId_),
+            page_(other.page_),
+            freeListH_(other.freeListH_),
+            listSize_(other.listSize_),
+            maxPageBytes_(other.maxPageBytes_),
+            lastOffset_(other.lastOffset_),
+            blockSpace_(other.blockSpace_),
+            blockCount_(other.blockCount_) {
+            // Nullify the source
+            other.page_ = nullptr;
+            other.freeListH_ = nullptr;
+        }
+
+        PageHeap& operator=(PageHeap&& other) noexcept {
+            if (this == &other) return *this; // Self-assignment check
+
+            // Clean up existing resources
+            delete[] page_;
+            this->~PageHeap();
+
+            // Steal data
+            PageId_ = other.PageId_;
+            page_ = other.page_;
+            freeListH_ = other.freeListH_;
+            listSize_ = other.listSize_;
+            maxPageBytes_ = other.maxPageBytes_;
+            lastOffset_ = other.lastOffset_;
+            blockSpace_ = other.blockSpace_;
+            blockCount_ = other.blockCount_;
+
+            // Nullify the source
+            other.page_ = nullptr;
+            other.freeListH_ = nullptr;
+
+            return *this;
         }
 
         FreeList* FindFree(int dataSize) {
@@ -478,7 +586,7 @@ namespace tagfilterdb {
     private:
         std::map<int, PageHeap> pages_;    ///< Vector to store all the pages.
 
-        ShareLRUCache<PageHeap*>* cache_;
+        ShareLRUCache<PageHeap>* cache_;
 
         size_t maxPageBytes_;
         
@@ -578,7 +686,7 @@ namespace tagfilterdb {
         friend Iterator;
 
     public:
-        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap*>* cache) 
+        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap>* cache) 
             : lastPageId_(0), cache_(cache), maxPageBytes_(maxBytes)
         {
             assert(cache);
@@ -587,11 +695,7 @@ namespace tagfilterdb {
             }
         }
 
-        ~PageHeapManager() {
-            for (auto& p : pages_) {
-                delete []p.second.page_;
-            }
-        }
+        ~PageHeapManager() {}
 
     char* Block(Flag flag, const void* record, int recordSize) {
         int dataSize = sizeof(flag.flagAssigned) + sizeof(flag.flagIsAppend) +
@@ -785,10 +889,12 @@ namespace tagfilterdb {
             int size = getPage(pageID)->LoadSize(*iter);
             
             Flag newflag{true, false};
+            // [MARK] Copy data multiply times
             char* blockData = Block(newflag, 
                         getPage(pageID)->page_ + *iter + 6, size);
             getPage(pageID)->SetData(offset,blockData, BlockSize(size));
             offset += BlockSize(size);
+            delete []blockData;
 
             if (flag.flagIsAppend) {
                 assert(pageID + 1 <= LastPageID());
@@ -870,7 +976,10 @@ namespace tagfilterdb {
 
     void CreateNewPage() {
         lastPageId_++;
-        pages_[lastPageId_] = PageHeap(lastPageId_, maxPageBytes_);  
+        pages_[lastPageId_].maxPageBytes_ = maxPageBytes_;
+        pages_[lastPageId_].setup();
+        pages_[lastPageId_].initFreeList();
+        pages_[lastPageId_].PageId_ = lastPageId_;
     }
 
     long LastPageID() {
@@ -885,9 +994,10 @@ namespace tagfilterdb {
                 return &pages_[pageID];
             }  else {
                 // Fetch the page form cache/disk
-                PageHeap* page = fetchPage(pageID);
+                auto res = fetchPage(pageID);
                 // Copy the page to pages 
-                pages_[pageID] = *page;
+                pages_[pageID] = *(res.first);
+                cache_->Release(res.second);
                 return &pages_[pageID];
             }
         } else { 
@@ -899,18 +1009,15 @@ namespace tagfilterdb {
     }
 
     // This is more general for external can request data
-    PageHeap* fetchPage(long pageID) {
+     std::pair<PageHeap*,BaseNode*> fetchPage(long pageID) {
         // Find in cache
         auto n = cache_->Get(std::to_string(pageID));
         if (n == nullptr) {
             // If it is not found the page in cache load from disk
             PageHeap* page = LoadAtPage(pageID);
-            // Add to cache
-            cache_->Release(cache_->Insert(std::to_string(pageID),page,maxPageBytes_));
-            return page;
+            return {page, nullptr};
         }
-        cache_->Release(n);
-        return ShareLRUCache<PageHeap*>::GetValue(n);
+        return {&ShareLRUCache<PageHeap>::GetValue(n), n};
     }
 
     Iterator begin() {
@@ -987,7 +1094,8 @@ namespace tagfilterdb {
         in.seekg(sizeof(int), std::ios::beg);
 
         while (in.peek() != EOF) {
-            PageHeap newPage(maxPageBytes_);
+            PageHeap newPage;
+            newPage.setup();
             try {
                 newPage.Load(in); 
             } catch (const std::exception& e) {
@@ -1016,7 +1124,9 @@ namespace tagfilterdb {
         throw std::runtime_error("Failed to seek to the specific page in the file.");
     }
 
-        PageHeap* loadedPage = new PageHeap(maxPageBytes_);
+        PageHeap* loadedPage = new PageHeap();
+        loadedPage->maxPageBytes_ = maxPageBytes_;
+        loadedPage->setup();
         try {
             loadedPage->Load(in);
         } catch (const std::exception& e) {
@@ -1060,16 +1170,22 @@ namespace tagfilterdb {
         assert(pageID <= LastPageID());
 
         int totalSize = 0;
-        std::vector<std::pair<PageHeap*, int>> dataBlocks;
+        struct Temp {
+            PageHeap* page;
+            OffsetType offset;
+            int dataSize;
+            BaseNode* ref;
+        };
+        std::vector<Temp> tempVec;
 
         while (pageID <= LastPageID()) {
-            PageHeap* page = fetchPage(pageID);
-            assert(page);
-            Flag flag = page->LoadFlag(offset);
+            auto res = fetchPage(pageID);
+            assert(res.first);
+            Flag flag = res.first->LoadFlag(offset);
             assert(flag.flagAssigned);
 
-            int dataSize = page->LoadSize(offset);
-            dataBlocks.emplace_back(page, offset);
+            int dataSize = res.first->LoadSize(offset);
+            tempVec.push_back(Temp{res.first, offset, dataSize, res.second});
 
             totalSize += dataSize;
 
@@ -1086,13 +1202,16 @@ namespace tagfilterdb {
         int writeOffset = 0;
 
         // Load data into the buffer
-        for (const auto& block : dataBlocks) {
-            PageHeap* page = block.first;
-            int dataOffset = block.second;
-            int dataSize = page->LoadSize(dataOffset);
-
-            page->LoadData(dataOffset, buffer + writeOffset, dataSize);
-            writeOffset += dataSize;
+        for (const auto& e : tempVec) {
+            e.page->LoadData(e.offset, buffer + writeOffset, e.dataSize);
+            writeOffset += e.dataSize;
+            if (e.ref == nullptr) {
+                cache_->Release(cache_->Insert(std::to_string(e.page->PageId_), 
+                                std::move(*e.page), maxPageBytes_));
+                delete e.page;
+            } else {
+                cache_->Release(e.ref);
+            }
         }
 
         return {buffer, totalSize};

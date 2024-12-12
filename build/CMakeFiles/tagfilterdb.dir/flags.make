@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/g++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/siriwid/new/include
+CXX_INCLUDES = -I/home/tin2003tin/tagfilterDB/include
 
-CXX_FLAGS = -g -std=gnu++17
+CXX_FLAGS = -g -O0 -std=gnu++17
 

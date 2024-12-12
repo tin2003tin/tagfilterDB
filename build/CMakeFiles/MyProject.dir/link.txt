@@ -1,1 +1,1 @@
-/usr/bin/g++ -g CMakeFiles/MyProject.dir/src/main.cpp.o -o MyProject  libtagfilterdb.a 
+/usr/bin/g++ -g -O0 CMakeFiles/MyProject.dir/src/main.cpp.o -o MyProject  libtagfilterdb.a 

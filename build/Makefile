@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/siriwid/new
+CMAKE_SOURCE_DIR = /home/tin2003tin/tagfilterDB
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/siriwid/new/build
+CMAKE_BINARY_DIR = /home/tin2003tin/tagfilterDB/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/siriwid/new/build/CMakeFiles /home/siriwid/new/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tin2003tin/tagfilterDB/build/CMakeFiles /home/tin2003tin/tagfilterDB/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/siriwid/new/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tin2003tin/tagfilterDB/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

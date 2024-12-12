@@ -52,7 +52,7 @@ namespace tagfilterdb {
     class MemPool {
         
     public:
-        ShareLRUCache<PageHeap* > cache_;  // Cache of pages
+        ShareLRUCache<PageHeap> cache_;  // Cache of pages
         PageHeapManager manager_;         // Manage page access (load/flush)
         
         SkipList<BlockAddress, JsonObject*, BlockAddressComparator> signedList_;  // Holds signed data
