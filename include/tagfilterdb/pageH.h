@@ -23,6 +23,7 @@ namespace tagfilterdb {
     constexpr int MAXIMUM_FILE_BYTES = 1024 * 4;
     constexpr long MAXINUM_CACHE_CHARGE = 1024*4* 100; // can cache 100 Page !!  
 
+    // [TODO] make env store file to disk
     const std::string PAGEHEAP_FILENAME = "fileHeap.txt";
 
     using PageIDType = long;
@@ -36,6 +37,7 @@ namespace tagfilterdb {
     };
     #pragma pack()
 
+    // [MARK] clean the pageHeap class structure
     class PageHeap {
 
         struct FreeList {
@@ -64,12 +66,12 @@ namespace tagfilterdb {
         friend PageHeapManager;
     public:
 
+      // The Iterator that traval all assigned block in the page 
       class Iterator {
             PageHeap* page_;
             OffsetType offset_;
 
         public:
-            // Constructors
             Iterator(PageHeap* page)
                 : page_(page), offset_(0) {
                 skipFree();
@@ -79,7 +81,6 @@ namespace tagfilterdb {
                 : page_(page), offset_(offset) {
             }
 
-            // Advance to the next valid record
             void operator++() {
                 assert(page_);
                 
@@ -87,7 +88,6 @@ namespace tagfilterdb {
                 skipFree();
             }
 
-            // Compare iterators
             bool operator==(const Iterator& other) const {
                 return offset_ == other.offset_;
             }
@@ -316,7 +316,7 @@ namespace tagfilterdb {
             } else {
                 node->prev_->next_ = node->next_;
                 node->next_->prev_ = node->prev_;
-                // TODO: 
+     
                 delete node;   
 
                 listSize_--;
@@ -478,7 +478,7 @@ namespace tagfilterdb {
     private:
         std::map<int, PageHeap> pages_;    ///< Vector to store all the pages.
 
-        ShareLRUCache<PageHeap>* cache_;
+        ShareLRUCache<PageHeap*>* cache_;
 
         size_t maxPageBytes_;
         
@@ -578,7 +578,7 @@ namespace tagfilterdb {
         friend Iterator;
 
     public:
-        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap>* cache) 
+        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap*>* cache) 
             : lastPageId_(0), cache_(cache), maxPageBytes_(maxBytes)
         {
             assert(cache);
@@ -677,7 +677,6 @@ namespace tagfilterdb {
         // If Create New Page 
         if (IsCreateNewPage(pageID)) {
             assert(node->offset_ == getPage(pageID)->lastOffset_);
-            // TODO: Compact reinsert !! 
             CreateNewPage();
             Compact(pageID);
             return RecursivelyAddRecord(node, pageID, record, offset, recordSize, 
@@ -878,20 +877,40 @@ namespace tagfilterdb {
         return lastPageId_;
     }
 
+    // This is used for assign/free/flush/compact process ??private
     PageHeap* getPage(long pageID) {
         if (pageID <= LastPageID()) {
+            // Find the page in pages 
             if (pages_.count(pageID)) {
                 return &pages_[pageID];
             }  else {
-                LoadAtPage(pageID);
+                // Fetch the page form cache/disk
+                PageHeap* page = fetchPage(pageID);
+                // Copy the page to pages 
+                pages_[pageID] = *page;
                 return &pages_[pageID];
             }
         } else { 
-            lastPageId_++;
-            pages_[lastPageId_] = PageHeap(lastPageId_, maxPageBytes_);
+            // Create new page if request more than lastPage
+           CreateNewPage();
         }
         
         return &pages_[pageID];
+    }
+
+    // This is more general for external can request data
+    PageHeap* fetchPage(long pageID) {
+        // Find in cache
+        auto n = cache_->Get(std::to_string(pageID));
+        if (n == nullptr) {
+            // If it is not found the page in cache load from disk
+            PageHeap* page = LoadAtPage(pageID);
+            // Add to cache
+            cache_->Release(cache_->Insert(std::to_string(pageID),page,maxPageBytes_));
+            return page;
+        }
+        cache_->Release(n);
+        return ShareLRUCache<PageHeap*>::GetValue(n);
     }
 
     Iterator begin() {
@@ -944,6 +963,7 @@ namespace tagfilterdb {
         out.close();
     }
 
+    // Load Meta of Page Manager
     void Load() {
         std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
         if (!in) {
@@ -957,7 +977,7 @@ namespace tagfilterdb {
         in.close();
     }
 
-
+    // This is just funtion for checking the test
     void LoadAllPage() {
         std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
         if (!in) {
@@ -978,7 +998,8 @@ namespace tagfilterdb {
         in.close();
     }
 
-    void LoadAtPage(PageIDType pageID) {
+    // This is used to load the page from disk
+    PageHeap* LoadAtPage(PageIDType pageID) {
     if (pageID < 0 || pageID > lastPageId_) {
         throw std::out_of_range("Invalid page index");
     }
@@ -995,18 +1016,19 @@ namespace tagfilterdb {
         throw std::runtime_error("Failed to seek to the specific page in the file.");
     }
 
-        PageHeap loadedPage(maxPageBytes_);
+        PageHeap* loadedPage = new PageHeap(maxPageBytes_);
         try {
-            loadedPage.Load(in);
+            loadedPage->Load(in);
         } catch (const std::exception& e) {
             throw std::runtime_error("Failed to load the specified page: " + std::string(e.what()));
         }
 
-        pages_[loadedPage.PageId_] =  std::move(loadedPage);
-
         in.close();
+
+        return loadedPage;
     }
 
+    // [OPTION]
     PageHeap LoadPageMedata(PageIDType pageID) {
     if (pageID < 0 || pageID > lastPageId_) {
         throw std::out_of_range("Invalid page index");
@@ -1032,6 +1054,48 @@ namespace tagfilterdb {
         }
 
         in.close();
+    }
+
+    std::pair<char*, int> FetchData(long pageID, int offset) {
+        assert(pageID <= LastPageID());
+
+        int totalSize = 0;
+        std::vector<std::pair<PageHeap*, int>> dataBlocks;
+
+        while (pageID <= LastPageID()) {
+            PageHeap* page = fetchPage(pageID);
+            assert(page);
+            Flag flag = page->LoadFlag(offset);
+            assert(flag.flagAssigned);
+
+            int dataSize = page->LoadSize(offset);
+            dataBlocks.emplace_back(page, offset);
+
+            totalSize += dataSize;
+
+            if (!flag.flagIsAppend) {
+                break;
+            }
+
+            pageID += 1; 
+            offset = 0; 
+        }
+
+        // Allocate buffer for the entire data
+        char* buffer = new char[totalSize];
+        int writeOffset = 0;
+
+        // Load data into the buffer
+        for (const auto& block : dataBlocks) {
+            PageHeap* page = block.first;
+            int dataOffset = block.second;
+            int dataSize = page->LoadSize(dataOffset);
+
+            page->LoadData(dataOffset, buffer + writeOffset, dataSize);
+            writeOffset += dataSize;
+        }
+
+        return {buffer, totalSize};
     }
 
     };

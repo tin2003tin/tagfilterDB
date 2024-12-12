@@ -64,10 +64,14 @@ BlockAddress Move(PageHeapManager* pageManager, int m) {
 }
 
 
-void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations, std::vector<BlockAddress>& sample) {
+void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
+                    std::vector<BlockAddress>& sample, int sampleSize) {
     std::srand(seed); // Seed randomness
 
     for (int i = 0; i < numOperations; ++i) {
+        if (i % 10000 == 0) {
+            std::cout << "- " << i << std::endl;
+        }
         int operation = std::rand() % 3; // 0: Add record, 1: Free record
         if (operation != 0) {
             // std::cout << "Trying to add.....\n";
@@ -78,9 +82,6 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations, 
             data["gpx"] = 2.0 + ((std::rand() % 200) / 100.0); // Random GPA between 2.0 and 4.0
 
             BlockAddress blockAddress = SetJson(pageManager, data);
-            if (i % 10 == 0) {
-                sample.push_back(blockAddress);
-            }
             // std::string jsonString = data.dump();
             // std::cout << "Added: " << jsonString << ", Size " << jsonString.size() << "\n";
             // std::cout << "At Page: " << blockAddress.first << ", Offset: " << blockAddress.second << "\n";
@@ -121,6 +122,22 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations, 
             }
         }
         // pageManager.PrintPageInfo();
+    }
+
+    int count = pageManager->TotalCount();
+    for (int i = 0; i < sampleSize; i++) {
+        while (true) {
+        auto iter = pageManager->begin();
+        int rn = std::rand();
+        int skip =  rn % count;
+         for (int j = 0; j < skip && iter != pageManager->end(); ++j) {
+                ++iter;
+        }
+        if (iter != pageManager->end()) {
+             sample.push_back(*iter);
+             break;
+        }
+        }   
     }
 }
 
@@ -217,17 +234,17 @@ void heap_test() {
     for (int i = 0; i < 10000; i++) {
         {
             int rn = std::rand() % 10000; 
-            ShareLRUCache<PageHeap> cache;
+            ShareLRUCache<PageHeap*> cache;
             std::vector<BlockAddress> sample;
             PageHeapManager pageManager(1024 * 4, &cache);
-            RandomTestCase1(rn, &pageManager, rn, sample);
+            RandomTestCase1(rn, &pageManager, rn, sample, 10);
             // pageManager.PrintPageInfo();
-            Scan(&pageManager);
+            // Scan(&pageManager);
             std::cout << i << ": Finished test1 Save! ";
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap> cache;
+            ShareLRUCache<PageHeap*> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);
@@ -238,7 +255,7 @@ void heap_test() {
         }
          {
             int rn = std::rand() % 2000; 
-            ShareLRUCache<PageHeap> cache;
+            ShareLRUCache<PageHeap*> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             RandomTestCase2(rn, pageManager, rn);
             // pageManager.PrintPageInfo();
@@ -247,7 +264,7 @@ void heap_test() {
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap> cache;
+            ShareLRUCache<PageHeap*> cache;
             PageHeapManager pageManager(1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);

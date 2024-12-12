@@ -34,12 +34,12 @@ namespace tagfilterdb {
         JsonObject(ObjectState state, json data) : state_(state), data_(std::move(data)) {}
 
         bool Assign(Arena* arena) {
-            // TODO: Write in arena with json Size and State size
+            // [TODO] Write in arena with json Size and State size
             return true;
         }
 
         static JsonObject* newObj(ObjectState state, json data, Arena* arena) {
-            // TODO: Create new JsonObject and assign
+            // [TODO] Create new JsonObject and assign
             return new JsonObject(state, std::move(data));
         }
     };
@@ -52,7 +52,7 @@ namespace tagfilterdb {
     class MemPool {
         
     public:
-        ShareLRUCache<PageHeap> cache_;  // Cache of pages
+        ShareLRUCache<PageHeap* > cache_;  // Cache of pages
         PageHeapManager manager_;         // Manage page access (load/flush)
         
         SkipList<BlockAddress, JsonObject*, BlockAddressComparator> signedList_;  // Holds signed data

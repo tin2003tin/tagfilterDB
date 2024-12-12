@@ -4,30 +4,69 @@
 #include <memory>
 
 using namespace tagfilterdb;
+using namespace  nlohmann;
+
 
 class MemPoolTest {
 
   Arena arena_;
   MemPool memPool_;
   std::vector<BlockAddress> sample_;
+  const int sampleSize = 100;
 
   public:
   MemPoolTest() : arena_(Arena()), 
   memPool_(MemPool(MemPoolOpinion(),&arena_))  {
-    SetupHeapFile();
+    for (int i = 0; i < 10; i++) {
+      SetupHeapFile(i);
+      FetchData();
+      sample_.clear();
+    }
   }
   private:
-  void SetupHeapFile() {
-    int rn = std::rand() % 1000; 
-    RandomTestCase1(rn, &memPool_.manager_, rn, sample_);
-    Scan(&memPool_.manager_);
+  void SetupHeapFile(int seed) {
+    int numOperations = 20000;
+    std::cout << "Trying.. Add/Free data and Save to file" << std::endl;
+   
+    MemPoolOpinion op;
+    ShareLRUCache<PageHeap*> tempCache(op.CACHE_CHARGE);
+    PageHeapManager manager(1024*4, &tempCache);
+    RandomTestCase1(seed, &manager, numOperations, sample_, sampleSize);
+    std::cout << "Finished!! Add/Free data and Save to file" << std::endl;
+    // Scan(&memPool_.manager_);
+    manager.Save();
+  }
+
+  void FetchData() {
+    MemPoolOpinion op;
+    ShareLRUCache<PageHeap*> tempCache(op.CACHE_CHARGE);
+    PageHeapManager manager(1024*4, &tempCache);
     std::cout << "Sample Size: " << sample_.size() << std::endl;
-    memPool_.manager_.Save();
+    manager.Load();
+    std::cout << "TotalPage: " << manager.LastPageID() << std::endl;
+
+    for (auto& addr : sample_) {
+      std::pair<char*, int> result  = manager.FetchData(addr.first,addr.second);
+      if (!result.first || result.second <= 0) {
+          throw std::runtime_error("Invalid data retrieved from PageHeapManager");
+      }
+      std::string jsonString(result.first, result.second);
+      delete[] result.first;
+
+      try {
+          json data = json::parse(jsonString);
+          std::cout << "Retrieved JSON: " << data.dump(4) << std::endl;
+      } catch (const json::parse_error& e) {
+          throw std::runtime_error("Failed to parse JSON data: " + std::string(e.what()));
+      }
+    } 
+    tempCache.Detail();
+    
   }
 
 
 };
 
 int main() {
-    MemPoolTest();
+  MemPoolTest();
 }
