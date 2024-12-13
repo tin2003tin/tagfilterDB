@@ -27,21 +27,6 @@ public:
     explicit Location(std::string id, std::string name, double x_min, double x_max, double y_min, double y_max) 
         : id(std::move(id)), name(std::move(name)), x_min(x_min), x_max(x_max), y_min(y_min), y_max(y_max) {}
 
-    Location* Align(Arena* arena) {
-        char* obj_memory = arena->Allocate(sizeof(Location));
-
-        char* id_memory = arena->Allocate(id.size() + 1);
-        std::memcpy(id_memory, id.data(), id.size());
-        id_memory[id.size()] = '\0';
-
-        char* name_memory = arena->Allocate(name.size() + 1);
-        std::memcpy(name_memory, name.data(), name.size());
-        name_memory[name.size()] = '\0';
-
-        // Create a new Location object in the arena with aligned strings
-        return new (obj_memory) Location(std::string(id_memory), std::string(name_memory), x_min, x_max, y_min, y_max);
-    }
-
     std::string ToString() const {
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(2);
@@ -61,6 +46,35 @@ public:
             BBManager::BB::Edge{y_min, y_max}
         };
     }
+
+    DataView Serialize() const {
+        size_t id_size = id.size();
+        size_t name_size = name.size();
+        size_t total_size = sizeof(size_t) * 2 + id_size + name_size + sizeof(double) * 4;
+
+        char* memory = new char[total_size];
+        char* ptr = memory;
+
+        memcpy(ptr, &id_size, sizeof(size_t));
+        ptr += sizeof(size_t);
+        memcpy(ptr, id.data(), id_size);
+        ptr += id_size;
+
+        memcpy(ptr, &name_size, sizeof(size_t));
+        ptr += sizeof(size_t);
+        memcpy(ptr, name.data(), name_size);
+        ptr += name_size;
+
+        memcpy(ptr, &x_min, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(ptr, &x_max, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(ptr, &y_min, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(ptr, &y_max, sizeof(double));
+
+        return DataView(memory, total_size);
+    }
 };
 
 
@@ -69,8 +83,9 @@ std::string LocationToString(Location** loc) {
 }
 
 int sp_example1() {
-    SpatialIndexOptions op;
-    MemTable<Location*> m(op);
+    SpatialIndexOptions sop;
+    MemPoolOpinion mop;
+    MemTable m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
 
         std::vector<Location> locations = {
@@ -92,7 +107,7 @@ int sp_example1() {
 
     for (auto& loc : locations) {
         auto locVE = manager->CreateBox(loc.getLocation());
-        m.GetSPI()->Insert(locVE, &loc);
+        m.GetSPI()->Insert(locVE, );
     }
 
 

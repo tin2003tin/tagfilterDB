@@ -4,6 +4,7 @@
 #include <atomic>
 #include <mutex>
 #include <stdexcept>
+#include <iterator>
 
 namespace tagfilterdb {
 
@@ -20,75 +21,83 @@ namespace tagfilterdb {
         };
 
     private:
-        std::atomic<Node*> head;   // Atomic pointer to the head of the list (first block)
-        std::atomic<Node*> tail;   // Atomic pointer to the tail of the list (last block)
-        std::atomic<size_t> size;  // Atomic size of the list
-        mutable std::mutex mtx;    // Mutex to protect against concurrent modifications
+        std::atomic<Node*> head_;
+        std::atomic<Node*> tail_;
+        std::atomic<size_t> size_;
+        mutable std::mutex mtx_;
+        Arena* arena_;
 
     public:
         // Constructor to initialize an empty list
-        List() : head(nullptr), tail(nullptr), size(0) {}
+        List(Arena* arena) : head_(nullptr), tail_(nullptr), size_(0), arena_(arena) {}
 
-        // Add a block to the list (takes a Value type)
-        void Add(Value data) {
-            std::lock_guard<std::mutex> lock(mtx);  // Lock the list during modification
+        Value* Add(Value data) {
+            std::lock_guard<std::mutex> lock(mtx_);
 
-            Node* newNode = new Node(data);
-            Node* oldTail = tail.load(std::memory_order_relaxed);
+            char* const node_memory = arena_->AllocateAligned(sizeof(Node));
+            Node* newNode = new (node_memory) Node(data);
+
+            Node* oldTail = tail_.load(std::memory_order_relaxed);
 
             if (oldTail) {
-                oldTail->next_ = newNode;  // Link the current tail to the new node
-                newNode->prev_ = oldTail;  // Set the previous pointer of the new node
-                tail.store(newNode, std::memory_order_release); // Update the tail atomically
+                oldTail->next_ = newNode;
+                newNode->prev_ = oldTail;
+                tail_.store(newNode, std::memory_order_release);
             } else {
-                head.store(newNode, std::memory_order_release); // If the list is empty, both head and tail point to the new node
-                tail.store(newNode, std::memory_order_release);
+                head_.store(newNode, std::memory_order_release);
+                tail_.store(newNode, std::memory_order_release);
             }
 
-            size.fetch_add(1, std::memory_order_relaxed);  // Atomically increment the size
+            size_.fetch_add(1, std::memory_order_relaxed);
+            return &newNode->data_;
         }
 
-        // Remove a block from the list (returns the block's data)
-        Value Remove() {
-            std::lock_guard<std::mutex> lock(mtx);  // Lock the list during modification
-
-            if (head.load(std::memory_order_acquire) == nullptr) {
-                throw std::out_of_range("List is empty");
-            }
-
-            Node* nodeToRemove = head.load(std::memory_order_acquire);  // Get the node at the head
-            Value data = nodeToRemove->data_;                            // Get the data
-            Node* newHead = nodeToRemove->next_;
-
-            if (newHead) {
-                newHead->prev_ = nullptr;  // Update the new head's previous pointer to null
-                head.store(newHead, std::memory_order_release);  // Update the head atomically
-            } else {
-                tail.store(nullptr, std::memory_order_release);  // If the list is empty after removal, reset tail
-            }
-
-            delete nodeToRemove;  // Free the memory of the removed node
-            size.fetch_sub(1, std::memory_order_relaxed);  // Atomically decrement the size
-
-            return data;  // Return the freed block's data
-        }
-
-        // Check if the list is empty
-        bool IsEmpty() const {
-            return head.load(std::memory_order_acquire) == nullptr;
-        }
-
-        // Get the current size of the list
         size_t GetSize() const {
-            return size.load(std::memory_order_acquire);
+            return size_.load(std::memory_order_acquire);
         }
 
-        // Destructor to clean up the list nodes
-        ~List() {
-            while (!IsEmpty()) {
-                Remove();  // Clean up the list by removing each node
+        // Iterator class
+        class Iterator {
+            Node* current_;
+            Node* prev_;  // Tracks the previous node for deletion
+            List* list_;
+
+        public:
+            explicit Iterator(Node* node, List* list) 
+                : current_(node), prev_(nullptr), list_(list) {}
+
+            Value& operator*() {
+                return current_->data_;
             }
+
+            Value* operator->() {
+                return &current_->data_;
+            }
+
+            Iterator& operator++() {
+                current_ = current_->next_;
+                return *this;
+            }
+
+            bool operator==(const Iterator& other) const {
+                return current_ == other.current_;
+            }
+
+            bool operator!=(const Iterator& other) const {
+                return current_ != other.current_;
+            }
+        };
+
+        Iterator begin() {
+            return Iterator(head_.load(std::memory_order_acquire), this);
         }
+
+        Iterator end() {
+            return Iterator(nullptr, this);
+        }
+
+    private:
+   
     };
 
 }

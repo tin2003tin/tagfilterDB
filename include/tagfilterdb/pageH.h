@@ -10,6 +10,8 @@
 #include <fstream>
 #include <map>
 #include "tagfilterdb/cache.h"
+#include "tagfilterdb/dataView.h"
+#include "tagfilterdb/list.h"
 
 #include "json.hpp"
 
@@ -28,7 +30,11 @@ namespace tagfilterdb {
 
     using PageIDType = long;
     using OffsetType = int;
-    using BlockAddress = std::pair<PageIDType,OffsetType>;
+
+    struct BlockAddress {
+        PageIDType pageID;
+        OffsetType offset;
+    };
     
     #pragma pack(1)
     struct Flag {
@@ -232,6 +238,8 @@ namespace tagfilterdb {
                     currOther = currOther->next_;
                     currThis = newNode;
                 }
+
+                freeListH_->prev_ = currThis;
             }
 
             return *this;
@@ -802,23 +810,23 @@ namespace tagfilterdb {
         }
     }
 
-    std::pair<char*, int> GetData(long pageID, int offset) {
-        assert(pageID <= LastPageID());
-        PageHeap* page = getPage(pageID);
+    DataView GetData(BlockAddress addr) {
+        assert(addr.pageID <= LastPageID());
+        PageHeap* page = getPage(addr.pageID);
         assert(page);
-        assert(offset < page->lastOffset_);
+        assert(addr.offset < page->lastOffset_);
 
-        int totalSize = 0;
+        size_t totalSize = 0;
         std::vector<std::pair<PageHeap*, int>> dataBlocks;
 
-        while (pageID <= LastPageID()) {
-            PageHeap* page = getPage(pageID);
+        while (addr.pageID <= LastPageID()) {
+            PageHeap* page = getPage(addr.pageID);
             assert(page);
-            Flag flag = page->LoadFlag(offset);
+            Flag flag = page->LoadFlag(addr.offset );
             assert(flag.flagAssigned);
 
-            int dataSize = page->LoadSize(offset);
-            dataBlocks.emplace_back(page, offset);
+            int dataSize = page->LoadSize(addr.offset );
+            dataBlocks.emplace_back(page, addr.offset );
 
             totalSize += dataSize;
 
@@ -826,8 +834,8 @@ namespace tagfilterdb {
                 break;
             }
 
-            pageID += 1; 
-            offset = 0; 
+            addr.pageID += 1; 
+            addr.offset = 0; 
         }
 
         // Allocate buffer for the entire data
@@ -847,7 +855,7 @@ namespace tagfilterdb {
         return {buffer, totalSize};
     }
 
-    int FreeBlock(PageIDType pageID, int offset) {
+    bool FreeBlock(PageIDType pageID, int offset) {
         PageHeap* page = getPage(pageID);
         assert(page);
         Flag flag = page->LoadFlag(offset);
@@ -859,23 +867,22 @@ namespace tagfilterdb {
 
         int blockSize = BlockSize(page->LoadSize(offset));
 
-        FreeAt(pageID,offset,blockSize);
-        assert(blockSize > 0);
-
-        return BlockToDataSize(blockSize);
+        return FreeAt(pageID,offset,blockSize);
     }
 
-    void FreeAt(PageIDType pageID, OffsetType offset, int size) {
+    bool FreeAt(PageIDType pageID, OffsetType offset, int size) {
         getPage(pageID)->Free(offset, size);
         // Compact 
         if (getPage(pageID)->listSize_ == FREE_LIST_SIZE) {
-            Compact(pageID);
+            return Compact(pageID);
+        } else {
+            return false;
         }
     }
 
-    void Compact(PageIDType pageID) {
+    bool Compact(PageIDType pageID) {
         if (getPage(pageID)->listSize_ == 1) {
-            return;
+            return false;
         }
         PageHeap::Iterator iter = getPage(pageID)->Begin();
         OffsetType offset = 0;
@@ -965,6 +972,8 @@ namespace tagfilterdb {
         curr->next_ = getPage(pageID)->freeListH_;
         getPage(pageID)->freeListH_->next_ = curr;
         getPage(pageID)->freeListH_->prev_ = curr;
+
+        return true;
     }
     
     bool IsCreateNewPage(long pageID) {
@@ -1166,26 +1175,26 @@ namespace tagfilterdb {
         in.close();
     }
 
-    std::pair<char*, int> FetchData(long pageID, int offset) {
-        assert(pageID <= LastPageID());
+    DataView FetchData(BlockAddress addr) {
+        assert(addr.pageID <= LastPageID());
 
-        int totalSize = 0;
+        size_t totalSize = 0;
         struct Temp {
             PageHeap* page;
             OffsetType offset;
-            int dataSize;
+            size_t dataSize;
             BaseNode* ref;
         };
         std::vector<Temp> tempVec;
 
-        while (pageID <= LastPageID()) {
-            auto res = fetchPage(pageID);
+        while (addr.pageID <= LastPageID()) {
+            auto res = fetchPage(addr.pageID);
             assert(res.first);
-            Flag flag = res.first->LoadFlag(offset);
+            Flag flag = res.first->LoadFlag(addr.offset);
             assert(flag.flagAssigned);
 
-            int dataSize = res.first->LoadSize(offset);
-            tempVec.push_back(Temp{res.first, offset, dataSize, res.second});
+            size_t dataSize = res.first->LoadSize(addr.offset);
+            tempVec.push_back(Temp{res.first, addr.offset, dataSize, res.second});
 
             totalSize += dataSize;
 
@@ -1193,8 +1202,8 @@ namespace tagfilterdb {
                 break;
             }
 
-            pageID += 1; 
-            offset = 0; 
+            addr.pageID += 1; 
+            addr.offset = 0; 
         }
 
         // Allocate buffer for the entire data

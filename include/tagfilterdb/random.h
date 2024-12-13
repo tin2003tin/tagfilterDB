@@ -27,8 +27,8 @@
  */
 
 
-#ifndef STORAGE_LEVELDB_UTIL_RANDOM_H_
-#define STORAGE_LEVELDB_UTIL_RANDOM_H_
+#ifndef TAGFILTERDB_RANDOM_H
+#define TAGFILTERDB_RANDOM_H
 
 #include <cstdint>
 
@@ -48,6 +48,7 @@ class Random {
       seed_ = 1;
     }
   }
+  
   uint32_t Next() {
     static const uint32_t M = 2147483647L;  // 2^31-1
     static const uint64_t A = 16807;        // bits 14, 8, 7, 5, 2, 1, 0

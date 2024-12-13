@@ -53,13 +53,13 @@ class SkipList {
 
   explicit SkipList(Comparator cmp, Arena* arena);
 
-  void Insert(const Key& key, const Value& value);
+  Value* Insert(const Key& key, const Value& value);
 
   bool Contains(const Key& key) const;
 
   bool Get(const Key& key, Value* value) const;
   
-  Value& Get(const Key& key) const;
+  Value* Get(const Key& key) const;
   
   void Remove(const Key& key);
 
@@ -324,7 +324,7 @@ SKIPLIST_CLASS::SkipList(Comparator cmp, Arena* arena)
 }
 
 SKIPLIST_TEMPLATE
-void SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
+Value* SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
   std::unique_lock lock(mutex_);
   Node* prev[kMaxHeight];
   Node* x = FindGreaterOrEqual(key, prev);
@@ -348,6 +348,7 @@ void SKIPLIST_CLASS::Insert(const Key& key, const Value& value)  {
     x->NoBarrier_SetNext(i, prev[i]->NoBarrier_Next(i));
     prev[i]->SetNext(i, x);
   }
+  return &x->value_;
 }
 
 SKIPLIST_TEMPLATE
@@ -374,14 +375,13 @@ bool SKIPLIST_CLASS::Get(const Key& key, Value* value) const {
 }
 
 SKIPLIST_TEMPLATE
-Value& SKIPLIST_CLASS::Get(const Key& key) const {
+Value* SKIPLIST_CLASS::Get(const Key& key) const {
   std::shared_lock lock(mutex_);
   Node* x = FindGreaterOrEqual(key, nullptr);
   if (x != nullptr && Equal(key, x->key_)) {
-    return x->value_;
+    return &x->value_;
   } else {
-    Value v;
-    return v;
+    return nullptr;
   }
 }
 

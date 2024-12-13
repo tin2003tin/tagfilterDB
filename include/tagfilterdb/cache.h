@@ -124,7 +124,7 @@ class LRUCache {
 
         friend LRUCache;
     };
-    
+
     /**
      * @class BucketValueNode
      * @brief A class representing a value node in the cache.
@@ -172,7 +172,7 @@ class LRUCache {
 
     BucketNode* outdated_head_; ///< Head of the LRU "outdated" list.
     BucketNode* outdated_tail_; ///< Tail of the LRU "outdated" list.
-    
+
     std::mutex mux_; ///< Mutex used to synchronize cache access.
 
     public: 
@@ -445,7 +445,6 @@ class LRUCache {
         }
         return node->key_;
     }
-
 
     private:
         void setup(size_t cap, size_t total_charge) {

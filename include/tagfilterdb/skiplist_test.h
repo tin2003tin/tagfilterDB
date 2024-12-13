@@ -5,9 +5,8 @@
 
 using namespace tagfilterdb;
 
-struct BlockAddressComparator {
+struct BlockAddressCmp {
   int operator()(const BlockAddress& a, const BlockAddress& b) const {
-    // Compare the PageID first, then Offset if necessary
     if (a.first != b.first) {
       return a.first - b.first;
     } else {
@@ -18,10 +17,9 @@ struct BlockAddressComparator {
 
 int main() {
   Arena arena;
-  
-  SkipList<BlockAddress, BlockAddress, BlockAddressComparator> skiplist(BlockAddressComparator(), &arena);
 
-  // Insert BlockAddress elements
+  SkipList<BlockAddress, BlockAddress, BlockAddressCmp> skiplist(BlockAddressCmp(), &arena);
+
   skiplist.Insert({5, 100}, {5, 100});
   skiplist.Insert({10, 200}, {10, 200});
   skiplist.Insert({3, 50}, {3, 50});
@@ -30,12 +28,12 @@ int main() {
     std::cout << "BlockAddress (10, 200) found in the skip list!" << std::endl;
   }
 
-  // Iterate over BlockAddress elements
-  SkipList<BlockAddress, BlockAddress, BlockAddressComparator>::Iterator it(&skiplist);
+  SkipList<BlockAddress, BlockAddress, BlockAddressCmp>::Iterator it(&skiplist);
   for (it.SeekToFirst(); it.Valid(); it.Next()) {
     std::cout << "(" << it.key().first << ", " << it.key().second << ") -> "
               << "(" << it.value().first << ", " << it.value().second << ") ";
   }
+
   std::cout << std::endl;
 
   return 0;

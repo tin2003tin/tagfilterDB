@@ -3,26 +3,33 @@
 
 #include "arena.h"
 #include "spatialIndex.h"
+#include "memPool.h"
+#include "dataView.h"
 
 namespace tagfilterdb {
-    template <typename Value>
     class MemTable {
         public: 
-        explicit MemTable(SpatialIndexOptions spo) : m_sp(spo, &m_arena) {}
+        explicit MemTable(SpatialIndexOptions sop, MemPoolOpinion mop)
+         : sp_(sop, &arena_), memPool_(mop, &arena_)  {}
         MemTable(const MemTable&) = delete;
         MemTable& operator=(const MemTable&) = delete;
 
         Arena* GetArena() {
-            return &m_arena;
+            return &arena_;
         }
 
-        SpatialIndex<Value>* GetSPI() {
-            return &m_sp;
+        SpatialIndex<DataView*>* GetSPI() {
+            return &sp_;
+        }
+
+        MemPool* GetMempool() {
+            return &memPool_;
         }
 
     private:
-        Arena m_arena;
-        SpatialIndex<Value> m_sp;
+        Arena arena_;
+        SpatialIndex<DataView*> sp_;
+        MemPool memPool_; 
     };
 }
 

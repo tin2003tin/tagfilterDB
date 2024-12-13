@@ -184,7 +184,6 @@ class SpatialIndex {
     }
 
     bool Remove(const BB &box, Value data) {
-        std::shared_lock lock(mutex_);
         std::unique_lock lock(mutex_);
         return removeBranch(box,data,&root_);
     }

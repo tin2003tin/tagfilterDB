@@ -19,16 +19,12 @@ BlockAddress SetJson(PageHeapManager* pageManager, const json& json) {
     return pageManager->AddRecord(jsonData.data(), jsonData.size());
 }
 
-json GetJson(PageHeapManager* pageManager, int PageID, int offset) {
-    std::pair<char*, int> result = pageManager->GetData(PageID, offset);
+json GetJson(PageHeapManager* pageManager, BlockAddress addr) {
+    auto result = pageManager->GetData(addr);
 
-    if (!result.first || result.second <= 0) {
-        throw std::runtime_error("Invalid data retrieved from PageHeapManager");
-    }
-
-    std::string jsonString(result.first, result.second);
+    std::string jsonString(result.data, result.size);
     // std::cout << jsonString << std::endl;
-    delete[] result.first;
+    delete[] result.data;
 
     try {
         return json::parse(jsonString);
@@ -46,7 +42,7 @@ void Scan(PageHeapManager *pageManager) {
     auto endIter = pageManager->end();
 
     while (iter != pageManager->end()) {
-        auto result = GetJson(pageManager, (*iter).first,(*iter).second);
+        auto result = GetJson(pageManager, (*iter));
         std::cout << "Retrieved JSON: " << result.dump(4) << std::endl;
         ++iter;
     }
@@ -120,7 +116,7 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
 
             if (iter != pageManager->end()) {
                 auto loc = *iter;
-                int freedSize = pageManager->FreeBlock(loc.first, loc.second);
+                int freedSize = pageManager->FreeBlock(loc.pageID, loc.offset);
                 // std::cout << "Freed record at PageID: " << loc.first << ", Offset: " << loc.second << "\n";
                 // std::cout << "Freed Size: " << freedSize << std::endl;;
             }

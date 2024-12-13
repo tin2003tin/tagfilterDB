@@ -79,9 +79,8 @@ template <class RangeType = double, class AreaType = double>
         }
         return *this;
     }
-    
-  protected:
 
+  protected:
     void setup(size_t dimension, Arena *arena) {
         assert(dimension > 0);
         assert(arena != nullptr);
@@ -89,7 +88,6 @@ template <class RangeType = double, class AreaType = double>
         dims_ = (Edge*) ptr;
     }
 };
-
 
 class BBManager {
     public :
@@ -107,7 +105,7 @@ class BBManager {
         assert(dimension_ > 0);
         assert(arena_ != nullptr);
     }
-    
+
     BB Copy(const BB& box) {
         BB t(dimension_, arena_);
         CopyTo(box, t);
@@ -157,7 +155,7 @@ class BBManager {
         box.dims_[a_axis] = std::make_pair(a_start, a_end);
         return true;
     }
-   
+
     bool SetAxis(BB& box,int a_axis, BB::Edge a_edge) {
             if (a_axis < 0 || a_axis > dimension_) {
                 return false;
@@ -174,7 +172,6 @@ class BBManager {
         return box.dims_[a_axis];
     }
 
-    
     double Min(const BB& box,size_t a_axis) const {
         if (a_axis < 0 || a_axis > dimension_) {
             return 0;
@@ -300,8 +297,7 @@ class BBManager {
     void Print(BB &b) const {
         std::cout << toString(b) << std::endl;
     }
-
 };
 } // namespace tagfilterdb
 
-#endif // TAGFILTERDB_R_STAR_TREE_BOX_HPP_
+#endif // TAGFILTERDB_R_STAR_TREE_BOX_H

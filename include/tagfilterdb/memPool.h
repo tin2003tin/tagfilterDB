@@ -4,43 +4,19 @@
 #include "tagfilterdb/cache.h"
 #include "tagfilterdb/pageH.h"
 #include "tagfilterdb/skiplist.h"
-#include "json.hpp"
+#include "tagfilterdb/dataView.h"
 #include "list.h"
 
 using namespace nlohmann;
 
 namespace tagfilterdb {
-
-    struct BlockAddressComparator {
+    struct BlockAddressCmp {
         int operator()(const BlockAddress& a, const BlockAddress& b) const {
-            if (a.first != b.first) {
-                return a.first - b.first;
+            if (a.pageID != b.pageID) {
+                return a.pageID - b.pageID;
             } else {
-                return a.second - b.second;
+                return a.offset - b.offset;
             }
-        }
-    };
-    
-    enum ObjectState {
-        Signed,
-        UnSigned,
-        Freed,
-    };
-
-    struct JsonObject {
-        ObjectState state_;
-        json data_;
-
-        JsonObject(ObjectState state, json data) : state_(state), data_(std::move(data)) {}
-
-        bool Assign(Arena* arena) {
-            // [TODO] Write in arena with json Size and State size
-            return true;
-        }
-
-        static JsonObject* newObj(ObjectState state, json data, Arena* arena) {
-            // [TODO] Create new JsonObject and assign
-            return new JsonObject(state, std::move(data));
         }
     };
 
@@ -49,124 +25,86 @@ namespace tagfilterdb {
         long CACHE_CHARGE = PAGE_MAX_BYTPES * 100;
     };
 
+    struct UnsignedData {
+        DataView data;
+        BlockAddress addr;
+    };
+
     class MemPool {
-        
     public:
-        ShareLRUCache<PageHeap> cache_;  // Cache of pages
-        PageHeapManager manager_;         // Manage page access (load/flush)
-        
-        SkipList<BlockAddress, JsonObject*, BlockAddressComparator> signedList_;  // Holds signed data
-        SkipList<BlockAddress, JsonObject*, BlockAddressComparator> unsignedList_;  // Holds unsigned data
-        List<BlockAddress> freedList_;  // Holds freed blocks (simple map for freed blocks)
+        ShareLRUCache<PageHeap> cache_; // Cache of pages
+        PageHeapManager manager_; // Manage page access (load/flush)
+
+        SkipList<BlockAddress, DataView, BlockAddressCmp> signedList_; // Holds signed data
+        List<UnsignedData> unsignedList_; // Holds unsigned data
+        List<BlockAddress> freedList_; // Holds freed blocks
+        List<DataView> adjustList_;
+
         Arena* arena_; // Reference to memtable Arena
-        BlockAddressComparator cmp_;
-    
+
     public:
         MemPool() = delete;
         MemPool(MemPoolOpinion op, Arena* arena)
             : cache_(op.CACHE_CHARGE),
-              manager_(PageHeapManager(op.PAGE_MAX_BYTPES, &cache_)),
-              cmp_(BlockAddressComparator()),
-              signedList_(cmp_, arena), 
-              unsignedList_(cmp_, arena),
-              arena_(arena) {}
+            manager_(PageHeapManager(op.PAGE_MAX_BYTPES, &cache_)),
+            signedList_(BlockAddressCmp(), arena),
+            unsignedList_(arena),
+            freedList_(arena),
+            adjustList_(arena),
+            arena_(arena) {}
 
-        bool Insert(BlockAddress addr, ObjectState state, json data) {
-            JsonObject* obj = JsonObject::newObj(state, data, arena_);
-            if (state == Signed) {
-                signedList_.Insert(addr, obj);
-            } else if (state == UnSigned) {
-                unsignedList_.Insert(addr, obj);
-            } else {
-                freedList_.Add(addr);
-            }
-            return true;
+        UnsignedData* Insert(DataView data) {
+            data.Align(arena_);
+            UnsignedData* unsignedData = 
+                unsignedList_.Add(UnsignedData{data,BlockAddress{0,0}});
+            return unsignedData;
         }
 
-        bool MarkFree(BlockAddress addr) {
-            JsonObject* obj = GetBlock(addr, Signed);
-            if (obj) {
-                // Move signed block to freed state
-                obj->state_ = Freed;
-                freedList_.Add(addr);  // Add freed block to the freed list
-                signedList_.Remove(addr);  // Remove from signed list
-                return true;
+        DataView* Get(BlockAddress addr) {
+            DataView* signedData = signedList_.Get(addr);
+            if (signedData != nullptr) {
+                return signedData;
             }
-            return false;
-        }
 
-        JsonObject* LoadData(BlockAddress addr) {
-            // Find in Signed SkipList
-            if (signedList_.Contains(addr)) {
-                return signedList_.Get(addr);
-            }
-            // if not found find the page in cache and store in Signed SkipList
-            auto n = cache_.Get(std::to_string(addr.first));
-            if (n != nullptr) {
-                
-            }
-           
-            // if not found pagemanger load that offset
-              
-        } 
+            DataView data = manager_.FetchData(addr);
 
-        JsonObject* GetBlock(BlockAddress addr, ObjectState state) {
-            if (state == Signed) {
-                return signedList_.Get(addr);
-            } else if (state == UnSigned) {
-                return unsignedList_.Get(addr);
-            } else {
+            try {
+                data.Align(arena_);
+                return signedList_.Insert(addr,data);
+
+            } catch (const std::exception& e) {
+                std::cerr << "Value parsing failed: " << e.what() << std::endl;
                 return nullptr;
             }
         }
 
-        bool UpdateBlockState(BlockAddress addr, ObjectState newState, json newData) {
-            JsonObject* obj = GetBlock(addr, Signed);
-            if (!obj) {
-                return false;  // Block not found
+        BlockAddress Delete(BlockAddress addr) {
+            return *freedList_.Add(addr);    
+        }
+        
+        bool Flush() {
+            bool isCompact = false;
+            // Free First
+            auto freedIter = freedList_.begin();  
+            while (freedIter != freedList_.end())
+            {
+                bool b = manager_.FreeBlock(freedIter->pageID, freedIter->offset);
+                if (b) isCompact = true;
+                ++freedIter;
+            }
+
+            // Sign the unsigned data 
+            auto unsignedIter = unsignedList_.begin();
+            while (unsignedIter != unsignedList_.end())
+            {
+                BlockAddress signedAddr = 
+                     manager_.AddRecord(unsignedIter->data.data, unsignedIter->data.size);
+                unsignedIter->addr = signedAddr;
+                ++unsignedIter;
             }
             
-            // Handle the transition of states
-            if (newState == Signed) {
-                // Move unsigned block to signed or just update if it's already signed
-                if (obj->state_ == UnSigned) {
-                    unsignedList_.Remove(addr);
-                    obj = JsonObject::newObj(Signed, newData, arena_);
-                    signedList_.Insert(addr, obj);
-                } else if (obj->state_ == Signed) {
-                    obj->data_ = newData;  // Update signed block data
-                }
-            } else if (newState == UnSigned) {
-                // Move signed block to unsigned or just update if it's already unsigned
-                if (obj->state_ == Signed) {
-                    signedList_.Remove(addr);
-                    obj = JsonObject::newObj(UnSigned, newData, arena_);
-                    unsignedList_.Insert(addr, obj);
-                } else if (obj->state_ == UnSigned) {
-                    obj->data_ = newData;  // Update unsigned block data
-                }
-            } else if (newState == Freed) {
-                // Moving signed block to freed state
-                if (obj->state_ == Signed) {
-                    signedList_.Remove(addr);
-                    obj->state_ = Freed;
-                    freedList_.Add(addr);
-                }
-                // Freed blocks cannot be moved
-            }
-            return true;
+            return isCompact;
         }
-
-        bool FreeBlock(BlockAddress blockAddress) {
-            JsonObject* obj = GetBlock(blockAddress, Freed);
-            if (obj) {
-                freedList_.Add(blockAddress);  // Add to freed list
-                return true;
-            }
-            return false;
-        }
-
-        // You can add other methods for cleanup, querying, etc.
     };
 }
 
