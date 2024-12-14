@@ -30,26 +30,53 @@ private:
 public:
     Test(std::string s) : s(std::move(s)) {}
 
-    Test* Align(Arena* arena) {
-        char* obj_memory = arena->Allocate(sizeof(Test));
-        char* str_memory = arena->Allocate(s.size() + 1);
-        std::memcpy(str_memory, s.data(), s.size());
-        str_memory[s.size()] = '\0';
-
-        // Create a new Test object in the arena with the string in arena memory
-        return new (obj_memory) Test(std::string(str_memory));
-    }
-
     std::string ToString()  {
         return s;
     }
+
+    DataView Serialize() const {
+        size_t string_size = s.size();
+        size_t total_size = sizeof(size_t) + string_size;
+
+        char* memory = new char[total_size];
+        char* ptr = memory;
+
+        // Store the size of the string
+        memcpy(ptr, &string_size, sizeof(size_t));
+        ptr += sizeof(size_t);
+
+        // Store the string content
+        memcpy(ptr, s.data(), string_size);
+
+        return DataView(memory, total_size);
+    }
+
+    static Test Deserialize(const DataView& dataView) {
+        if (!dataView.data || dataView.size == 0) {
+            throw std::invalid_argument("Invalid DataView for deserialization.");
+        }
+
+        const char* ptr = dataView.data;
+
+        // Read the size of the string
+        size_t string_size;
+        memcpy(&string_size, ptr, sizeof(size_t));
+        ptr += sizeof(size_t);
+
+        // Read the string content
+        std::string deserialized_string(ptr, string_size);
+
+        // Construct and return the Test object
+        return Test(deserialized_string);
+    }
+
 };
 
-class TestSearchAllCallBack : public SpICallBack<Test*> {
+class TestSearchAllCallBack : public SpICallBack {
     public :
-    std::vector<SpICallBackValue<Test*> > v;
+    std::vector<SpICallBackValue> v;
     size_t move_count = 0;
-    bool Process(SpICallBackValue<Test*>  value) {
+    bool Process(SpICallBackValue  value) {
         v.push_back(value);
         return true;
     }
@@ -68,7 +95,7 @@ class TestSearchAllCallBack : public SpICallBack<Test*> {
     }
 };
 
-void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
+void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchOverlap: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -101,9 +128,10 @@ void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Tes
     std::cout << "Vector results: " << vector_results.size() << ", R-tree results: " << callback.v.size() << std::endl;
 
     callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
 }
 
-void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
+void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>& v, MemTable & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchContain: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -136,9 +164,10 @@ void TestSearchUnderSpeed(VE query_v,std::vector<std::pair<BBManager::BB, Test>>
     std::cout << "Vector results: " << vector_results.size() << ", R-tree results: " << callback.v.size() << std::endl;
 
     callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
 }
 
-void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable<Test*> & m) {
+void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>>& v, MemTable & m) {
     TestSearchAllCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
     std::cout << "Find SearchCover: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
@@ -171,22 +200,26 @@ void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>
 
     std::cout << "Vector results: " << vector_results.size() << ", R-tree results: " << callback.v.size() << std::endl;
 
-      callback.Sample(m.GetSPI()->GetBBManager());
+    callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
 }
 
 int SpeedTest() {
-    SpatialIndexOptions op;
+    SpatialIndexOptions sop;
+    MemPoolOpinion mop;
     std::vector<std::pair<BBManager::BB, Test>> v;
-    MemTable<Test*>  m(op);
-    size_t size = 100000;
-    size_t range = 100000;
+    MemTable  m(sop,mop);
+    size_t size = 10000;
+    size_t range = 10000;
 
     auto manager = m.GetSPI()->GetBBManager();
-    VE chula_locate = {{100,200},{100,200}};
-    auto bb = manager->CreateBox(chula_locate);
-    Test chula = Test("Chula");
-    m.GetSPI()->Insert(bb, &chula);
-    v.push_back({manager->Copy(bb), chula});
+    // VE chula_locate = {{100,200},{100,200}};
+    // auto bb = manager->CreateBox(chula_locate);
+    // Test chula = Test("Chula");
+    // SignableData tData;
+    // tData.data = chula.Serialize();
+    // m.GetSPI()->Insert(bb, &tData);
+    // v.push_back({manager->Copy(bb), chula});
     Random r(100);
     for (size_t i = 0; i < size; i++) {
         Test t = Test("Location: " + std::to_string(i + 1));
@@ -196,19 +229,31 @@ int SpeedTest() {
         double d = r.Uniform(range);
 
         auto bb = manager->CreateBox({{std::min(a, b), std::max(a, b)}, {std::min(c, d), std::max(c, d)}});
-        m.GetSPI()->Insert(bb, &t);
+
+        auto sData = m.GetMempool()->Insert(t.Serialize());
+        m.GetSPI()->Insert(bb, sData);
+        if (i%5 == 0) {
+            m.GetSPI()->Remove(bb, sData);
+        } 
+        
         v.push_back({manager->Copy(bb), t});
+        bb.Destroy();
     }
+    std::cout << "Total Node: " << m.GetSPI()->totalNode() << std::endl;
     std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 
     std::cout << "Testing Overlap Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchOverlapSpeed(chula_locate,v, m);
+    TestSearchOverlapSpeed({{0,1000},{0,1000}},v, m);
 
     std::cout << "Testing Under Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchUnderSpeed(chula_locate,v, m);
+    TestSearchUnderSpeed({{0,1000},{0,1000}},v, m);
 
     std::cout << "Testing Cover Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchCoverSpeed(chula_locate,v, m);
+    TestSearchCoverSpeed({{0,1000},{0,1000}},v, m);
+
+    for (auto& e : v) {
+        e.first.Destroy();
+    }
 
     return 0;
 }

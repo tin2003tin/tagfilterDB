@@ -997,8 +997,8 @@ namespace tagfilterdb {
 
         // Load data and add to compact List
         for (auto e : adjustVec) {
-                DataView loadedData = GetData(e.newAddr);
-                clist->Add(AdjustData{loadedData,e.oldAddr,e.newAddr});
+            DataView loadedData = GetData(e.newAddr);
+            clist->Add(AdjustData{loadedData,e.oldAddr,e.newAddr});
         }
 
         return true;

@@ -18,7 +18,7 @@ namespace tagfilterdb {
             return &arena_;
         }
 
-        SpatialIndex<DataView*>* GetSPI() {
+        SpatialIndex* GetSPI() {
             return &sp_;
         }
 
@@ -28,7 +28,7 @@ namespace tagfilterdb {
 
     private:
         Arena arena_;
-        SpatialIndex<DataView*> sp_;
+        SpatialIndex sp_;
         MemPool memPool_; 
     };
 }

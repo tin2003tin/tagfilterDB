@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "arena.h"
+#include "murmurHash.h"
 
 namespace tagfilterdb {
     class DataView {
@@ -35,7 +36,23 @@ public:
         return data[idx];
     }
 
-    // Example usage
+    bool operator==(const DataView& other) const {
+        auto thisChecksum = ComputeChecksum();
+        auto otherChecksum = other.ComputeChecksum();
+
+        return thisChecksum == otherChecksum;
+    }
+
+    std::size_t ComputeChecksum() const {
+        std::size_t hash = 0;
+
+        if (data && size > 0) {
+            hash = support::MurmurHash::Hash(data, size, 0); 
+        }
+
+        return hash;
+    }
+
     std::string toString() const {
         return std::string(data, size);
     }

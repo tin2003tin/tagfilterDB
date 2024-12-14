@@ -8,6 +8,7 @@
 
 
 #include "tagfilterdb/memtable.h"
+#include "tagfilterdb/memPool.h"
 #include <string>
 #include <cstring>
 #include <vector>
@@ -75,11 +76,46 @@ public:
 
         return DataView(memory, total_size);
     }
+
+    static Location Deserialize(const DataView& dataView) {
+        if (!dataView.data || dataView.size == 0) {
+            throw std::invalid_argument("Invalid DataView provided for deserialization.");
+        }
+
+        const char* ptr = dataView.data;
+
+        // Extract ID size and ID
+        size_t id_size;
+        memcpy(&id_size, ptr, sizeof(size_t));
+        ptr += sizeof(size_t);
+        std::string id(ptr, id_size);
+        ptr += id_size;
+
+        // Extract name size and name
+        size_t name_size;
+        memcpy(&name_size, ptr, sizeof(size_t));
+        ptr += sizeof(size_t);
+        std::string name(ptr, name_size);
+        ptr += name_size;
+
+        // Extract x_min, x_max, y_min, y_max
+        double x_min, x_max, y_min, y_max;
+        memcpy(&x_min, ptr, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(&x_max, ptr, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(&y_min, ptr, sizeof(double));
+        ptr += sizeof(double);
+        memcpy(&y_max, ptr, sizeof(double));
+
+        // Construct and return the Location object
+        return Location(id, name, x_min, x_max, y_min, y_max);
+    }
 };
 
 
-std::string LocationToString(Location** loc) {
-    return (*loc)->ToString();
+std::string LocationToString(SignableData* sData) {
+    return (Location::Deserialize(sData->data)).ToString();
 }
 
 int sp_example1() {
@@ -88,7 +124,7 @@ int sp_example1() {
     MemTable m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
 
-        std::vector<Location> locations = {
+    std::vector<Location> locations = {
             Location("001", "Chulalongkorn University", 0.0, 12000.0, 0.0, 12000.0), 
             Location("002", "Faculty of Engineering", 6919, 6919 + 1960, 7796 - 1175, 7796 ),
             Location("003", "Building 4 of Engineering", 8353, 8353 + 361, 7780 - 258, 7780 ),
@@ -107,13 +143,13 @@ int sp_example1() {
 
     for (auto& loc : locations) {
         auto locVE = manager->CreateBox(loc.getLocation());
-        m.GetSPI()->Insert(locVE, );
+        SignableData* data = m.GetMempool()->Insert(loc.Serialize());
+        m.GetSPI()->Insert(locVE, data);
     }
 
-
     m.GetSPI()->Print(LocationToString);
-    // std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    // std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
+    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 
     // m.GetSPI()->Save();
 

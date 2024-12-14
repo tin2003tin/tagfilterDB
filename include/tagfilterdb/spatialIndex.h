@@ -37,6 +37,7 @@
 #include "broundingbox.h"
 #include "arena.h"
 #include "page.h"
+#include "dataView.h"
 
 #include <algorithm>
 #include <vector>
@@ -60,22 +61,19 @@ struct SpatialIndexOptions {
     size_t PAGE_MAX_BYTES = 4096;
 };
 
-template <class Value>
 struct SpICallBackValue {
     const BBManager::BB* box;
-    const Value* data;
+    const SignableData* data;
 };
 
-template <class Value>
 class SpICallBack {
   public:
     #if defined(SPI_MOVE_COUNT)
     virtual bool Move() = 0;
     #endif 
-    virtual bool Process(SpICallBackValue<Value> value) = 0;
+    virtual bool Process(SpICallBackValue value) = 0;
 };
 
-template <class Value>
 class SpatialIndex {
     using BB = BBManager::BB;
     using RangeType = BBManager::RangeType;
@@ -118,16 +116,18 @@ class SpatialIndex {
     struct Branch {
         BB box_;          ///< Bounding box of the branch.
         Node *child_;     ///< Pointer to child node, if any.
-        Value data_;      ///< Data associated with the branch.
+        SignableData* data_;      ///< Data associated with the branch.
 
         Branch() = default ;
 
-        Branch(BBManager* bbm_) : box_(bbm_->CreateBox()), child_(nullptr), data_(Value()) {}
+        Branch(BBManager* bbm_) : box_(bbm_->CreateBox()), child_(nullptr),    
+                                    data_(nullptr) {}
 
         void CreateBox(BBManager* bbm_) {
             if (box_.dims_ == nullptr) {
                 box_ = bbm_->CreateBox();
             }
+            bbm_->Align(box_);
         }
 
         static Branch Copy(const Branch& s, BBManager* bbm_) {
@@ -137,6 +137,12 @@ class SpatialIndex {
             ss.box_ = bbm_->Copy(s.box_);
             return ss;
         }
+
+        static void Move(Branch& dest, Branch& src) {
+            dest.box_ = std::move(src.box_);
+            dest.child_ = src.child_;
+            dest.data_ = src.data_;
+        }
     };
 
     struct Group {
@@ -144,12 +150,8 @@ class SpatialIndex {
         int count_;        ///< Number of nodes in the group.
         Group() : count_(0) {}
 
-        Group(BBManager* bbm) : count_(0), box_(bbm->CreateBox()) {}
-
-        void InitBox(BBManager* bbm) {
-            if (box_.dims_ == nullptr) {
-                box_ = bbm->CreateBox();
-            }
+        ~Group() {
+            box_.Destroy();
         }
     };
 
@@ -157,8 +159,7 @@ class SpatialIndex {
         std::vector<size_t> assign_;      ///< Array for group assignments.
         Group group_[2];                      ///< Two groups used for splitting.
 
-        GroupAssign(SpatialIndexOptions &op, BBManager* bbm_)
-            : group_{Group(bbm_), Group(bbm_)} {
+        GroupAssign(SpatialIndexOptions &op, BBManager* bbm_) {
             for (int i = 0; i < op.MAX_CHILD + 1; ++i) {
                 assign_.push_back(-1);
             }
@@ -171,10 +172,11 @@ class SpatialIndex {
         size_ = 0; 
     }
 
-    bool Insert(const BB &box, const Value& data) {
+    bool Insert(const BB &box, SignableData* data) {
         std::unique_lock lock(mutex_);
-        Branch tempBranch(&bbm_);
+        Branch tempBranch;
         tempBranch.box_ = bbm_.Copy(box);
+        bbm_.Align(tempBranch.box_);
         tempBranch.child_ = nullptr;
         tempBranch.data_ = data;
 
@@ -183,12 +185,12 @@ class SpatialIndex {
         return true;  
     }
 
-    bool Remove(const BB &box, Value data) {
+    bool Remove(const BB &box, SignableData* data) {
         std::unique_lock lock(mutex_);
         return removeBranch(box,data,&root_);
     }
 
-    void SearchOverlap(const BB &box, SpICallBack<Value>* callback) {
+    void SearchOverlap(const BB &box, SpICallBack* callback) {
         std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
@@ -197,7 +199,7 @@ class SpatialIndex {
         recursivelySearchOverlap(box, root_, callback);
     }
 
-    void SearchUnder(BB &box, SpICallBack<Value>* callback) {
+    void SearchUnder(BB &box, SpICallBack* callback) {
         std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
@@ -206,7 +208,7 @@ class SpatialIndex {
         recursivelySearchUnder(box, root_, callback);
     }
 
-    void SearchCover(BB &box, SpICallBack<Value>* callback) {
+    void SearchCover(BB &box, SpICallBack* callback) {
         std::shared_lock lock(mutex_);
         if (callback == nullptr) {
             return;
@@ -215,7 +217,7 @@ class SpatialIndex {
         recursivelySearchCover(box, root_, callback);
     }
 
-    void Print(std::string (*formatFunc)(Value*)) {
+    void Print(std::string (*formatFunc)(SignableData*)) {
         BB box = bbm_.CreateBox();
         recursivelyPrint(root_, &box, formatFunc);
     }
@@ -286,6 +288,10 @@ class SpatialIndex {
             }
 
         }
+    }
+
+    size_t totalNode() {
+        return recursivelyTotalNode(root_);
     }
 
     size_t getNodeSize() {
@@ -394,14 +400,19 @@ class SpatialIndex {
 
         if (splited) {
         Node *newRoot = newNode((*refNode)->height_ + 1);
-        Branch tempBranch(&bbm_);
-        bbm_.CopyTo(nodeCover(*refNode), tempBranch.box_);
-        tempBranch.child_ = *refNode;
-        addBranch(tempBranch, newRoot, &nodeBuffer);
+        Branch tempBranch1(&bbm_);
+        BB nC1 = nodeCover(*refNode);
+        bbm_.Move(tempBranch1.box_, nC1);
+        bbm_.Align(tempBranch1.box_);
+        tempBranch1.child_ = *refNode;
+        addBranch(tempBranch1, newRoot, &nodeBuffer);
 
-        bbm_.CopyTo(nodeCover(nodeBuffer), tempBranch.box_);
-        tempBranch.child_ = nodeBuffer;
-        addBranch(tempBranch, newRoot,&nodeBuffer);
+        Branch tempBranch2(&bbm_);
+        BB nC2 = nodeCover(*refNode);
+        bbm_.Move(tempBranch2.box_, nC2);
+        bbm_.Align(tempBranch2.box_);
+        tempBranch2.child_ = nodeBuffer;
+        addBranch(tempBranch2, newRoot,&nodeBuffer);
 
         *refNode = newRoot; 
 
@@ -410,7 +421,7 @@ class SpatialIndex {
         return false;
     }
 
-    bool removeBranch(const BB &box,const Value& data , Node **refNode) {
+    bool removeBranch(const BB &box, SignableData* data , Node **refNode) {
         assert(*refNode);
         ListNode* reInsertList = NULL;
         if (!recursivelyRemove(box,data, *refNode, &reInsertList)) {
@@ -422,6 +433,7 @@ class SpatialIndex {
                 }
                 ListNode* remLNode = reInsertList;
                 reInsertList = reInsertList->next_;
+                delete remLNode;
             }
             if((*refNode)->childSize_ == 1 && !(*refNode)->isLeaf())
             {
@@ -454,28 +466,33 @@ class SpatialIndex {
         bool childSplited = recursivelyInsertBranch(
             branch, node->branch_[index].child_, nodeBuffer,height); 
         if (childSplited) {
-            bbm_.CopyTo(nodeCover(node->branch_[index].child_),
-                 node->branch_[index].box_);
+            BB coverBox1 = nodeCover(node->branch_[index].child_);
+            bbm_.Align(coverBox1);
+            node->branch_[index].box_.dims_ = coverBox1.dims_;
             Branch tempBranch(&bbm_);
             tempBranch.child_ = (*nodeBuffer);
-            bbm_.CopyTo(nodeCover(*nodeBuffer), tempBranch.box_);
+            BB coverBox2 = nodeCover(node->branch_[index].child_);
+             bbm_.Align(coverBox2);
+            bbm_.Move(tempBranch.box_, coverBox2);
 
             return addBranch(tempBranch, node,nodeBuffer);
         } else {
             // Update the bounding box if no split occurred
-            bbm_.CopyTo(bbm_.Union(node->branch_[index].box_, branch.box_),node->branch_[index].box_);
+            BB newBox = bbm_.Union(node->branch_[index].box_, branch.box_);
+            bbm_.Align(newBox);
+            node->branch_[index].box_.dims_ = newBox.dims_;
             return false; // Indicate no split
         }
         return false; 
     }
 
-    bool recursivelyRemove(const BB& box, const Value& data, Node* node, ListNode** listNode) {
+    bool recursivelyRemove(const BB& box, const SignableData* data, Node* node, ListNode** listNode) {
         assert(node && listNode);
         assert(node->height_ >= 0);
 
         if (node->isLeaf()) {
             for (size_t index = 0; index < node->childSize_; index++) {
-                if ((*node->branch_[index].data_) == (data)) {
+                if ((node->branch_[index].data_->data) == (data->data)) {
                         deleteBranch(node,index);
                         return false;
                 }
@@ -486,7 +503,9 @@ class SpatialIndex {
                 if (bbm_.IsOverlap(box,node->branch_[index].box_)) {
                     if (!recursivelyRemove(box,data,node->branch_[index].child_,listNode)) {
                         if (node->branch_[index].child_->childSize_ >= op_.MIN_CHILD) {
-                            node->branch_[index].box_ = nodeCover(node->branch_[index].child_);
+                            BB coverBox = nodeCover(node->branch_[index].child_);
+                            bbm_.Align(coverBox);
+                            node->branch_[index].box_.dims_ = coverBox.dims_; 
                         } else {
                             addListNode(node->branch_[index].child_,listNode);
                             deleteBranch(node, index);
@@ -499,11 +518,11 @@ class SpatialIndex {
         }
     }
 
-    bool addBranch(const Branch &branch, Node *node,Node** nodeBuffer) {
+    bool addBranch(Branch &branch, Node *node,Node** nodeBuffer) {
          assert(node);
 
         if (node->childSize_ < op_.MAX_CHILD) {
-                node->branch_[node->childSize_++] =  Branch::Copy(branch,&bbm_);
+                Branch::Move(node->branch_[node->childSize_++], branch);
                 return false;  // Indicate no split
             } else {
                 // Need to split the node
@@ -516,7 +535,10 @@ class SpatialIndex {
         assert(node && (index >= 0) && (index < op_.MAX_CHILD));
         assert(node->childSize_ > 0);
 
-        node->branch_[index] = Branch::Copy(node->branch_[node->childSize_ - 1], &bbm_);
+        node->branch_[index].box_.dims_ = node->branch_[node->childSize_ - 1].box_.dims_;
+        node->branch_[index].child_ = node->branch_[node->childSize_ - 1].child_;
+        node->branch_[index].data_ = node->branch_[node->childSize_ - 1].data_;
+
         size_--;
         node->childSize_--;
     }
@@ -525,7 +547,8 @@ class SpatialIndex {
         assert(node);
         BB box = bbm_.Copy(node->branch_[0].box_);
         for (int index = 1; index < node->childSize_; index++) {
-            box = bbm_.Union(box, node->branch_[index].box_);
+            BB uBox = bbm_.Union(box, node->branch_[index].box_);
+            bbm_.Move(box, uBox);
         }
         return box; 
     }
@@ -541,7 +564,7 @@ class SpatialIndex {
                                 .box_); // Area of the current tempBranch's box
             BBManager::AreaType increase =
                 bbm_.Area(box) - area; // Increase in area due to the new box
-
+            box.Destroy();
             // Update best index based on area increase
             if (increase < bestIncr || (increase == bestIncr && area < bestArea)) {
                 bestIndex = index;
@@ -552,7 +575,7 @@ class SpatialIndex {
         return bestIndex;
     }
 
-    void splitNode(const Branch &branch, Node *node, Node** nodeBuffer) {
+    void splitNode(Branch &branch, Node *node, Node** nodeBuffer) {
         assert(node);
         assert(node->childSize_ == op_.MAX_CHILD);
         bool firstTime;
@@ -568,14 +591,17 @@ class SpatialIndex {
 
         // Copy existing Branchs and the new Branch into overflowBuffer
         for (int i_tempBranch = 0; i_tempBranch < op_.MAX_CHILD; i_tempBranch++) {
-            overflowBuffer[i_tempBranch] = Branch::Copy(node->branch_[i_tempBranch],&bbm_);
-            box = bbm_.Union(box, overflowBuffer[i_tempBranch].box_);
+            Branch::Move(overflowBuffer[i_tempBranch], node->branch_[i_tempBranch]);
+            BB uBox = bbm_.Union(box, overflowBuffer[i_tempBranch].box_);
+            bbm_.Move(box, uBox);
             overflowBufferArea[i_tempBranch] =
                 bbm_.Area(overflowBuffer[i_tempBranch].box_);
         }
-        overflowBuffer[op_.MAX_CHILD] = Branch::Copy(branch, &bbm_); // Add the new Branch to the buffer
-        box = bbm_.Union(box, branch.box_); // Update the bounding box with the new Branch
+        Branch::Move(overflowBuffer[op_.MAX_CHILD], branch);
+        BB uBox = bbm_.Union(box, branch.box_); // Update the bounding box with the new Branch
+        bbm_.Move(box, uBox);
         overflowBufferArea[op_.MAX_CHILD] = bbm_.Area(branch.box_); // Update the area of the new Branch
+        box.Destroy();
 
         int seed0 = 0, seed1 = 0; // Indices of the seeds for splitting
         RangeType bestNormalizedSeparation =
@@ -590,6 +616,7 @@ class SpatialIndex {
             {
             BB tempBox = bbm_.Union(overflowBuffer[indexA].box_, overflowBuffer[indexB].box_);
             waste = bbm_.Area(tempBox) - overflowBufferArea[indexA] - overflowBufferArea[indexB];
+            tempBox.Destroy();
             if(firstTime || waste > worst)
             {
                 firstTime = false;
@@ -633,7 +660,7 @@ class SpatialIndex {
                     AreaType growth1 =
                          bbm_.Area(box1) -  bbm_.Area(groupAssign.group_[1].box_);
                     AreaType diff = growth1 - growth0;
-
+                    box0.Destroy(); box1.Destroy();
                     // Determine which group would be better for the current Branch
                     if (diff >= 0) {
                         group = 0;
@@ -735,8 +762,9 @@ class SpatialIndex {
         } else {
             // Otherwise, expand the existing bounding box to include the new
             // Branch
-            groupAssign.group_[group].box_ =
-                bbm_.Union(groupAssign.group_[group].box_, box);
+            BB uBox = bbm_.Union(groupAssign.group_[group].box_, box);
+            bbm_.Move(groupAssign.group_[group].box_,uBox);
+                
         }
 
         // Increment the count of Branchs in the group
@@ -747,13 +775,13 @@ class SpatialIndex {
     {
     ListNode* newListNode;
 
-    newListNode = (ListNode *) arena_->AllocateAligned(sizeof(ListNode));
+    newListNode = new ListNode;
     newListNode->node_ = node;
     newListNode->next_ = *listNode;
     *listNode = newListNode;
     }
 
-    void recursivelyPrint(Node *node, BB *box, std::string(*formatFunc)(Value*)) {
+    void recursivelyPrint(Node *node, BB *box, std::string(*formatFunc)(SignableData*)) {
         if (node == nullptr) {
             return;
         }
@@ -761,7 +789,7 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             std::cout << node->height_ << " " << bbm_.toString(*box) << " -> ";
             if (node->branch_[i].data_ != nullptr) {
-                std::cout << formatFunc(&node->branch_[i].data_);
+                std::cout << formatFunc(node->branch_[i].data_);
             }
                     
             std::cout << bbm_.toString(node->branch_[i].box_) << std::endl;
@@ -771,7 +799,7 @@ class SpatialIndex {
         }
     }
 
-    void recursivelySearchOverlap(const BB &box, Node *node, SpICallBack<Value>* callback) {
+    void recursivelySearchOverlap(const BB &box, Node *node, SpICallBack* callback) {
         if (node == nullptr) {
             return;
         }
@@ -781,9 +809,9 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             if (bbm_.IsOverlap(node->branch_[i].box_, box)) {
                 if (node->isLeaf()) {
-                    SpICallBackValue<Value> cv;
+                    SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
-                    cv.data = &node->branch_[i].data_;
+                    cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
                     
                     if (!conti) {
@@ -796,7 +824,7 @@ class SpatialIndex {
         }
     }
 
-    void recursivelySearchUnder(const BB &box, Node *node, SpICallBack<Value>* callback) {
+    void recursivelySearchUnder(const BB &box, Node *node, SpICallBack* callback) {
         if (node == nullptr) {
             return;
         }
@@ -806,9 +834,9 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             if (bbm_.ContainsRange(node->branch_[i].box_, box)) {
                 if (node->isLeaf()) {
-                    SpICallBackValue<Value> cv;
+                    SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
-                    cv.data = &node->branch_[i].data_;
+                    cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
 
                     if (!conti) {
@@ -821,7 +849,7 @@ class SpatialIndex {
         }
     }
 
-    void recursivelySearchCover(const BB &box, Node *node, SpICallBack<Value>* callback) {
+    void recursivelySearchCover(const BB &box, Node *node, SpICallBack* callback) {
         if (node == nullptr) {
             return;
         }
@@ -830,9 +858,9 @@ class SpatialIndex {
         #endif 
         for (int i = 0; i < node->childSize_; i++) {
             if (node->isLeaf() && bbm_.ContainsRange(box, node->branch_[i].box_)) {
-                    SpICallBackValue<Value> cv;
+                    SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
-                    cv.data = &node->branch_[i].data_;
+                    cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
                    
                     if (!conti) {
@@ -844,6 +872,17 @@ class SpatialIndex {
                 recursivelySearchCover(box, node->branch_[i].child_, callback);
             }
         }
+    }
+
+    size_t recursivelyTotalNode(Node *node) {
+        if (node == nullptr) {
+            return 0;
+        }
+        size_t n = 1;
+        for (int i = 0; i < node->childSize_; i++) {
+            n += recursivelyTotalNode(node->branch_[i].child_);
+        }
+        return n;
     }
 
     public:
@@ -864,7 +903,7 @@ class SpatialIndex {
                 return stack_.empty();
             }
 
-            Value& operator*()
+            SignableData* operator*()
             {
                 assert(!stack_.empty());
                 TraversalContext top = stack_.top();
@@ -885,7 +924,7 @@ class SpatialIndex {
                 return top.node->height_;
             }
 
-            Value& getValue()
+            SignableData* getValue()
             {
                 assert(!stack_.empty());
                 TraversalContext top = stack_.top();

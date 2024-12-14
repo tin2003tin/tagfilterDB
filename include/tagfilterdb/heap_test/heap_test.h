@@ -141,6 +141,12 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
         }
         }   
     }
+
+    auto iter = clist.begin();
+    while (iter != clist.end()) {
+        delete []iter->sdata.data;
+        ++iter;
+    }
 }
 
 

@@ -66,26 +66,23 @@ template <class RangeType = double, class AreaType = double>
         dims_ = nullptr;
     }
 
-    BoundingBox(size_t dimension, Arena *arena) {
-        setup(dimension, arena);
+    BoundingBox(int dimension) {
+        dims_ = new Edge[dimension];
     }
 
     BoundingBox(BB &&other) noexcept
         : dims_(std::move(other.dims_)) {}
+
+    void Destroy() {
+        delete []dims_;
+        dims_ = nullptr;
+    }
 
     BB& operator=(BB &&other) noexcept {
         if (this != &other) {
             dims_ = std::move(other.dims_);
         }
         return *this;
-    }
-
-  protected:
-    void setup(size_t dimension, Arena *arena) {
-        assert(dimension > 0);
-        assert(arena != nullptr);
-        char* ptr = arena->AllocateAligned(sizeof(Edge) * dimension);
-        dims_ = (Edge*) ptr;
     }
 };
 
@@ -107,13 +104,32 @@ class BBManager {
     }
 
     BB Copy(const BB& box) {
-        BB t(dimension_, arena_);
+        BB t(dimension_);
+
         CopyTo(box, t);
         return t;
     }
 
+    void Move(BB& dist, BB& res) {
+        delete []dist.dims_;
+        dist.dims_ = res.dims_;
+        res.dims_ = nullptr;
+    }
+
+   void Delete(BB& box) {
+        delete []box.dims_;
+    }
+
+    BB& Align(BB& box) {
+        char* memory = arena_->AllocateAligned(sizeof(BB::Edge) * dimension_);
+        std::memcpy(memory,box.dims_,sizeof(BB::Edge) * dimension_);
+        delete []box.dims_;
+        box.dims_ = (BB::Edge*) memory;
+        return box;
+    }
+
     BB CreateBox() {
-        BB box(dimension_, arena_);
+        BB box(dimension_);
         return box;
     }
 

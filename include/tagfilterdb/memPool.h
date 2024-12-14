@@ -109,6 +109,14 @@ namespace tagfilterdb {
             manager_.Flush();
             return true;
         }
+
+        void ClearAdjust() {
+            auto iter = adjustList_.begin();
+            while (iter != adjustList_.end()) {
+                delete []iter->sdata.data;
+                ++iter;
+            }
+        }
     };
 }
 
