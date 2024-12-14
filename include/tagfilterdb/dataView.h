@@ -41,6 +41,35 @@ public:
     }
 };
 
+
+using PageIDType = long;
+using OffsetType = int;
+
+struct BlockAddress {
+    PageIDType pageID;
+    OffsetType offset;
+};
+    
+struct SignableData {
+    DataView data;
+    BlockAddress addr;
+
+    SignableData(DataView aData, BlockAddress aAddr) 
+        : data(aData), addr(aAddr) {}
+
+    SignableData() : data(), addr(BlockAddress{0,0}) {}
+
+    bool IsSigned() {
+        return addr.pageID == 0;
+    }
+};
+
+struct AdjustData {
+    DataView sdata;
+    BlockAddress oldAddr;
+    BlockAddress newAddr;
+};
+
 }
 
 #endif

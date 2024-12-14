@@ -15,8 +15,9 @@ using namespace tagfilterdb;
 
 BlockAddress SetJson(PageHeapManager* pageManager, const json& json) {
     std::string jsonData = json.dump();  
-
-    return pageManager->AddRecord(jsonData.data(), jsonData.size());
+    Arena arena;
+    List<AdjustData> clist(&arena);
+    return pageManager->AddRecord(jsonData.data(), jsonData.size(), &clist);
 }
 
 json GetJson(PageHeapManager* pageManager, BlockAddress addr) {
@@ -64,7 +65,8 @@ BlockAddress Move(PageHeapManager* pageManager, int m) {
 void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
                     std::vector<BlockAddress>& sample, int sampleSize) {
     std::srand(seed); // Seed randomness
-
+    Arena arena;
+    List<AdjustData> clist(&arena);
     for (int i = 0; i < numOperations; ++i) {
         if (i % 10000 == 0) {
             std::cout << "- " << i << std::endl;
@@ -116,7 +118,7 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
 
             if (iter != pageManager->end()) {
                 auto loc = *iter;
-                int freedSize = pageManager->FreeBlock(loc.pageID, loc.offset);
+                int freedSize = pageManager->FreeBlock(loc.pageID, loc.offset, true, &clist);
                 // std::cout << "Freed record at PageID: " << loc.first << ", Offset: " << loc.second << "\n";
                 // std::cout << "Freed Size: " << freedSize << std::endl;;
             }

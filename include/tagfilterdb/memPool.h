@@ -5,6 +5,7 @@
 #include "tagfilterdb/pageH.h"
 #include "tagfilterdb/skiplist.h"
 #include "tagfilterdb/dataView.h"
+#include <set>
 #include "list.h"
 
 using namespace nlohmann;
@@ -25,20 +26,15 @@ namespace tagfilterdb {
         long CACHE_CHARGE = PAGE_MAX_BYTPES * 100;
     };
 
-    struct UnsignedData {
-        DataView data;
-        BlockAddress addr;
-    };
-
     class MemPool {
     public:
         ShareLRUCache<PageHeap> cache_; // Cache of pages
         PageHeapManager manager_; // Manage page access (load/flush)
 
         SkipList<BlockAddress, DataView, BlockAddressCmp> signedList_; // Holds signed data
-        List<UnsignedData> unsignedList_; // Holds unsigned data
+        List<SignableData> unsignedList_; // Holds unsigned data
         List<BlockAddress> freedList_; // Holds freed blocks
-        List<DataView> adjustList_;
+        List<AdjustData> adjustList_;
 
         Arena* arena_; // Reference to memtable Arena
 
@@ -53,11 +49,11 @@ namespace tagfilterdb {
             adjustList_(arena),
             arena_(arena) {}
 
-        UnsignedData* Insert(DataView data) {
+        SignableData* Insert(DataView data) {
             data.Align(arena_);
-            UnsignedData* unsignedData = 
-                unsignedList_.Add(UnsignedData{data,BlockAddress{0,0}});
-            return unsignedData;
+            SignableData* signableData = 
+                unsignedList_.Add(SignableData(data,BlockAddress{0,0}));
+            return signableData;
         }
 
         DataView* Get(BlockAddress addr) {
@@ -83,14 +79,21 @@ namespace tagfilterdb {
         }
         
         bool Flush() {
-            bool isCompact = false;
             // Free First
+            std::set<PageIDType> pageSet;
             auto freedIter = freedList_.begin();  
             while (freedIter != freedList_.end())
             {
-                bool b = manager_.FreeBlock(freedIter->pageID, freedIter->offset);
-                if (b) isCompact = true;
+                bool b = manager_.FreeBlock(freedIter->pageID, freedIter->offset,
+                                            false, &adjustList_);
+                pageSet.insert(freedIter->pageID);
                 ++freedIter;
+            }
+
+            for (auto& pageID : pageSet) {
+                if (manager_.MayCompact(pageID)) {
+                    manager_.Compact(pageID, &adjustList_);                    
+                }
             }
 
             // Sign the unsigned data 
@@ -98,12 +101,13 @@ namespace tagfilterdb {
             while (unsignedIter != unsignedList_.end())
             {
                 BlockAddress signedAddr = 
-                     manager_.AddRecord(unsignedIter->data.data, unsignedIter->data.size);
+                     manager_.AddRecord(unsignedIter->data.data, unsignedIter->data.size, &adjustList_);
                 unsignedIter->addr = signedAddr;
                 ++unsignedIter;
             }
-            
-            return isCompact;
+
+            manager_.Flush();
+            return true;
         }
     };
 }

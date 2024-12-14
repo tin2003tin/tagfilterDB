@@ -27,14 +27,6 @@ namespace tagfilterdb {
 
     // [TODO] make env store file to disk
     const std::string PAGEHEAP_FILENAME = "fileHeap.txt";
-
-    using PageIDType = long;
-    using OffsetType = int;
-
-    struct BlockAddress {
-        PageIDType pageID;
-        OffsetType offset;
-    };
     
     #pragma pack(1)
     struct Flag {
@@ -598,7 +590,7 @@ namespace tagfilterdb {
 
         size_t maxPageBytes_;
         
-        long lastPageId_;           ///< Page ID for the next page to be allocated.
+        PageIDType lastPageId_;           ///< Page ID for the next page to be allocated.
 
     public:
         friend PageHeap;
@@ -729,7 +721,8 @@ namespace tagfilterdb {
         return dataBlock - 2 - sizeof(int); 
     }
 
-    BlockAddress AddRecord(const char* record, int recordSize) {
+    BlockAddress AddRecord(const char* record, int recordSize,
+                           List<AdjustData>* clist) {
         Flag flag{true,false};
         int blockSize = BlockSize(recordSize);
         int pageID = 1;
@@ -741,13 +734,13 @@ namespace tagfilterdb {
             if (node == getPage(pageID)->freeListH_->prev_) {
                 isAppendable = true;
             }
-            if (RecursivelyAddRecord(node,pageID,record,0,recordSize, isAppendable, true)) {
+            if (RecursivelyAddRecord(node,pageID,record,0,recordSize, 
+                                    isAppendable, true, clist)) {
                 break;
             }
             // Create New page ?
             if (IsCreateNewPage(pageID)) {
-                // Compact !!
-                 Compact(pageID);
+                Compact(pageID, clist);
                 CreateNewPage();
             }   
             pageID++;
@@ -757,7 +750,8 @@ namespace tagfilterdb {
     }
 
     bool RecursivelyAddRecord(PageHeap::FreeList* node, long pageID, const void* record, 
-                              OffsetType offset, int recordSize, bool isAppendable, bool isFirst) {
+                              OffsetType offset, int recordSize, bool isAppendable, 
+                              bool isFirst, List<AdjustData>* clist) {
         if (!isFirst)  {
             if (node->offset_ != 0) {
                 return false;   
@@ -790,15 +784,16 @@ namespace tagfilterdb {
         if (IsCreateNewPage(pageID)) {
             assert(node->offset_ == getPage(pageID)->lastOffset_);
             CreateNewPage();
-            Compact(pageID);
+            Compact(pageID, clist);
             return RecursivelyAddRecord(node, pageID, record, offset, recordSize, 
-                                        isAppendable, isFirst);
+                                        isAppendable, isFirst, clist);
         }
 
         int nextPageID = pageID + 1;
         int splitSize = recordSize - BlockToDataSize(node->blockSize_);
         if (RecursivelyAddRecord(getPage(nextPageID)->freeListH_->next_, nextPageID, record,
-                             offset + BlockToDataSize(node->blockSize_), splitSize, true, false)) {
+                             offset + BlockToDataSize(node->blockSize_), splitSize, 
+                            true, false, clist)) {
                 flag.flagIsAppend = true;
                 const char* partialRecord = static_cast<const char*>(record) + offset;
                 char* dataBlock = Block(flag, partialRecord, BlockToDataSize(node->blockSize_));
@@ -855,123 +850,156 @@ namespace tagfilterdb {
         return {buffer, totalSize};
     }
 
-    bool FreeBlock(PageIDType pageID, int offset) {
+    bool FreeBlock(PageIDType pageID, int offset, bool isStress, List<AdjustData>* clist ) {
         PageHeap* page = getPage(pageID);
         assert(page);
         Flag flag = page->LoadFlag(offset);
         assert(flag.flagAssigned);
 
         if (flag.flagIsAppend) {
-            FreeBlock(pageID + 1, 0);
+            FreeBlock(pageID + 1, 0, isStress, clist);
         }
 
         int blockSize = BlockSize(page->LoadSize(offset));
 
-        return FreeAt(pageID,offset,blockSize);
+        return FreeAt(pageID,offset,blockSize,isStress, clist);
+    }
+    
+    bool FreeAt(PageIDType pageID, OffsetType offset, 
+                int size, bool isStress, List<AdjustData>* clist) {
+        getPage(pageID)->Free(offset, size);
+        if (isStress && MayCompact(pageID)) {
+            return Compact(pageID,clist);
+        }
+        return false;
     }
 
-    bool FreeAt(PageIDType pageID, OffsetType offset, int size) {
-        getPage(pageID)->Free(offset, size);
-        // Compact 
-        if (getPage(pageID)->listSize_ == FREE_LIST_SIZE) {
-            return Compact(pageID);
+    bool MayCompact(PageIDType pageID) {
+         if (getPage(pageID)->listSize_ >= FREE_LIST_SIZE) {
+            return true;
         } else {
             return false;
         }
     }
 
-    bool Compact(PageIDType pageID) {
-        if (getPage(pageID)->listSize_ == 1) {
-            return false;
-        }
-        PageHeap::Iterator iter = getPage(pageID)->Begin();
-        OffsetType offset = 0;
-        auto end = getPage(pageID)->End();
-        while (iter != end) {
-            PageHeap::Iterator next = iter;
-            ++next;
-            Flag flag = getPage(pageID)->LoadFlag(*iter);
-            assert(flag.flagAssigned);
+    bool Compact(PageIDType pageID, List<AdjustData>* clist) {
+        struct Adjust {
+            BlockAddress oldAddr;
+            BlockAddress newAddr;
+        };
+        std::vector<Adjust> adjustVec;
+        bool isStop = false;
+        bool isAppend = false;
+        while (!isStop && pageID <= lastPageId_) {
+            if (getPage(pageID)->listSize_ == 1) {
+                return false;
+            }
+            PageHeap::Iterator iter = getPage(pageID)->Begin();
+            OffsetType offset = 0;
+            auto end = getPage(pageID)->End();
+            while (iter != end) {
+                PageHeap::Iterator next = iter;
+                ++next;
+                Flag flag = getPage(pageID)->LoadFlag(*iter);
+                assert(flag.flagAssigned);
 
-            int size = getPage(pageID)->LoadSize(*iter);
-            
-            Flag newflag{true, false};
-            // [MARK] Copy data multiply times
-            char* blockData = Block(newflag, 
-                        getPage(pageID)->page_ + *iter + 6, size);
-            getPage(pageID)->SetData(offset,blockData, BlockSize(size));
-            offset += BlockSize(size);
-            delete []blockData;
-
-            if (flag.flagIsAppend) {
-                assert(pageID + 1 <= LastPageID());
-                // Move next 
-                int leftspace = getPage(pageID)->EndBlocks() - offset; 
-                Flag nextFlag = getPage(pageID + 1)->LoadFlag(0);
-                assert(nextFlag.flagAssigned);
-
-                int nextSize = getPage(pageID + 1)->LoadSize(0);
-                if (leftspace >= nextSize) {
-                    // move all next block to this block
-                    getPage(pageID)->SetData(offset, getPage(pageID + 1)->page_ + 6, 
-                                              nextSize);
-                   
-                    int newSize = size + nextSize;
-                    getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
-                    offset += nextSize;
-
-                    FreeAt(pageID + 1, 0, BlockSize(nextSize));
-                } else {
-                    // move part that fit leftspace to this block
-                    getPage(pageID)->SetData(offset,getPage(pageID + 1)->page_ + 6, 
-                                              leftspace);
-                    int newSize = size + leftspace;
-                    getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
-                    bool isAppend = true;
-                    getPage(pageID)->SetData(offset - BlockSize(size) + 1,&isAppend, 1); 
-                    offset += leftspace;
-                    assert(offset == getPage(pageID)->EndBlocks());
-
-                    int leftSize = nextSize - leftspace;
-                    // left part set at offset 0 in its page with its flag 
-                    // free offset at 0 + the left part  blockSize 
-    
-                    getPage(pageID + 1)->SetData(0 + 6, getPage(pageID + 1)->page_ + 6 + leftspace, 
-                                              leftSize);
-                    getPage(pageID + 1)->SetData(0 + 2,&leftSize, sizeof(int)); 
-                    getPage(pageID + 1)->SetData(0 + 1,&newflag.flagIsAppend, sizeof(bool)); 
-
-                    FreeAt(pageID + 1, 0 + BlockSize(leftSize), nextSize - leftSize);
-                    
-                    // if the left part have append call compact with that page
-                    if (newflag.flagIsAppend) {
-                        Compact(pageID + 1);
+                int size = getPage(pageID)->LoadSize(*iter);
+                
+                Flag newflag{true, false};
+                // check is it same offset  
+                if (offset != *iter) {
+                    char* blockData = Block(newflag, 
+                            getPage(pageID)->page_ + *iter + 6, size);
+                    getPage(pageID)->SetData(offset,blockData, BlockSize(size));
+                    delete []blockData;
+                    if (!isAppend) {
+                        adjustVec.push_back(
+                                {BlockAddress{pageID,*iter}, 
+                                 BlockAddress{pageID,offset}});
                     }
                 }
+            
+                offset += BlockSize(size);
+
+                if (flag.flagIsAppend) {
+                    isAppend = true;
+                    assert(pageID + 1 <= LastPageID());
+                    // Move next 
+                    int leftspace = getPage(pageID)->EndBlocks() - offset; 
+                    Flag nextFlag = getPage(pageID + 1)->LoadFlag(0);
+                    assert(nextFlag.flagAssigned);
+
+                    int nextSize = getPage(pageID + 1)->LoadSize(0);
+                    if (leftspace >= nextSize) {
+                        // move all next block to this block
+                        getPage(pageID)->SetData(offset, getPage(pageID + 1)->page_ + 6, 
+                                                nextSize);
+                    
+                        int newSize = size + nextSize;
+                        getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
+                        offset += nextSize;
+
+                        FreeAt(pageID + 1, 0, BlockSize(nextSize), true, clist);
+                    } else {
+                        // move part that fit leftspace to this block
+                        getPage(pageID)->SetData(offset,getPage(pageID + 1)->page_ + 6, 
+                                                leftspace);
+                        int newSize = size + leftspace;
+                        getPage(pageID)->SetData(offset - BlockSize(size) + 2,&newSize,sizeof(int)); 
+                        bool isAppend = true;
+                        getPage(pageID)->SetData(offset - BlockSize(size) + 1,&isAppend, 1); 
+                        offset += leftspace;
+                        assert(offset == getPage(pageID)->EndBlocks());
+
+                        int leftSize = nextSize - leftspace;
+                        // left part set at offset 0 in its page with its flag 
+                        // free offset at 0 + the left part  blockSize 
+        
+                        getPage(pageID + 1)->SetData(0 + 6, getPage(pageID + 1)->page_ + 6 + leftspace, 
+                                                leftSize);
+                        getPage(pageID + 1)->SetData(0 + 2,&leftSize, sizeof(int)); 
+                        getPage(pageID + 1)->SetData(0 + 1,&newflag.flagIsAppend, sizeof(bool)); 
+
+                        FreeAt(pageID + 1, 0 + BlockSize(leftSize), nextSize - leftSize, true, clist);
+                        
+                        // if the left part have append call compact with that page
+                        if (newflag.flagIsAppend) {
+                            pageID++;
+                        } 
+                    } 
+                } else {
+                    isStop = true;
+                }
+
+                iter = next;
+            }   
+            // offset = lastOffset
+            getPage(pageID)->lastOffset_ = offset;
+            getPage(pageID)->blockSpace_ = getPage(pageID)->blockCount_;
+            auto curr = getPage(pageID)->freeListH_->next_;
+
+            // delete Free list except last one
+            while (curr != getPage(pageID)->freeListH_->prev_) {
+                auto next = curr->next_;
+                delete curr;
+                getPage(pageID)->listSize_--;
+                curr = next;
             }
 
-            iter = next;
-        }   
-        // offset = lastOffset
-        getPage(pageID)->lastOffset_ = offset;
-        getPage(pageID)->blockSpace_ = getPage(pageID)->blockCount_;
-        auto curr = getPage(pageID)->freeListH_->next_;
-
-        // delete Free list except last one
-        while (curr != getPage(pageID)->freeListH_->prev_) {
-            auto next = curr->next_;
-            delete curr;
-            getPage(pageID)->listSize_--;
-            curr = next;
+            assert(getPage(pageID)->listSize_ == 1); 
+            curr->offset_ = offset; // lastOffset 
+            curr->blockSize_ = getPage(pageID)->EndBlocks() - offset;
+            curr->prev_ = getPage(pageID)->freeListH_;
+            curr->next_ = getPage(pageID)->freeListH_;
+            getPage(pageID)->freeListH_->next_ = curr;
+            getPage(pageID)->freeListH_->prev_ = curr;
         }
 
-        assert(getPage(pageID)->listSize_ == 1); 
-        curr->offset_ = offset; // lastOffset 
-        curr->blockSize_ = getPage(pageID)->EndBlocks() - offset;
-        curr->prev_ = getPage(pageID)->freeListH_;
-        curr->next_ = getPage(pageID)->freeListH_;
-        getPage(pageID)->freeListH_->next_ = curr;
-        getPage(pageID)->freeListH_->prev_ = curr;
+        // Load data and add to compact List
+        for (auto e : adjustVec) {
+                DataView loadedData = GetData(e.newAddr);
+                clist->Add(AdjustData{loadedData,e.oldAddr,e.newAddr});
+        }
 
         return true;
     }
@@ -1066,13 +1094,13 @@ namespace tagfilterdb {
     }
 
     void Save() {
-        std::ofstream out(PAGEHEAP_FILENAME,  std::ios::trunc);
+        std::ofstream out(PAGEHEAP_FILENAME, std::ios::in | std::ios::out | std::ios::trunc);
         if (!out) {
             throw std::runtime_error("Failed to open file for saving.");
         }
-        char lastPageId[sizeof(int)];
-        std::memcpy(lastPageId,&lastPageId_,sizeof(int));
-        out.write(lastPageId, sizeof(int));
+        char lastPageId[sizeof(PageIDType)];
+        std::memcpy(lastPageId,&lastPageId_,sizeof(PageIDType));
+        out.write(lastPageId, sizeof(PageIDType));
         for (int i = 1; i <= lastPageId_; i++) {
             getPage(i)->Write(out);
         }
@@ -1086,7 +1114,7 @@ namespace tagfilterdb {
             throw std::runtime_error("Failed to open file for loading.");
         }
 
-        in.read(reinterpret_cast<char*>(&lastPageId_), sizeof(int));
+        in.read(reinterpret_cast<char*>(&lastPageId_), sizeof(PageIDType));
         if (!in) {
             throw std::runtime_error("Failed to read lastPageId from file.");
         }
@@ -1122,12 +1150,12 @@ namespace tagfilterdb {
     }
     long pageIndex = pageID - 1;
 
-    std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+    std::ifstream in(PAGEHEAP_FILENAME, std::ios::in | std::ios::out | std::ios::binary);
     if (!in) {
         throw std::runtime_error("Failed to open file for loading.");
     }
 
-    size_t pageOffset = sizeof(int) + (pageIndex * (maxPageBytes_));
+    size_t pageOffset = sizeof(PageIDType) + (pageIndex * (maxPageBytes_));
     in.seekg(pageOffset, std::ios::beg);
     if (!in) {
         throw std::runtime_error("Failed to seek to the specific page in the file.");
@@ -1224,6 +1252,38 @@ namespace tagfilterdb {
         }
 
         return {buffer, totalSize};
+    }
+
+
+   void Flush() {
+        std::ofstream out(PAGEHEAP_FILENAME, std::ios::binary | std::ios::in | std::ios::out);
+        if (!out) {
+            throw std::runtime_error("Failed to open file for updating.");
+        }
+
+        out.seekp(0, std::ios::beg); 
+        out.write(reinterpret_cast<const char*>(&lastPageId_), sizeof(PageIDType));
+        if (!out) {
+            throw std::runtime_error("Failed to write lastPageId_ to file.");
+        }
+
+        for (auto& [pageID, page] : pages_) {
+            out.seekp((pageID - 1) * maxPageBytes_ + sizeof(PageIDType), std::ios::beg);
+            if (!out) {
+                throw std::runtime_error("Failed to seek to the correct position for page data.");
+            }
+
+            getPage(pageID)->Write(out);
+
+            if (!out) {
+                throw std::runtime_error("Failed to write page data to file.");
+            }
+        }
+
+        out.close();
+        if (!out) {
+            throw std::runtime_error("Failed to properly close the file.");
+        }
     }
 
     };

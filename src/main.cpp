@@ -20,6 +20,7 @@ class MemPoolTest {
       SetupHeapFile(seed);
       FetchData();
       FlushTest();
+      ScanTest();
   }
 
   private:
@@ -59,7 +60,7 @@ class MemPoolTest {
   }
 
   void FlushTest() {
-    std::vector<UnsignedData*> vec;
+    std::vector<SignableData*> vec;
     // Free First 5 items
     for (int i = 0; i < 5; i++) {
         auto iter = memPool_.manager_.begin();
@@ -71,7 +72,7 @@ class MemPoolTest {
         memPool_.Delete(*iter);
     }
     // Add Unsigned 10 items
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 10; i++) {
         json data;
         data["name"] = "user " + std::to_string(i);
         data["grade"] = 3.5;
@@ -81,14 +82,22 @@ class MemPoolTest {
         char* rawData = new char[dataString.size()];
         std::memcpy(rawData, dataString.data(), dataString.size());
 
-        vec.push_back(memPool_.Insert(DataView{rawData, dataString.size()}));
-        memPool_.Flush();
+        vec.push_back(memPool_.Insert(DataView{rawData, dataString.size()}));   
     }
+    // Scan(&memPool_.manager_);
+    memPool_.Flush();
+  }
 
+  void ScanTest() {
+    MemPoolOpinion op;
+    ShareLRUCache<PageHeap> tempCache(op.CACHE_CHARGE);
+    PageHeapManager manager(1024*4, &tempCache);
+    manager.Load();
+    std::cout << "-----Scan-----" << std::endl;
+    Scan(&manager);
   }
 };
 
 int main() {
   MemPoolTest(0);
-  
 }
