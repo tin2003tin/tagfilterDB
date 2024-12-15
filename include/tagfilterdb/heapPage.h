@@ -18,15 +18,12 @@
 using namespace nlohmann;
 
 namespace tagfilterdb {
-    class PageHeapManager;
-    constexpr size_t MINIMUM_FILE_BYTES = 1; 
+    class HeapPageMgr;
+    constexpr size_t MINIMUM_HEAP_FILE_BYTES = 1; 
     constexpr int MIN_SIZE = 2 + 4;
     constexpr int FREE_LIST_SIZE = 10;
     constexpr int MAXIMUM_FILE_BYTES = 1024 * 4;
     constexpr long MAXINUM_CACHE_CHARGE = 1024*4* 100; // can cache 100 Page !!  
-
-    // [TODO] make env store file to disk
-    const std::string PAGEHEAP_FILENAME = "fileHeap.txt";
     
     #pragma pack(1)
     struct Flag {
@@ -35,9 +32,8 @@ namespace tagfilterdb {
     };
     #pragma pack()
 
-    // [MARK] clean the pageHeap class structure
-    class PageHeap {
-
+    // [MARK] clean the HeapPage class structure
+    class HeapPage {
         struct FreeList {
             OffsetType offset_ = -1;
             int blockSize_ = 0;
@@ -61,21 +57,20 @@ namespace tagfilterdb {
         int blockSpace_;
         int blockCount_;
 
-        friend PageHeapManager;
+        friend HeapPageMgr;
     public:
 
-      // The Iterator that traval all assigned block in the page 
       class Iterator {
-            PageHeap* page_;
+            HeapPage* page_;
             OffsetType offset_;
 
         public:
-            Iterator(PageHeap* page)
+            Iterator(HeapPage* page)
                 : page_(page), offset_(0) {
                 skipFree();
             }
 
-            Iterator(PageHeap* page, OffsetType offset)
+            Iterator(HeapPage* page, OffsetType offset)
                 : page_(page), offset_(offset) {
             }
 
@@ -125,9 +120,9 @@ namespace tagfilterdb {
                 ; 
         }
 
-        PageHeap() = default;
+        HeapPage() = default;
 
-        PageHeap(PageIDType pageId, size_t maxPageBytes) : 
+        HeapPage(PageIDType pageId, size_t maxPageBytes) : 
             PageId_(pageId), 
             maxPageBytes_(maxPageBytes), blockSpace_(0),
             listSize_(0), blockCount_(0),
@@ -153,7 +148,7 @@ namespace tagfilterdb {
             listSize_++;
         }
 
-         ~PageHeap() {
+         ~HeapPage() {
             delete []page_;
             if (freeListH_ == nullptr) {
                 return;
@@ -168,7 +163,7 @@ namespace tagfilterdb {
             delete freeListH_;
         }
 
-        PageHeap(const PageHeap& other)
+        HeapPage(const HeapPage& other)
             : PageId_(other.PageId_),
             maxPageBytes_(other.maxPageBytes_),
             blockSpace_(other.blockSpace_),
@@ -197,12 +192,12 @@ namespace tagfilterdb {
             }
         }
 
-        PageHeap& operator=(const PageHeap& other) {
+        HeapPage& operator=(const HeapPage& other) {
             if (this == &other) return *this; // Self-assignment check
 
             // Clean up existing resources
             delete[] page_;
-            this->~PageHeap();
+            this->~HeapPage();
 
             // Copy data
             PageId_ = other.PageId_;
@@ -237,7 +232,7 @@ namespace tagfilterdb {
             return *this;
         }
 
-        PageHeap(PageHeap&& other) noexcept
+        HeapPage(HeapPage&& other) noexcept
             : PageId_(other.PageId_),
             page_(other.page_),
             freeListH_(other.freeListH_),
@@ -251,12 +246,12 @@ namespace tagfilterdb {
             other.freeListH_ = nullptr;
         }
 
-        PageHeap& operator=(PageHeap&& other) noexcept {
+        HeapPage& operator=(HeapPage&& other) noexcept {
             if (this == &other) return *this; // Self-assignment check
 
             // Clean up existing resources
             delete[] page_;
-            this->~PageHeap();
+            this->~HeapPage();
 
             // Steal data
             PageId_ = other.PageId_;
@@ -561,7 +556,7 @@ namespace tagfilterdb {
         }
 
         /// Get the page ID
-        long GetPageId() const {
+        long GetPageID() const {
             return PageId_;
         }
 
@@ -581,39 +576,41 @@ namespace tagfilterdb {
         } 
     };
 
-    class PageHeapManager {
+    class HeapPageMgr {
         
     private:
-        std::map<int, PageHeap> pages_;    ///< Vector to store all the pages.
+        std::map<int, HeapPage> pages_;    ///< Vector to store all the pages.
 
-        ShareLRUCache<PageHeap>* cache_;
+        ShareLRUCache<HeapPage>* cache_;
 
         size_t maxPageBytes_;
         
         PageIDType lastPageId_;           ///< Page ID for the next page to be allocated.
 
+        std::string filename_;
+
     public:
-        friend PageHeap;
+        friend HeapPage;
 
         class Iterator {
-            PageHeapManager* pm_;
+            HeapPageMgr* pm_;
             int pageID_;
             int offset_;
 
         public:
             // Constructors
-            Iterator(PageHeapManager* pm)
+            Iterator(HeapPageMgr* pm)
                 : pm_(pm), pageID_(1), offset_(0) {
                 skipUnassigned();
             }
 
-            Iterator(PageHeapManager* pm, int pageID, int offset)
+            Iterator(HeapPageMgr* pm, int pageID, int offset)
                 : pm_(pm), pageID_(pageID), offset_(offset) {
             }
 
             // Advance to the next valid record
             void operator++() {
-                PageHeap* page = pm_->getPage(pageID_);
+                HeapPage* page = pm_->getPage(pageID_);
                 assert(page);
                 bool isAppend = false;  
                 while (true) {
@@ -655,7 +652,7 @@ namespace tagfilterdb {
         private:
             // Skip over free and unassigned blocks
             void skipUnassigned() {
-                PageHeap* page = pm_->getPage(pageID_);
+                HeapPage* page = pm_->getPage(pageID_);
                 assert(page);
                 if (offset_ == page->lastOffset_) {
                     if (pageID_ + 1 <= pm_->Size()) {
@@ -686,16 +683,18 @@ namespace tagfilterdb {
         friend Iterator;
 
     public:
-        PageHeapManager(size_t maxBytes, ShareLRUCache<PageHeap>* cache) 
-            : lastPageId_(0), cache_(cache), maxPageBytes_(maxBytes)
+        HeapPageMgr(std::string filename, size_t maxBytes,
+            ShareLRUCache<HeapPage>* cache) 
+            : filename_(filename), lastPageId_(0), cache_(cache),
+            maxPageBytes_(maxBytes)
         {
             assert(cache);
-            if (maxBytes < MINIMUM_FILE_BYTES) {
-                maxBytes = MINIMUM_FILE_BYTES;
+            if (maxBytes < MINIMUM_HEAP_FILE_BYTES) {
+                maxBytes = MINIMUM_HEAP_FILE_BYTES;
             }
         }
 
-        ~PageHeapManager() {}
+        ~HeapPageMgr() {}
 
     char* Block(Flag flag, const void* record, int recordSize) {
         int dataSize = sizeof(flag.flagAssigned) + sizeof(flag.flagIsAppend) +
@@ -728,7 +727,7 @@ namespace tagfilterdb {
         int pageID = 1;
         int assignedOffset = -1;
         while (true) {
-            PageHeap::FreeList* node = getPage(pageID)->FindFree(blockSize); 
+            HeapPage::FreeList* node = getPage(pageID)->FindFree(blockSize); 
             assignedOffset = node->offset_;
             bool isAppendable = false;
             if (node == getPage(pageID)->freeListH_->prev_) {
@@ -749,7 +748,7 @@ namespace tagfilterdb {
         return {pageID, assignedOffset};
     }
 
-    bool RecursivelyAddRecord(PageHeap::FreeList* node, long pageID, const void* record, 
+    bool RecursivelyAddRecord(HeapPage::FreeList* node, long pageID, const void* record, 
                               OffsetType offset, int recordSize, bool isAppendable, 
                               bool isFirst, List<AdjustData>* clist) {
         if (!isFirst)  {
@@ -807,15 +806,15 @@ namespace tagfilterdb {
 
     DataView GetData(BlockAddress addr) {
         assert(addr.pageID <= LastPageID());
-        PageHeap* page = getPage(addr.pageID);
+        HeapPage* page = getPage(addr.pageID);
         assert(page);
         assert(addr.offset < page->lastOffset_);
 
         size_t totalSize = 0;
-        std::vector<std::pair<PageHeap*, int>> dataBlocks;
+        std::vector<std::pair<HeapPage*, int>> dataBlocks;
 
         while (addr.pageID <= LastPageID()) {
-            PageHeap* page = getPage(addr.pageID);
+            HeapPage* page = getPage(addr.pageID);
             assert(page);
             Flag flag = page->LoadFlag(addr.offset );
             assert(flag.flagAssigned);
@@ -839,7 +838,7 @@ namespace tagfilterdb {
 
         // Load data into the buffer
         for (const auto& block : dataBlocks) {
-            PageHeap* page = block.first;
+            HeapPage* page = block.first;
             int dataOffset = block.second;
             int dataSize = page->LoadSize(dataOffset);
 
@@ -851,7 +850,7 @@ namespace tagfilterdb {
     }
 
     bool FreeBlock(PageIDType pageID, int offset, bool isStress, List<AdjustData>* clist ) {
-        PageHeap* page = getPage(pageID);
+        HeapPage* page = getPage(pageID);
         assert(page);
         Flag flag = page->LoadFlag(offset);
         assert(flag.flagAssigned);
@@ -894,11 +893,11 @@ namespace tagfilterdb {
             if (getPage(pageID)->listSize_ == 1) {
                 return false;
             }
-            PageHeap::Iterator iter = getPage(pageID)->Begin();
+            HeapPage::Iterator iter = getPage(pageID)->Begin();
             OffsetType offset = 0;
             auto end = getPage(pageID)->End();
             while (iter != end) {
-                PageHeap::Iterator next = iter;
+                HeapPage::Iterator next = iter;
                 ++next;
                 Flag flag = getPage(pageID)->LoadFlag(*iter);
                 assert(flag.flagAssigned);
@@ -1024,7 +1023,7 @@ namespace tagfilterdb {
     }
 
     // This is used for assign/free/flush/compact process ??private
-    PageHeap* getPage(long pageID) {
+    HeapPage* getPage(PageIDType pageID) {
         if (pageID <= LastPageID()) {
             // Find the page in pages 
             if (pages_.count(pageID)) {
@@ -1046,15 +1045,15 @@ namespace tagfilterdb {
     }
 
     // This is more general for external can request data
-     std::pair<PageHeap*,BaseNode*> fetchPage(long pageID) {
+     std::pair<HeapPage*,BaseNode*> fetchPage(long pageID) {
         // Find in cache
         auto n = cache_->Get(std::to_string(pageID));
         if (n == nullptr) {
             // If it is not found the page in cache load from disk
-            PageHeap* page = LoadAtPage(pageID);
+            HeapPage* page = LoadAtPage(pageID);
             return {page, nullptr};
         }
-        return {&ShareLRUCache<PageHeap>::GetValue(n), n};
+        return {&ShareLRUCache<HeapPage>::GetValue(n), n};
     }
 
     Iterator begin() {
@@ -1094,7 +1093,7 @@ namespace tagfilterdb {
     }
 
     void Save() {
-        std::ofstream out(PAGEHEAP_FILENAME, std::ios::in | std::ios::out | std::ios::trunc);
+        std::ofstream out(filename_, std::ios::in | std::ios::out | std::ios::trunc);
         if (!out) {
             throw std::runtime_error("Failed to open file for saving.");
         }
@@ -1109,7 +1108,7 @@ namespace tagfilterdb {
 
     // Load Meta of Page Manager
     void Load() {
-        std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+        std::ifstream in(filename_, std::ios::binary);
         if (!in) {
             throw std::runtime_error("Failed to open file for loading.");
         }
@@ -1123,7 +1122,7 @@ namespace tagfilterdb {
 
     // This is just funtion for checking the test
     void LoadAllPage() {
-        std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+        std::ifstream in(filename_, std::ios::binary);
         if (!in) {
             throw std::runtime_error("Failed to open file for loading pages.");
         }
@@ -1131,7 +1130,7 @@ namespace tagfilterdb {
         in.seekg(sizeof(int), std::ios::beg);
 
         while (in.peek() != EOF) {
-            PageHeap newPage;
+            HeapPage newPage;
             newPage.setup();
             try {
                 newPage.Load(in); 
@@ -1144,13 +1143,13 @@ namespace tagfilterdb {
     }
 
     // This is used to load the page from disk
-    PageHeap* LoadAtPage(PageIDType pageID) {
+    HeapPage* LoadAtPage(PageIDType pageID) {
     if (pageID < 0 || pageID > lastPageId_) {
         throw std::out_of_range("Invalid page index");
     }
     long pageIndex = pageID - 1;
 
-    std::ifstream in(PAGEHEAP_FILENAME, std::ios::in | std::ios::out | std::ios::binary);
+    std::ifstream in(filename_, std::ios::in | std::ios::out | std::ios::binary);
     if (!in) {
         throw std::runtime_error("Failed to open file for loading.");
     }
@@ -1161,7 +1160,7 @@ namespace tagfilterdb {
         throw std::runtime_error("Failed to seek to the specific page in the file.");
     }
 
-        PageHeap* loadedPage = new PageHeap();
+        HeapPage* loadedPage = new HeapPage();
         loadedPage->maxPageBytes_ = maxPageBytes_;
         loadedPage->setup();
         try {
@@ -1176,13 +1175,13 @@ namespace tagfilterdb {
     }
 
     // [OPTION]
-    PageHeap LoadPageMedata(PageIDType pageID) {
+    HeapPage LoadPageMedata(PageIDType pageID) {
     if (pageID < 0 || pageID > lastPageId_) {
         throw std::out_of_range("Invalid page index");
     }
     long pageIndex = pageID - 1;
 
-    std::ifstream in(PAGEHEAP_FILENAME, std::ios::binary);
+    std::ifstream in(filename_, std::ios::binary);
     if (!in) {
         throw std::runtime_error("Failed to open file for loading.");
     }
@@ -1193,7 +1192,7 @@ namespace tagfilterdb {
         throw std::runtime_error("Failed to seek to the specific page in the file.");
     }
 
-        PageHeap newPage;
+        HeapPage newPage;
         try {
             newPage.LoadMetadataOnly(in);
         } catch (const std::exception& e) {
@@ -1208,7 +1207,7 @@ namespace tagfilterdb {
 
         size_t totalSize = 0;
         struct Temp {
-            PageHeap* page;
+            HeapPage* page;
             OffsetType offset;
             size_t dataSize;
             BaseNode* ref;
@@ -1256,9 +1255,12 @@ namespace tagfilterdb {
 
 
    void Flush() {
-        std::ofstream out(PAGEHEAP_FILENAME, std::ios::binary | std::ios::in | std::ios::out);
+        std::ofstream out(filename_, std::ios::binary | std::ios::in | std::ios::out);
         if (!out) {
-            throw std::runtime_error("Failed to open file for updating.");
+            out.open(filename_, std::ios::binary | std::ios::trunc | std::ios::out);
+            if (!out) {
+                throw std::runtime_error("Failed to create a new file.");
+            }
         }
 
         out.seekp(0, std::ios::beg); 

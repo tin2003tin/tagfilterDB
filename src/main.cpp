@@ -1,6 +1,6 @@
-#include "tagfilterdb/heap_test/memPool_test.h"
+#include "tagfilterdb/sp_test/example1.h"
 
 
 int main() {
-  mempool_test();
+    sp_example1();
 }

@@ -30,7 +30,7 @@ private:
 public:
     Test(std::string s) : s(std::move(s)) {}
 
-    std::string ToString()  {
+    std::string ToString() const {
         return s;
     }
 
@@ -72,6 +72,10 @@ public:
 
 };
 
+std::string TestToString(SignableData* sData) {
+    return (Test::Deserialize(sData->data)).ToString();
+}
+
 class TestSearchAllCallBack : public SpICallBack {
     public :
     std::vector<SpICallBackValue> v;
@@ -103,7 +107,7 @@ void TestSearchOverlapSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Tes
     // Test vector-based search (searching for overlap)
     auto start_time = std::chrono::high_resolution_clock::now();
     std::vector<Test> vector_results;
-    for (const auto& entry : v) {
+    for (auto& entry : v) {
         if (m.GetSPI()->GetBBManager()->IsOverlap(query_bb, entry.first)) {
             vector_results.push_back(entry.second);
         }
@@ -206,11 +210,13 @@ void TestSearchCoverSpeed(VE query_v, std::vector<std::pair<BBManager::BB, Test>
 
 int SpeedTest() {
     SpatialIndexOptions sop;
+    sop.FILENAME = "SpeedTest_SP.tin";
     MemPoolOpinion mop;
+    mop.FILENAME = "SpeedTest_MEM.tin";
     std::vector<std::pair<BBManager::BB, Test>> v;
     MemTable  m(sop,mop);
-    size_t size = 10000;
-    size_t range = 10000;
+    size_t size = 1000;
+    size_t range = 1000;
 
     auto manager = m.GetSPI()->GetBBManager();
     // VE chula_locate = {{100,200},{100,200}};
@@ -220,7 +226,7 @@ int SpeedTest() {
     // tData.data = chula.Serialize();
     // m.GetSPI()->Insert(bb, &tData);
     // v.push_back({manager->Copy(bb), chula});
-    Random r(100);
+    Random r(101);
     for (size_t i = 0; i < size; i++) {
         Test t = Test("Location: " + std::to_string(i + 1));
         double a = r.Uniform(range);
@@ -232,24 +238,23 @@ int SpeedTest() {
 
         auto sData = m.GetMempool()->Insert(t.Serialize());
         m.GetSPI()->Insert(bb, sData);
-        if (i%5 == 0) {
-            m.GetSPI()->Remove(bb, sData);
-        } 
         
         v.push_back({manager->Copy(bb), t});
         bb.Destroy();
     }
+    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
     std::cout << "Total Node: " << m.GetSPI()->totalNode() << std::endl;
     std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 
     std::cout << "Testing Overlap Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchOverlapSpeed({{0,1000},{0,1000}},v, m);
+    TestSearchOverlapSpeed({{0,500},{0,500}},v, m);
 
     std::cout << "Testing Under Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchUnderSpeed({{0,1000},{0,1000}},v, m);
+    TestSearchUnderSpeed({{100,200},{100,200}},v, m);
 
     std::cout << "Testing Cover Search Speed (Vector vs R-tree)..." << std::endl;
-    TestSearchCoverSpeed({{0,1000},{0,1000}},v, m);
+    TestSearchCoverSpeed({{0,500},{0,500}},v, m);
+
 
     for (auto& e : v) {
         e.first.Destroy();

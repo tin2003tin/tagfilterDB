@@ -44,6 +44,29 @@ public:
         return bitCount;
     }
 
+    // Serialize the Bitset to a binary buffer
+    void Serialize(char* buffer, size_t& offset) const {
+        std::memcpy(buffer + offset, &size_, sizeof(size_));
+        offset += sizeof(size_);
+
+        size_t byteSize = (size_ + 7) / 8;
+        std::memcpy(buffer + offset, data_, byteSize);
+        offset += byteSize;
+    }
+
+    // Deserialize the Bitset from a binary buffer
+    void Deserialize(const char* buffer, size_t& offset) {
+        std::memcpy(&size_, buffer + offset, sizeof(size_));
+        offset += sizeof(size_);
+
+        delete[] data_;
+        data_ = new char[(size_ + 7) / 8]();
+
+        size_t byteSize = (size_ + 7) / 8;
+        std::memcpy(data_, buffer + offset, byteSize);
+        offset += byteSize;
+    }
+
     std::string toString() const {
         std::string result;
         for (size_t i = 0; i < size_; ++i) {

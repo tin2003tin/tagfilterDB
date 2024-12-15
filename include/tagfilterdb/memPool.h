@@ -2,7 +2,7 @@
 #define TAGFILTERDB_MEMPOOL_H
 
 #include "tagfilterdb/cache.h"
-#include "tagfilterdb/pageH.h"
+#include "tagfilterdb/heapPage.h"
 #include "tagfilterdb/skiplist.h"
 #include "tagfilterdb/dataView.h"
 #include <set>
@@ -22,14 +22,15 @@ namespace tagfilterdb {
     };
 
     struct MemPoolOpinion {
-        size_t PAGE_MAX_BYTPES = 1024 * 4; 
-        long CACHE_CHARGE = PAGE_MAX_BYTPES * 100;
+        size_t PAGE_MAX_BYTES = 1024 * 4; 
+        long CACHE_CHARGE = PAGE_MAX_BYTES * 100;
+        std::string FILENAME = "memPool.tin";
     };
 
     class MemPool {
     public:
-        ShareLRUCache<PageHeap> cache_; // Cache of pages
-        PageHeapManager manager_; // Manage page access (load/flush)
+        ShareLRUCache<HeapPage> cache_; // Cache of pages
+        HeapPageMgr manager_; // Manage page access (load/flush)
 
         SkipList<BlockAddress, DataView, BlockAddressCmp> signedList_; // Holds signed data
         List<SignableData> unsignedList_; // Holds unsigned data
@@ -42,7 +43,7 @@ namespace tagfilterdb {
         MemPool() = delete;
         MemPool(MemPoolOpinion op, Arena* arena)
             : cache_(op.CACHE_CHARGE),
-            manager_(PageHeapManager(op.PAGE_MAX_BYTPES, &cache_)),
+            manager_(HeapPageMgr(op.FILENAME, op.PAGE_MAX_BYTES, &cache_)),
             signedList_(BlockAddressCmp(), arena),
             unsignedList_(arena),
             freedList_(arena),

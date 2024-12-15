@@ -10,7 +10,7 @@ namespace tagfilterdb {
     class MemTable {
         public: 
         explicit MemTable(SpatialIndexOptions sop, MemPoolOpinion mop)
-         : sp_(sop, &arena_), memPool_(mop, &arena_)  {}
+         : memPool_(mop, &arena_), sp_(sop, &arena_,&memPool_)  {}
         MemTable(const MemTable&) = delete;
         MemTable& operator=(const MemTable&) = delete;
 
