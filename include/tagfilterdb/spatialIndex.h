@@ -102,7 +102,13 @@ class SpatialIndex {
         Node(int height , SpatialIndexOptions &op, Arena *arena)
         : height_(height), branch_(nullptr), childSize_(0) {
             if (arena && op.MAX_CHILD > 0) {
-                branch_ = (Branch *)arena->AllocateAligned(op.MAX_CHILD * sizeof(Branch));
+                branch_ = (Branch *)arena->Allocate(op.MAX_CHILD * sizeof(Branch));
+            }
+            for (int i = 0; i < op.MAX_CHILD;i++) {
+                branch_[i].box_ = BB();
+                branch_[i].child_ = nullptr;
+                branch_[i].data_ = nullptr;
+                branch_[i].isFlushed = false;
             }
         }
 
@@ -141,19 +147,26 @@ class SpatialIndex {
         }
 
         static Branch Copy(const Branch& s, BBManager* bbm_) {
-            Branch ss(bbm_);
+            Branch ss;
             ss.child_ = s.child_;
             ss.data_ = s.data_;
             ss.box_ = bbm_->Copy(s.box_);
+            bbm_->Align(ss.box_);
             ss.toAddr_ = s.toAddr_;
+            ss.isFlushed = s.isFlushed;
             return ss;
         }
 
         static void Move(Branch& dest, Branch& src) {
-            dest.box_ = std::move(src.box_);
+            dest.box_.dims_ = src.box_.dims_;
             dest.child_ = src.child_;
             dest.data_ = src.data_;
             dest.toAddr_ = src.toAddr_;
+            dest.isFlushed = src.isFlushed;
+            src.isFlushed = false;
+            src.box_.dims_ = nullptr;
+            src.data_ = nullptr;
+            src.child_ = nullptr;
         }
     };
 
@@ -190,13 +203,14 @@ class SpatialIndex {
 
     bool Insert(const BB &box, SignableData* data) {
         std::unique_lock lock(mutex_);
+
         Branch tempBranch;
-        tempBranch.box_ = bbm_.Copy(box);
-        bbm_.Align(tempBranch.box_);
+        tempBranch.box_.dims_ = box.dims_;
         tempBranch.child_ = nullptr;
         tempBranch.data_ = data;
 
         insertBranch(tempBranch, &root_, 0);
+
              
         return true;  
     }
@@ -208,6 +222,9 @@ class SpatialIndex {
 
     void Load() {
         auto rootView = manager_.Load();
+        if (rootView.data.size == 0) {
+            return;
+        } 
         root_ = deserialize(rootView);
         delete []rootView.data.data;
     }
@@ -333,8 +350,8 @@ class SpatialIndex {
         if (node->isLeaf()) {
             return nullptr;
         }
-        Node* child = node->branch_[index].child_;
-        if (node->branch_[index].child_ == nullptr) {
+        Branch* child = &node->branch_[index];
+    if (node->branch_[index].child_ == nullptr) {
             assert(node->branch_[index].isFlushed);
             // load child
             node->branch_[index].child_ = LoadNode(node->branch_[index].toAddr_);
@@ -347,6 +364,7 @@ class SpatialIndex {
         char* nodeBuffer = res.first->GetBlock(addr.offset);
         Node* node = deserialize(SignableData(
                                     DataView{nodeBuffer,getNodeSize()},addr));
+        assert(node);
         delete []nodeBuffer;
         manager_.HandleCache(res.first, res.second);
         return node;
@@ -488,7 +506,7 @@ class SpatialIndex {
          assert(node);
 
         if (node->childSize_ < op_.MAX_CHILD) {
-                Branch::Move(node->branch_[node->childSize_++], branch);
+                node->branch_[node->childSize_++] = Branch::Copy(branch, &bbm_);
                 return false;  // Indicate no split
         } else {
                 // Need to split the node
@@ -545,17 +563,12 @@ class SpatialIndex {
         assert(node);
         assert(node->childSize_ == op_.MAX_CHILD);
         bool firstTime;
-
+        // [MARK] make overflowBuffer
         GroupAssign groupAssign(op_, &bbm_);
-
         Branch overflowBuffer[op_.MAX_CHILD + 1];
-
         AreaType overflowBufferArea[op_.MAX_CHILD + 1];
 
-        BB box = bbm_.Copy(
-            node->branch_[0].box_);
-
-        // Copy existing Branchs and the new Branch into overflowBuffer
+        BB box = bbm_.Copy(node->branch_[0].box_);
         for (int i_tempBranch = 0; i_tempBranch < op_.MAX_CHILD; i_tempBranch++) {
             Branch::Move(overflowBuffer[i_tempBranch], node->branch_[i_tempBranch]);
             BB uBox = bbm_.Union(box, overflowBuffer[i_tempBranch].box_);
@@ -563,10 +576,10 @@ class SpatialIndex {
             overflowBufferArea[i_tempBranch] =
                 bbm_.Area(overflowBuffer[i_tempBranch].box_);
         }
-        Branch::Move(overflowBuffer[op_.MAX_CHILD], branch);
-        BB uBox = bbm_.Union(box, branch.box_); // Update the bounding box with the new Branch
+        BB uBox = bbm_.Union(box, branch.box_);  
         bbm_.Move(box, uBox);
-        overflowBufferArea[op_.MAX_CHILD] = bbm_.Area(branch.box_); // Update the area of the new Branch
+        overflowBuffer[op_.MAX_CHILD] = Branch::Copy(branch,&bbm_);
+        overflowBufferArea[op_.MAX_CHILD] = bbm_.Area(branch.box_); 
         box.Destroy();
 
         int seed0 = 0, seed1 = 0; // Indices of the seeds for splitting
@@ -766,8 +779,10 @@ class SpatialIndex {
         }
 
         if (node->isLeaf()) {
-            if (node->branch_[branchIndex].data_ == nullptr) {
+            if (node->branch_[branchIndex].isFlushed) {
                 //Use old addr 
+                assert(node->branch_[branchIndex].toAddr_.pageID != 0);
+              
                 std::memcpy(buffer + offset, &node->branch_[branchIndex].toAddr_.pageID,
                  sizeof(PageIDType));
                 offset += sizeof(PageIDType);
@@ -775,6 +790,9 @@ class SpatialIndex {
                 std::memcpy(buffer + offset, &node->branch_[branchIndex].toAddr_.offset, sizeof(OffsetType));
                 offset += sizeof(OffsetType);
             } else {
+                Branch* b = &node->branch_[branchIndex];
+                assert(node->branch_[branchIndex].data_->addr.pageID != 0);
+
                 std::memcpy(buffer + offset, &node->branch_[branchIndex].data_->addr.pageID, sizeof(PageIDType));
                 offset += sizeof(PageIDType);
 
@@ -782,8 +800,10 @@ class SpatialIndex {
                 offset += sizeof(OffsetType);
             }
         } else {
-            if (node->branch_[branchIndex].child_ == nullptr) {
+            if (node->branch_[branchIndex].isFlushed) {
                 //Use old addr
+                assert(node->branch_[branchIndex].toAddr_.pageID != 0);
+                
                 std::memcpy(buffer + offset, &node->branch_[branchIndex].toAddr_.pageID, sizeof(PageIDType));
                 offset += sizeof(PageIDType);
 
@@ -795,6 +815,8 @@ class SpatialIndex {
                     BlockAddress addr = manager_.Assign(node->addr.pageID);
                     node->branch_[branchIndex].child_->addr = addr;
                 }
+                assert(node->branch_[branchIndex].child_->addr.pageID != 0);
+
                 std::memcpy(buffer + offset, &node->branch_[branchIndex].child_->addr.pageID, sizeof(PageIDType));
                 offset += sizeof(node->branch_[branchIndex].child_->addr.pageID);
 
@@ -836,7 +858,6 @@ class SpatialIndex {
                 std::memcpy(&box.dims_[j].second, loc + offset, sizeof(RangeType));
                 offset += sizeof(RangeType);
             }
-            Branch* b = &node->branch_[i];
             node->branch_[i].box_.dims_ = box.dims_;
             node->branch_[i].isFlushed = true;
 
@@ -844,8 +865,12 @@ class SpatialIndex {
             offset += sizeof(PageIDType);
             std::memcpy(&node->branch_[i].toAddr_.offset, loc + offset, sizeof(OffsetType));
             offset += sizeof(OffsetType);
+            assert(node->branch_[i].toAddr_.pageID != 0);
         }
+
         node->addr = sData.addr;
+        assert(node->addr.pageID != 0);
+        assert(node->addr.pageID <= manager_.LastPageID());
         return node;
     }
 
@@ -857,6 +882,7 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             std::cout << node->height_ << " " << bbm_.toString(*box) << " -> ";
             if (node->isLeaf()) {
+                
                 if (node->branch_[i].isFlushed) {
                     SignableData s = getData(node->branch_[i].toAddr_);
                     std::cout << formatFunc(&s);
@@ -868,7 +894,9 @@ class SpatialIndex {
             std::cout << bbm_.toString(node->branch_[i].box_) << std::endl;
             // Recursively print for child nodes
             if (node->height_ != 0) {
-                recursivelyPrint(getChild(node, i),
+                Branch* branch = &node->branch_[i];
+                Node* child = getChild(node, i);
+                recursivelyPrint(child,
                             &node->branch_[i].box_,formatFunc);
             }
            

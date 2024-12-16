@@ -691,10 +691,10 @@ class ShareLRUCache {
     void Detail() {
         std::cout << "Total Charge: " << total_charge_ << std::endl; 
         std::cout << "Total Usage: " << TotalUsage() << std::endl; 
-        for (size_t i = 0 ; i < m_count; i++) {
-            std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
-            m_caches[i].Detail();
-        }
+        // for (size_t i = 0 ; i < m_count; i++) {
+        //     std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
+        //     m_caches[i].Detail();
+        // }
     }
 
     /**

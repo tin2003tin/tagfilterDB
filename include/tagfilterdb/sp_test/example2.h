@@ -6,7 +6,6 @@
 // ==========
 
 
-
 #include "tagfilterdb/memtable.h"
 #include "tagfilterdb/memPool.h"
 #include <string>
@@ -14,6 +13,7 @@
 #include <vector>
 #include <iomanip>
 #include <iostream>
+#include <cstdio>
 
 using namespace tagfilterdb;
 using VE = std::vector<BBManager::BB::Edge>;
@@ -120,8 +120,9 @@ std::string LocationToString(SignableData* sData) {
 
 void Load() {
     SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
     MemPoolOpinion mop;
-    mop.FILENAME = "locMemPool.tin";
+    mop.FILENAME = "mExample2.tin";
     MemTable  m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
     m.GetSPI()->Load();
@@ -136,7 +137,7 @@ void Load() {
     // }
    
     m.GetSPI()->Print(LocationToString);
-    // m.GetSPI()->GetCache()->Detail();
+    m.GetSPI()->GetCache()->Detail();
 
     // m.GetMempool()->Flush();
     // m.GetSPI()->flush();
@@ -144,46 +145,96 @@ void Load() {
     // std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 }
 
-int sp_example1() {
-    Load();
-    return 0;
+void FirstSave() {
     SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
     MemPoolOpinion mop;
-    mop.FILENAME = "locMemPool.tin";
+    mop.FILENAME = "mExample2.tin";
     MemTable m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
+    size_t size = 10;
+    size_t range = 1000;
+    Random r(101);
+    for (int i = 0; i < size; i++) {
+        int id = r.Uniform(range);
+        double a = r.Uniform(range);
+        double b = r.Uniform(range);
+        double c = r.Uniform(range);
+        double d = r.Uniform(range);
 
-    std::vector<Location> locations = {
-            Location("001", "Chulalongkorn University", 0.0, 12000.0, 0.0, 12000.0), 
-            Location("002", "Faculty of Engineering", 6919, 6919 + 1960, 7796 - 1175, 7796 ),
-            Location("003", "Building 4 of Engineering", 8353, 8353 + 361, 7780 - 258, 7780 ),
-            Location("004", "Building 3 of Engineering", 7076, 7076 + 1406, 7134 - 463, 7134 ),
-            Location("005", "Building 2 of Engineering", 7782, 7782 + 523, 7450 - 265, 7450 ),
-            Location("006", "Building 1 of Engineering", 7145, 7145 + 499, 7461 - 288, 7461),
-            Location("006", "ENG Centenial Memorial Building", 8365, 8365 + 361, 7467 - 301, 7467),
-            Location("007", "Icanteen", 8429, 8429 + 213, 6908 - 223, 6908),
-            Location("008", "LarnGear", 8143, 8143 + 354, 7125 - 264, 7125),
-            Location("009", "Faculty of Science", 4863, 4863 + 1632, 6616, 6616 + 1208),
-            Location("010", "Faculty of Science", 4855, 4855 + 1185, 7920, 7920 + 1160),
-            Location("011", "Science Canteen", 6111, 6111 + 248, 8016, 8016 + 728),
-            Location("012", "Sala Phra Kiao ", 6351, 6351 + 40, 8192, 8192 + 425),
-        };
-
-    for (auto& loc : locations) {
+        auto loc = Location(std::to_string(id), "House", std::min(a, b), std::max(a, b)
+                                                            , std::min(c, d), std::max(c, d));
         auto locVE = manager->CreateBox(loc.getLocation());
         SignableData* data = m.GetMempool()->Insert(loc.Serialize());
         m.GetSPI()->Insert(locVE, data);
         locVE.Destroy();
     }
 
-    m.GetSPI()->Print(LocationToString);
-    std::cout << "Total Node: " << m.GetSPI()->totalNode() << std::endl;
-    std::cout << "Total Size: " << m.GetSPI()->Size() << std::endl;
-    std::cout << "Total Usage: " << m.GetArena()->MemoryUsage() << std::endl;
-
     m.GetMempool()->Flush();
     m.GetSPI()->flush();
     m.GetSPI()->GetManager()->PrintPageInfo();
+    std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
 
+void Save(int seed) {
+    SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
+    MemPoolOpinion mop;
+    mop.FILENAME = "mExample2.tin";
+    MemTable  m(sop,mop);
+    auto manager = m.GetSPI()->GetBBManager();
+    m.GetSPI()->Load();
+    m.GetMempool()->manager_.Load();
+
+    size_t size = 10;
+    size_t range = 1000;
+    Random r(seed);
+    for (int i = 0; i < size; i++) {
+        int id = r.Uniform(range);
+        double a = r.Uniform(range);
+        double b = r.Uniform(range);
+        double c = r.Uniform(range);
+        double d = r.Uniform(range);
+
+        auto loc = Location(std::to_string(id), "House", std::min(a, b), std::max(a, b)
+                                                            , std::min(c, d), std::max(c, d));
+        auto locVE = manager->CreateBox(loc.getLocation());
+        SignableData* data = m.GetMempool()->Insert(loc.Serialize());
+        m.GetSPI()->Insert(locVE, data);
+        locVE.Destroy();
+    }
+   
+    m.GetMempool()->Flush();
+    m.GetSPI()->flush();
+    m.GetSPI()->GetManager()->PrintPageInfo();
+    std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
+
+void DeleteFile() {
+    const char* filename = "sExample2.tin";
+
+    if (std::remove(filename) == 0) {
+        std::cout << "File deleted successfully: " << filename << std::endl;
+    } else {
+        std::perror("Error deleting file");
+    }
+
+    filename = "mExample2.tin";
+
+    if (std::remove(filename) == 0) {
+        std::cout << "File deleted successfully: " << filename << std::endl;
+    } else {
+        std::perror("Error deleting file");
+    }
+}
+
+int sp_example2() {
+    FirstSave();
+    Load();
+    for (int i = 0; i < 10; i++) {
+        Save(i);
+    }
+    Load();
+    DeleteFile();
     return 0;
 }

@@ -1,6 +1,6 @@
-#include "tagfilterdb/sp_test/example1.h"
+#include "tagfilterdb/sp_test/example2.h"
 
 
 int main() {
-    sp_example1();
+    sp_example2();
 }
