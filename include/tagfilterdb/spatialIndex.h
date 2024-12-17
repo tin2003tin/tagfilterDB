@@ -65,8 +65,8 @@ struct SpatialIndexOptions {
 };
 
 struct SpICallBackValue {
-    const BBManager::BB* box;
-    const SignableData* data;
+    BBManager::BB* box;
+    SignableData* data;
 };
 
 class SpICallBack {
@@ -108,7 +108,6 @@ class SpatialIndex {
                 branch_[i].box_ = BB();
                 branch_[i].child_ = nullptr;
                 branch_[i].data_ = nullptr;
-                branch_[i].isFlushed = false;
             }
         }
 
@@ -132,8 +131,6 @@ class SpatialIndex {
 
         BlockAddress toAddr_ = {0,0}; 
 
-        bool isFlushed = false;
-
         Branch() = default;
 
         Branch(BBManager* bbm_) : box_(bbm_->CreateBox()), child_(nullptr),  toAddr_({0,0}),
@@ -153,7 +150,6 @@ class SpatialIndex {
             ss.box_ = bbm_->Copy(s.box_);
             bbm_->Align(ss.box_);
             ss.toAddr_ = s.toAddr_;
-            ss.isFlushed = s.isFlushed;
             return ss;
         }
 
@@ -162,8 +158,6 @@ class SpatialIndex {
             dest.child_ = src.child_;
             dest.data_ = src.data_;
             dest.toAddr_ = src.toAddr_;
-            dest.isFlushed = src.isFlushed;
-            src.isFlushed = false;
             src.box_.dims_ = nullptr;
             src.data_ = nullptr;
             src.child_ = nullptr;
@@ -298,13 +292,13 @@ class SpatialIndex {
     void flush() {
         int node_size = getNodeSize();
         char bufferNode[node_size];
-
+       
         if (!root_->isAssign()) {
             auto p = manager_.Assign(1);
             root_->addr.pageID = p.pageID;
             root_->addr.offset = p.offset;
         }
-
+   
         std::queue<Node*> q;
         q.push(root_);
 
@@ -352,7 +346,7 @@ class SpatialIndex {
         }
         Branch* child = &node->branch_[index];
     if (node->branch_[index].child_ == nullptr) {
-            assert(node->branch_[index].isFlushed);
+            assert(node->branch_[index].toAddr_.pageID != 0);
             // load child
             node->branch_[index].child_ = LoadNode(node->branch_[index].toAddr_);
         }
@@ -366,13 +360,13 @@ class SpatialIndex {
                                     DataView{nodeBuffer,getNodeSize()},addr));
         assert(node);
         delete []nodeBuffer;
+
         manager_.HandleCache(res.first, res.second);
         return node;
     }   
 
-    SignableData getData(BlockAddress addr) {
-        DataView* view = memPool_->Get(addr);
-        return SignableData(*view, addr);
+    SignableData* getData(BlockAddress addr) {
+        return memPool_->Get(addr);
     }
 
     bool insertBranch(Branch &branch, Node **refNode, size_t height) {
@@ -384,24 +378,24 @@ class SpatialIndex {
         bool splited = recursivelyInsertBranch(branch, *refNode, &nodeBuffer, height); 
 
         if (splited) {
-        Node *newRoot = newNode((*refNode)->height_ + 1);
-        Branch tempBranch1(&bbm_);
-        BB nC1 = nodeCover(*refNode);
-        bbm_.Move(tempBranch1.box_, nC1);
-        bbm_.Align(tempBranch1.box_);
-        tempBranch1.child_ = *refNode;
-        addBranch(tempBranch1, newRoot, &nodeBuffer);
+            Node *newRoot = newNode((*refNode)->height_ + 1);
+            Branch tempBranch1(&bbm_);
+            BB nC1 = nodeCover(*refNode);
+            bbm_.Move(tempBranch1.box_, nC1);
+            bbm_.Align(tempBranch1.box_);
+            tempBranch1.child_ = *refNode;
+            addBranch(tempBranch1, newRoot, &nodeBuffer);
 
-        Branch tempBranch2(&bbm_);
-        BB nC2 = nodeCover(nodeBuffer);
-        bbm_.Move(tempBranch2.box_, nC2);
-        bbm_.Align(tempBranch2.box_);
-        tempBranch2.child_ = nodeBuffer;
-        addBranch(tempBranch2, newRoot,&nodeBuffer);
+            Branch tempBranch2(&bbm_);
+            BB nC2 = nodeCover(nodeBuffer);
+            bbm_.Move(tempBranch2.box_, nC2);
+            bbm_.Align(tempBranch2.box_);
+            tempBranch2.child_ = nodeBuffer;
+            addBranch(tempBranch2, newRoot,&nodeBuffer);
 
-        *refNode = newRoot; 
+            *refNode = newRoot; 
 
-        return true;
+            return true;
         }
         return false;
     }
@@ -779,7 +773,7 @@ class SpatialIndex {
         }
 
         if (node->isLeaf()) {
-            if (node->branch_[branchIndex].isFlushed) {
+            if (node->branch_[branchIndex].data_ == nullptr) {
                 //Use old addr 
                 assert(node->branch_[branchIndex].toAddr_.pageID != 0);
               
@@ -800,7 +794,7 @@ class SpatialIndex {
                 offset += sizeof(OffsetType);
             }
         } else {
-            if (node->branch_[branchIndex].isFlushed) {
+            if (node->branch_[branchIndex].child_ == nullptr) {
                 //Use old addr
                 assert(node->branch_[branchIndex].toAddr_.pageID != 0);
                 
@@ -859,7 +853,8 @@ class SpatialIndex {
                 offset += sizeof(RangeType);
             }
             node->branch_[i].box_.dims_ = box.dims_;
-            node->branch_[i].isFlushed = true;
+            node->branch_[i].child_ = nullptr;
+            node->branch_[i].data_ = nullptr;
 
             std::memcpy(&node->branch_[i].toAddr_.pageID, loc + offset, sizeof(PageIDType));
             offset += sizeof(PageIDType);
@@ -882,10 +877,8 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             std::cout << node->height_ << " " << bbm_.toString(*box) << " -> ";
             if (node->isLeaf()) {
-                
-                if (node->branch_[i].isFlushed) {
-                    SignableData s = getData(node->branch_[i].toAddr_);
-                    std::cout << formatFunc(&s);
+                if (node->branch_[i].data_ == nullptr) {
+                    std::cout << formatFunc(getData(node->branch_[i].toAddr_));
                 } else {
                     std::cout << formatFunc(node->branch_[i].data_);
                 }
@@ -915,6 +908,9 @@ class SpatialIndex {
                 if (node->isLeaf()) {
                     SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
+                    if (node->branch_[i].data_ == nullptr) {
+                        node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
+                    } 
                     cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
                     
@@ -940,6 +936,9 @@ class SpatialIndex {
                 if (node->isLeaf()) {
                     SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
+                    if (node->branch_[i].data_ == nullptr) {
+                        node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
+                    } 
                     cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
 
@@ -964,11 +963,14 @@ class SpatialIndex {
             if (node->isLeaf() && bbm_.ContainsRange(box, node->branch_[i].box_)) {
                     SpICallBackValue cv;
                     cv.box = &node->branch_[i].box_;
+                    if (node->branch_[i].data_ == nullptr) {
+                        node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
+                    } 
                     cv.data = node->branch_[i].data_;
                     bool conti = callback->Process(cv);
-                   
+
                     if (!conti) {
-                        return; 
+                        return;
                     }
             }
 

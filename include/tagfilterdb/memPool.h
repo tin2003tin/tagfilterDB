@@ -32,7 +32,7 @@ namespace tagfilterdb {
         ShareLRUCache<HeapPage> cache_; // Cache of pages
         HeapPageMgr manager_; // Manage page access (load/flush)
 
-        SkipList<BlockAddress, DataView, BlockAddressCmp> signedList_; // Holds signed data
+        SkipList<BlockAddress, SignableData, BlockAddressCmp> signedList_; // Holds signed data
         List<SignableData> unsignedList_; // Holds unsigned data
         List<BlockAddress> freedList_; // Holds freed blocks
         List<AdjustData> adjustList_;
@@ -57,8 +57,8 @@ namespace tagfilterdb {
             return signableData;
         }
 
-        DataView* Get(BlockAddress addr) {
-            DataView* signedData = signedList_.Get(addr);
+        SignableData* Get(BlockAddress addr) {
+            SignableData* signedData = signedList_.Get(addr);
             if (signedData != nullptr) {
                 return signedData;
             }
@@ -67,7 +67,7 @@ namespace tagfilterdb {
 
             try {
                 data.Align(arena_);
-                return signedList_.Insert(addr,data);
+                return signedList_.Insert(addr,  SignableData(data, addr));
 
             } catch (const std::exception& e) {
                 std::cerr << "Value parsing failed: " << e.what() << std::endl;

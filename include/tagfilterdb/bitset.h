@@ -13,6 +13,64 @@ public:
         data_ = nullptr;
     }
 
+    ~Bitset() {
+        delete []data_;
+    }
+
+    // Copy Constructor
+    Bitset(const Bitset& other) : size_(other.size_) {
+        if (other.data_) {
+            size_t byteSize = (size_ + 7) / 8;
+            data_ = new char[byteSize];
+            std::memcpy(data_, other.data_, byteSize);
+        } else {
+            data_ = nullptr;
+        }
+    }
+
+    // Move Constructor
+    Bitset(Bitset&& other) noexcept : data_(other.data_), size_(other.size_) {
+        other.data_ = nullptr;
+        other.size_ = 0;
+    }
+
+    // Copy Assignment Operator
+    Bitset& operator=(const Bitset& other) {
+        if (this == &other) return *this; // Handle self-assignment
+
+        // Free existing data
+        delete[] data_;
+
+        size_ = other.size_;
+        if (other.data_) {
+            size_t byteSize = (size_ + 7) / 8;
+            data_ = new char[byteSize];
+            std::memcpy(data_, other.data_, byteSize);
+        } else {
+            data_ = nullptr;
+        }
+
+        return *this;
+    }
+
+    // Move Assignment Operator
+    Bitset& operator=(Bitset&& other) noexcept {
+        if (this == &other) return *this; // Handle self-assignment
+
+        // Free existing data
+        delete[] data_;
+
+        // Move data
+        data_ = other.data_;
+        size_ = other.size_;
+
+        // Nullify the source
+        other.data_ = nullptr;
+        other.size_ = 0;
+
+        return *this;
+    }
+
     void Setup(size_t bits) {
         size_ = bits;
         data_ = new char[(bits + 7) / 8]();

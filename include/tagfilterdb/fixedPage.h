@@ -30,6 +30,10 @@ namespace tagfilterdb {
         friend FixedPageMgr;
     public:
         FixedPage() = default;
+        
+        ~FixedPage(){
+            delete []page_;
+        }
 
         FixedPage(PageIDType pageID, size_t maxPageBytes, int blockSize_) : 
             pageID_(pageID) {
@@ -52,6 +56,38 @@ namespace tagfilterdb {
                     maxBlock_--;
             }
             bitSet_.Setup(maxBlock_);
+        }
+
+        // Copy Constructor
+        FixedPage(const FixedPage& other) : pageID_(other.pageID_), 
+                                            blockSize_(other.blockSize_), 
+                                            maxBlock_(other.maxBlock_), 
+                                            maxPageBytes_(other.maxPageBytes_), 
+                                            bitSet_(other.bitSet_) {
+            // Deep copy the page data
+            page_ = new char[GetMaxDataOffset()];
+            std::memcpy(page_, other.page_, GetMaxDataOffset());
+        }
+
+        // Copy Assignment Operator
+        FixedPage& operator=(const FixedPage& other) {
+            if (this == &other) return *this; // Handle self-assignment
+
+            // Free existing resources
+            delete[] page_;
+
+            // Copy data
+            pageID_ = other.pageID_;
+            blockSize_ = other.blockSize_;
+            maxBlock_ = other.maxBlock_;
+            maxPageBytes_ = other.maxPageBytes_;
+            bitSet_ = other.bitSet_;
+
+            // Deep copy the page data
+            page_ = new char[maxPageBytes_];
+            std::memcpy(page_, other.page_, maxPageBytes_);
+
+            return *this;
         }
 
         size_t getMetaDataSize() const {
@@ -247,7 +283,7 @@ namespace tagfilterdb {
         size_t blockSize_;
         size_t maxPageBytes_;
         size_t maxBlock_;
-        
+
         PageIDType lastPageID_;
 
         std::string filename_;
@@ -273,9 +309,6 @@ namespace tagfilterdb {
             }
         }
 
-        ~FixedPageMgr() {
-        }
-
         FixedPage* getPage(PageIDType pageID) {
             if (pageID <= lastPageID_) {
                 // Find the page in pages 
@@ -287,6 +320,8 @@ namespace tagfilterdb {
                     // Copy the page to pages 
                     pages_[pageID] = *(res.first);
                     cache_->Release(res.second);
+     
+
                     return &pages_[pageID];
                 }
             } else { 
@@ -383,13 +418,15 @@ namespace tagfilterdb {
 
             res.first->GetData(addr.offset, buffer);
             HandleCache(res.first, res.second);
+  
 
             return {buffer, blockSize_};
         }
 
         void HandleCache(FixedPage* page, BaseNode* cacheEntry) {
             if (cacheEntry == nullptr) {
-                cache_->Release(cache_->Insert(std::to_string(page->pageID_), std::move(*page), maxPageBytes_));
+                cache_->Release(cache_->Insert(
+                    std::to_string(page->pageID_), *page, maxPageBytes_));
                 delete page;
             } else {
                 cache_->Release(cacheEntry);

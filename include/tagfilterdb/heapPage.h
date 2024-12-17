@@ -196,7 +196,6 @@ namespace tagfilterdb {
             if (this == &other) return *this; // Self-assignment check
 
             // Clean up existing resources
-            delete[] page_;
             this->~HeapPage();
 
             // Copy data
@@ -208,7 +207,7 @@ namespace tagfilterdb {
             lastOffset_ = other.lastOffset_;
 
             page_ = new char[maxPageBytes_];
-            std::copy(other.page_, other.page_ + maxPageBytes_, page_);
+            std::copy(other.page_, other.page_ + EndBlocks(), page_);
 
             // Deep copy the free list
             if (other.freeListH_) {
@@ -1034,6 +1033,8 @@ namespace tagfilterdb {
                 // Copy the page to pages 
                 pages_[pageID] = *(res.first);
                 cache_->Release(res.second);
+                delete res.first;
+
                 return &pages_[pageID];
             }
         } else { 

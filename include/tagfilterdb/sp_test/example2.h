@@ -5,9 +5,11 @@
 // spatial data processing and retrieval.
 // ==========
 
+#define SPI_MOVE_COUNT
 
 #include "tagfilterdb/memtable.h"
 #include "tagfilterdb/memPool.h"
+
 #include <string>
 #include <cstring>
 #include <vector>
@@ -118,32 +120,29 @@ std::string LocationToString(SignableData* sData) {
     return (Location::Deserialize(sData->data)).ToString();
 }
 
-void Load() {
-    SpatialIndexOptions sop;
-    sop.FILENAME = "sExample2.tin";
-    MemPoolOpinion mop;
-    mop.FILENAME = "mExample2.tin";
-    MemTable  m(sop,mop);
-    auto manager = m.GetSPI()->GetBBManager();
-    m.GetSPI()->Load();
-    m.GetMempool()->manager_.Load();
+class LocationCallBack : public SpICallBack {
+    public :
+    std::vector<SpICallBackValue> v;
+    size_t move_count = 0;
+    bool Process(SpICallBackValue  value) {
+        v.push_back(value);
+        return true;
+    }
 
-    // for (int i = 100; i < 1000; i++) {
-    //     auto loc = Location("00" + std::to_string(i), "Test", 0.0, 1000.0 + i * 10, 0.0, 1000.0 + i * 10);
-    //     auto locVE = manager->CreateBox(loc.getLocation());
-    //     SignableData* data = m.GetMempool()->Insert(loc.Serialize());
-    //     m.GetSPI()->Insert(locVE, data);
-    //     locVE.Destroy();
-    // }
-   
-    m.GetSPI()->Print(LocationToString);
-    m.GetSPI()->GetCache()->Detail();
+    #if defined(SPI_MOVE_COUNT)
+        bool Move() {
+            move_count++;
+            return true;
+        }
+    #endif 
 
-    // m.GetMempool()->Flush();
-    // m.GetSPI()->flush();
-    // m.GetSPI()->GetManager()->PrintPageInfo();
-    // std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
-}
+    void Sample(BBManager* bbm) const {
+        for (int i = 0; i < 5 && i < v.size(); i++) {
+            std::cout << LocationToString(v[i].data) 
+            << bbm->toString(*v[i].box) << std::endl;       
+        }
+    }
+};
 
 void FirstSave() {
     SpatialIndexOptions sop;
@@ -152,8 +151,8 @@ void FirstSave() {
     mop.FILENAME = "mExample2.tin";
     MemTable m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
-    size_t size = 10;
-    size_t range = 1000;
+    size_t size = 10000;
+    size_t range = 10000;
     Random r(101);
     for (int i = 0; i < size; i++) {
         int id = r.Uniform(range);
@@ -171,9 +170,11 @@ void FirstSave() {
     }
 
     m.GetMempool()->Flush();
+
     m.GetSPI()->flush();
+
     m.GetSPI()->GetManager()->PrintPageInfo();
-    std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+    std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;  
 }
 
 void Save(int seed) {
@@ -185,9 +186,9 @@ void Save(int seed) {
     auto manager = m.GetSPI()->GetBBManager();
     m.GetSPI()->Load();
     m.GetMempool()->manager_.Load();
-
-    size_t size = 10;
-    size_t range = 1000;
+    
+    size_t size = 10000;
+    size_t range = 10000;
     Random r(seed);
     for (int i = 0; i < size; i++) {
         int id = r.Uniform(range);
@@ -206,7 +207,8 @@ void Save(int seed) {
    
     m.GetMempool()->Flush();
     m.GetSPI()->flush();
-    m.GetSPI()->GetManager()->PrintPageInfo();
+    // m.GetSPI()->GetManager()->PrintPageInfo();
+    std::cout << "Time: " << seed << std::endl;
     std::cout <<  "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 }
 
@@ -228,13 +230,152 @@ void DeleteFile() {
     }
 }
 
+void Scan() {
+    SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
+    MemPoolOpinion mop;
+    mop.FILENAME = "mExample2.tin";
+    MemTable  m(sop,mop);
+    auto manager = m.GetSPI()->GetBBManager();
+    m.GetSPI()->Load();
+    m.GetMempool()->manager_.Load();
+
+    m.GetSPI()->Print(LocationToString);
+    std::cout << "Total Node: " << m.GetSPI()->totalNode() << std::endl;
+    std::cout << "Cache Node Total Usage:  " << m.GetSPI()->GetCache()->TotalUsage()  << std::endl;
+    std::cout << "Cache Data Total Usage:  " << m.GetMempool()->cache_.TotalUsage()  << std::endl;
+    std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
+
+void SearchCover(VE query_v) {
+    SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
+    MemPoolOpinion mop;
+    mop.FILENAME = "mExample2.tin";
+    MemTable  m(sop,mop);
+    auto manager = m.GetSPI()->GetBBManager();
+    m.GetSPI()->Load();
+    m.GetMempool()->manager_.Load();
+
+    LocationCallBack callback;
+        auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
+    std::cout << "Find SearchCover: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
+
+    // Test R-tree-based search (searching for "under")
+    auto start_time = std::chrono::high_resolution_clock::now();
+    m.GetSPI()->SearchCover(query_bb, &callback);
+    auto end_time = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Found: " << callback.v.size() << std::endl;
+
+    auto rtree_elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    std::cout << "R Tree SearchCover Time: " << rtree_elapsed_time << " microseconds";
+
+    #if defined(SPI_MOVE_COUNT)
+    std::cout << ", " << callback.move_count << " node";
+    #endif
+
+    std::cout << std::endl;
+
+    std::cout << "Sample: " << std::endl;
+    callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
+    
+    std::cout << "Cache Node Total Usage:  " << m.GetSPI()->GetCache()->TotalUsage()  << std::endl;
+    std::cout << "Cache Data Total Usage:  " << m.GetMempool()->cache_.TotalUsage()  << std::endl;
+    std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
+
+
+void SearchOverlap(VE query_v) {
+    SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
+    MemPoolOpinion mop;
+    mop.FILENAME = "mExample2.tin";
+    MemTable  m(sop,mop);
+    auto manager = m.GetSPI()->GetBBManager();
+    m.GetSPI()->Load();
+    m.GetMempool()->manager_.Load();
+
+    LocationCallBack callback;
+        auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
+    std::cout << "Find SearchOverlap: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
+
+    // Test R-tree-based search (searching for "under")
+    auto start_time = std::chrono::high_resolution_clock::now();
+    m.GetSPI()->SearchOverlap(query_bb, &callback);
+    auto end_time = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Found: " << callback.v.size() << std::endl;
+
+    auto rtree_elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    std::cout << "R Tree SearchOverlap Time: " << rtree_elapsed_time << " microseconds";
+
+    #if defined(SPI_MOVE_COUNT)
+    std::cout << ", " << callback.move_count << " node";
+    #endif
+
+    std::cout << std::endl;
+    std::cout << "Sample: " << std::endl;
+    callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
+
+    std::cout << "Cache Node Total Usage:  " << m.GetSPI()->GetCache()->TotalUsage()  << std::endl;
+    std::cout << "Cache Data Total Usage:  " << m.GetMempool()->cache_.TotalUsage()  << std::endl;
+    std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
+
+
+void SearchUnder(VE query_v) {
+    SpatialIndexOptions sop;
+    sop.FILENAME = "sExample2.tin";
+    MemPoolOpinion mop;
+    mop.FILENAME = "mExample2.tin";
+    MemTable  m(sop,mop);
+    auto manager = m.GetSPI()->GetBBManager();
+    m.GetSPI()->Load();
+    m.GetMempool()->manager_.Load();
+
+    LocationCallBack callback;
+        auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
+    std::cout << "Find SearchUnder: " << m.GetSPI()->GetBBManager()->toString(query_bb) << std::endl;
+
+    // Test R-tree-based search (searching for "under")
+    auto start_time = std::chrono::high_resolution_clock::now();
+    m.GetSPI()->SearchUnder(query_bb, &callback);
+    auto end_time = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Found: " << callback.v.size() << std::endl;
+
+    auto rtree_elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    std::cout << "R Tree SearchUnder Time: " << rtree_elapsed_time << " microseconds";
+
+    #if defined(SPI_MOVE_COUNT)
+    std::cout << ", " << callback.move_count << " node";
+    #endif
+
+    std::cout << std::endl;
+
+    std::cout << "Sample: " << std::endl;
+    callback.Sample(m.GetSPI()->GetBBManager());
+    query_bb.Destroy();
+
+    std::cout << "Cache Node Total Usage:  " << m.GetSPI()->GetCache()->TotalUsage()  << std::endl;
+    std::cout << "Cache Data Total Usage:  " << m.GetMempool()->cache_.TotalUsage()  << std::endl;
+    std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
+}
+
 int sp_example2() {
-    FirstSave();
-    Load();
-    for (int i = 0; i < 10; i++) {
-        Save(i);
-    }
-    Load();
-    DeleteFile();
+    // FirstSave();
+    // for (int i = 0; i < 9; i++) {
+    //     Save(i);
+    // }
+    // Scan();
+
+    // SearchOverlap({{0,500},{0, 500}});
+    // SearchCover({{0,500},{0,500}});
+    SearchUnder({{100,200},{100,200}});
+
+    // DeleteFile();
     return 0;
 }
