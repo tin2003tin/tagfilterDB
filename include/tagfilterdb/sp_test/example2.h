@@ -372,9 +372,9 @@ int sp_example2() {
     // }
     // Scan();
 
-    // SearchOverlap({{0,500},{0, 500}});
-    // SearchCover({{0,500},{0,500}});
-    SearchUnder({{100,200},{100,200}});
+    SearchOverlap({{0,500},{0, 500}});
+    SearchCover({{1000,2000},{1000,2000}});
+    // SearchUnder({{100,200},{100,200}});
 
     // DeleteFile();
     return 0;

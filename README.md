@@ -41,7 +41,7 @@ Efficient **Access management** enables you to track key properties such as:
 
 ## Architecture
 
-![Class Diagram](./ClassDiagram.webp)
+![Class Diagram](./image/ClassDiagram.webp)
 
 The **tagfilterdb** architecture consists of several interdependent components, which together deliver high performance, scalability, and reliability:
 
@@ -85,9 +85,11 @@ The development of **tagfilterdb** will follow these steps:
 10. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
 11. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
 
-## Installation and Setup
-
-To get started with **tagfilterdb**, follow these steps:
-
-Clone the repository to your local machine:
+## Example Implementation Code
+Trying to search all the data that is overlap with the area.
+![Seach Overlap](./image/searchOverlap.png)
+Trying to search all the data that is covered by the area.
+![Seach Overlap](./image/searchCover.png)
+Trying to search all the data that cover the area.
+![Seach Overlap](./image/searchUnder.png)
 
