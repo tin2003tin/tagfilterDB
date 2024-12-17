@@ -7,8 +7,8 @@ By integrating a smart **caching mechanism,** the database improves data retriev
 ## Key Features
 
 ### 1. **Indexing for Spatial and Non-Spatial Data**
-tagfilterdb uses R-tree indexing for spatial data and a Skip List for non-spatial data. This combination provides:
-- **Efficient spatial queries**: R-tree handles spatial queries, while the skip list offers fast search and insertion for ordered data.
+tagfilterdb uses R-tree indexing for spatial data and a Inverted List for non-spatial data. This combination provides:
+- **Efficient spatial queries**: R-tree handles spatial queries, while the Inverted List offers fast search and insertion for ordered data.
 - **Dynamic data management**: Both structures support frequent updates and deletions with minimal overhead.
 - **Scalability**: The system scales efficiently with growing data, maintaining high performance for both spatial and non-spatial queries.
 
@@ -28,8 +28,8 @@ As your data grows, **tagfilterdb** ensures that the system remains highly scala
 - Handling massive datasets with ease, thanks to optimized indexing and data storage techniques.
 - Dynamically adjusting to increasing data access loads.
 
-### 5. **Metadata Management**
-Efficient **metadata management** enables you to track key properties such as:
+### 5. **Access Management**
+Efficient **Access management** enables you to track key properties such as:
 - **Record counts** and metadata usage statistics.
 - **Cache hit/miss rates** to optimize data retrieval.
 - **Data integrity verification** to ensure reliability across operations.
@@ -39,8 +39,9 @@ Efficient **metadata management** enables you to track key properties such as:
 - **Compiler Hook** Hooks provide the ability to intercept certain operations, such as data storage, retrieval, and query execution, and modify them based on your requirements.
 - **System Parameter Adjustment** The compiler format allows you to adjust system parameters directly
 
-
 ## Architecture
+
+![Class Diagram](./ClassDiagram.webp)
 
 The **tagfilterdb** architecture consists of several interdependent components, which together deliver high performance, scalability, and reliability:
 
@@ -52,8 +53,8 @@ The **tagfilterdb** architecture consists of several interdependent components, 
 - **R-tree** is used to efficiently index and organize spatial data, enabling fast retrieval and updates.
 - Optimized for both **static** and **dynamic** data, with excellent performance in high-volume, frequently updated data environments.
 
-### 3. **Skip List Integration for Non-Spiral MemTable**
-- To enhance tagfilterdb's MemTable performance, a skip list has been integrated for efficient handling of non-spiral data. A skip list is a probabilistic data structure that provides fast search, insertion, and deletion in logarithmic time, making it a suitable choice for in-memory storage systems where frequent updates and dynamic data are common.
+### 3. **Inverted List Integration for Non-Spiral MemTable**
+- To enhance tagfilterdb's MemTable performance, a Inverted List has been integrated for efficient handling of non-spiral data.
 
 ### 4. **Caching Layer**
 - The system features an intelligent **in-memory caching layer**, storing frequently accessed data to minimize latency.
@@ -72,28 +73,21 @@ The **tagfilterdb** architecture consists of several interdependent components, 
 
 The development of **tagfilterdb** will follow these steps:
 
-1. **Finalize R-tree Data Structure**: Complete the R-tree implementation with support for efficient insertions, deletions, and spatial queries. Ensure the data structure is optimized for file writing and retrieval.
-2. **Implement Skip List for Non-Spatial Data**: Design and implement a Skip List for efficient storage and querying of non-spatial, ordered data. This will complement the R-tree indexing system.
-3. **MemTable Implementation**: Develop a MemTable to store recently written data in memory before flushing to disk. This allows for faster writes and can be used in conjunction with WAL for reliable storage.
-4. **Write-Ahead Logging (WAL)**: Implement WAL to ensure durability and consistency. All changes are first written to a log before being applied to the MemTable and eventually flushed to disk.
-5. **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism, such as an LRU Cache, to store frequently accessed data and reduce read latency.
-6. **Develop Metadata Management System**: Implement a system for tracking metadata such as record counts, cache usage, and other properties to optimize database performance.
-7. **Design and Implement Server API**: Build a RESTful API for clients to interact with the server, including operations like adding data, querying spatial regions, and filtering based on metadata tags.
-8.  **Compiler Integration** Implement support for customizable compiler (**LR Compiler**) functions to allow users to define and optimize database operations and parameters for specific use cases.
-9. **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
-10. **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
+1.  <span style="color:green; font-weight:bold;">**Completed!**</span> **Finalize R-tree Data Structure**: Complete the R-tree implementation with support for efficient insertions, deletions, and spatial queries. Ensure the data structure is optimized for file writing and retrieval.
+2.  <span style="color:red; font-weight:bold;">**Skip!!!**</span> **Implement Inverted List for Non-Spatial Data**: Design and implement a Inverted List for efficient storage and querying of non-spatial, ordered data. This will complement the R-tree indexing system.
+3.  <span style="color:green; font-weight:bold;">**Completed!**</span> **MemTable Implementation**: Develop a MemTable to store recently written data in memory before flushing to disk. This allows for faster writes and can be used in conjunction with WAL for reliable storage.
+4.  <span style="color:blue; font-weight:bold;">**Implementing!**</span> **Write-Ahead Logging (WAL)**: Implement WAL to ensure durability and consistency. All changes are first written to a log before being applied to the MemTable and eventually flushed to disk.
+5.  <span style="color:green; font-weight:bold;">**Completed!**</span> **Select and Implement Caching System**: Choose an appropriate in-memory caching mechanism, such as an LRU Cache, to store frequently accessed data and reduce read latency.
+6. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Develop Metadata Management System**: Implement a system for tracking metadata such as record counts, cache usage, and other properties to optimize database performance.
+7. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Design and Implement Server API**: Build a RESTful API for clients to interact with the server, including operations like adding data, querying spatial regions, and filtering based on metadata tags.
+8. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Compiler Integration** Implement support for customizable compiler (**LR Compiler**) functions to allow users to define and optimize database operations and parameters for specific use cases.
+9. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Optimize and Test Performance**: Continuously optimize the system for scalability, query performance, and caching efficiency. Implement benchmarking tools and unit tests.
+10. <span style="color:gray; font-weight:bold;">**InPlan!**</span> **Documentation and Deployment**: Complete the system documentation (**DoxyFile**), including setup instructions, API usage, and deployment guides. Prepare the project for deployment.
 11. **Docker Integration**: Provide a Docker setup for easy containerization and deployment.
 
 ## Installation and Setup
 
 To get started with **tagfilterdb**, follow these steps:
 
-### Prerequisites
-Ensure you have the following installed:
-- **Git**: To clone the repository.
-- **CMake**: To build the project.
-- **Docker** (optional): For easy deployment.
-
-### Clone the Repository
 Clone the repository to your local machine:
 
