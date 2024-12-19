@@ -122,10 +122,12 @@ std::string LocationToString(SignableData* sData) {
 
 class LocationCallBack : public SpICallBack {
     public :
-    std::vector<SpICallBackValue> v;
+    std::vector<std::pair<BBManager::BB,SignableData*>> v;
     size_t move_count = 0;
-    bool Process(SpICallBackValue  value) {
-        v.push_back(value);
+
+    bool Process(SpICallBackValue& value) {
+        v.push_back({BBManager::BB(),value.data});
+        BBManager::Move(v[v.size()-1].first, value.box);
         return true;
     }
 
@@ -138,8 +140,8 @@ class LocationCallBack : public SpICallBack {
 
     void Sample(BBManager* bbm) const {
         for (int i = 0; i < 5 && i < v.size(); i++) {
-            std::cout << LocationToString(v[i].data) 
-            << bbm->toString(*v[i].box) << std::endl;       
+            std::cout << LocationToString(v[i].second) 
+            << bbm->toString(v[i].first) << std::endl;       
         }
     }
 
@@ -147,10 +149,16 @@ class LocationCallBack : public SpICallBack {
         if (index > v.size()) {
             return Location();
         }
-        if (v[index].data->data.data == nullptr) {
+        if (v[index].second->data.data == nullptr) {
             return Location();
         }
-        return Location::Deserialize(v[index].data->data);    
+        return Location::Deserialize(v[index].second->data);    
+    }
+
+    ~LocationCallBack() {
+        for (int i =0; i < v.size(); i++) {
+            v[i].first.Destroy();            
+        }
     }
 };
 
@@ -161,7 +169,7 @@ void FirstSave() {
     mop.FILENAME = "mExample3.tin";
     MemTable m(sop,mop);
     auto manager = m.GetSPI()->GetBBManager();
-    size_t size = 10;
+    size_t size = 100;
     size_t range = 100;
     Random r(101);
     for (int i = 0; i < size; i++) {
@@ -171,8 +179,8 @@ void FirstSave() {
         double c = r.Uniform(range);
         double d = r.Uniform(range);
 
-        auto loc = Location(std::to_string(id), "House", std::min(a, b), std::max(a, b)
-                                                            , std::min(c, d), std::max(c, d));
+        auto loc = Location(std::to_string(id), "House", 1, 1
+                                                            , 1, 1);
         auto locVE = manager->CreateBox(loc.getLocation());
         SignableData* data = m.GetMempool()->Insert(loc.Serialize());
         m.GetSPI()->Insert(locVE, data);
@@ -197,7 +205,7 @@ void Save(int seed) {
     m.GetSPI()->Load();
     m.GetMempool()->manager_.Load();
     
-    size_t size = 10000;
+    size_t size = 1000;
     size_t range = 10000;
     Random r(seed);
     for (int i = 0; i < size; i++) {
@@ -375,7 +383,7 @@ void SearchUnder(VE query_v) {
     std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 }
 
-void DeleteAllCover(VE query_v) {
+void DeleteAllOverlap(VE query_v) {
     SpatialIndexOptions sop;
     sop.FILENAME = "sExample3.tin";
     MemPoolOpinion mop;
@@ -387,28 +395,29 @@ void DeleteAllCover(VE query_v) {
 
     LocationCallBack callback;
     auto query_bb = m.GetSPI()->GetBBManager()->CreateBox(query_v);
-    m.GetSPI()->SearchCover(query_bb, &callback);
+    m.GetSPI()->SearchOverlap(query_bb, &callback);
     query_bb.Destroy();
 
     std::cout << "Found: " << callback.v.size() << std::endl;
     for (int i = 0; i < callback.v.size(); i++) {
-        if (callback.v[i].data->data.data == nullptr) {
-            callback.v[i].data = m.GetMempool()->Get(callback.v[i].data->addr);
+        if (callback.v[i].second->data.data == nullptr) {
+            callback.v[i].second = m.GetMempool()->Get(callback.v[i].second->addr);
         }
         Location loc = callback.getAt(i);
-        std::cout << loc.ToString() << std::endl;
-
-        m.GetSPI()->Remove(*callback.v[i].box, callback.v[i].data);
-        m.GetSPI()->Print(LocationToString);
+        std::cout << "Delete: "<< loc.ToString() << std::endl;
+        assert(callback.v[i].second->data.data);
+        m.GetSPI()->Remove(callback.v[i].first, callback.v[i].second);
+        // m.GetSPI()->Print(LocationToString);
         int temp;
     }
     m.GetSPI()->Print(LocationToString);
+    std::cout << "Memory Usage: " << m.GetArena()->MemoryUsage() << std::endl;
 }
 
 int sp_example3() {
     FirstSave();
     Scan();
-    DeleteAllCover({{0,100},{0, 100}});
+    DeleteAllOverlap({{0,100},{0, 100}});
 
     DeleteFile();
     return 0;

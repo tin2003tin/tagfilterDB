@@ -103,15 +103,22 @@ class BBManager {
         assert(dimension_ > 0);
         assert(arena_ != nullptr);
     }
+    
+    static BB Copy(const BB& box,int d) {
+        BB t(d);
+
+        CopyTo(box, t,d);
+        return t;
+    }
 
     BB Copy(const BB& box) {
         BB t(dimension_);
 
-        CopyTo(box, t);
+        CopyTo(box, t,dimension_);
         return t;
     }
 
-    void Move(BB& dist, BB& res) {
+    static void Move(BB& dist, BB& res) {
         delete []dist.dims_;
         dist.dims_ = res.dims_;
         res.dims_ = nullptr;
@@ -145,9 +152,9 @@ class BBManager {
         return b;
     }
 
-    void CopyTo(const BB &self, const BB &other) {
+    static void CopyTo(const BB &self, const BB &other, int d) {
         if (&self != &other) {
-            for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
+            for (std::size_t i_axis = 0; i_axis < d; ++i_axis) {
                 other.dims_[i_axis] = self.dims_[i_axis];
             }
         }
@@ -232,8 +239,8 @@ class BBManager {
 
     bool IsOverlap(const BB &self, const BB &other) const {
         for (std::size_t i_axis = 0; i_axis < dimension_; ++i_axis) {
-            if (!(self.dims_[i_axis].first < other.dims_[i_axis].second) ||
-                !(other.dims_[i_axis].first < self.dims_[i_axis].second))
+            if ((self.dims_[i_axis].first > other.dims_[i_axis].second) ||
+                (other.dims_[i_axis].first > self.dims_[i_axis].second))
                 return false;
         }
 

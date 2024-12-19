@@ -67,8 +67,9 @@ struct SpatialIndexOptions {
     std::vector<std::pair<std::string,std::string>> DNAME;
 };
 
-struct SpICallBackValue {
-    BBManager::BB* box;
+class SpICallBackValue {
+    public:
+    BBManager::BB box;
     SignableData* data;
 };
 
@@ -77,7 +78,7 @@ class SpICallBack {
     #if defined(SPI_MOVE_COUNT)
     virtual bool Move() = 0;
     #endif 
-    virtual bool Process(SpICallBackValue value) = 0;
+    virtual bool Process(SpICallBackValue& value) = 0;
 };
 
 class SpatialIndex {
@@ -214,6 +215,8 @@ class SpatialIndex {
 
     bool Remove(const BB &box, SignableData* data) {
         std::unique_lock lock(mutex_);
+        assert(data);
+        assert(data->data.data);
         return removeBranch(box,data,&root_);
     }
 
@@ -487,7 +490,8 @@ class SpatialIndex {
             return true;
         } else {
             for(int index = 0; index < node->childSize_; ++index) {
-                if (bbm_.IsOverlap(box,node->branch_[index].box_)) {
+                BB* a = &node->branch_[index].box_;
+                if (bbm_.IsOverlap(node->branch_[index].box_, box)) {
                     if (!recursivelyRemove(box,data,getChild(node,index),listNode)) {
                         if (getChild(node,index)->childSize_ >= op_.MIN_CHILD) {
                             BB coverBox = nodeCover(getChild(node,index));
@@ -497,8 +501,8 @@ class SpatialIndex {
                             addListNode(getChild(node,index),listNode);
                             deleteBranch(node, index);
                         }
+                        return false;
                     }
-                    return false;
                 }  
             }
             return true;
@@ -919,7 +923,7 @@ class SpatialIndex {
             if (bbm_.IsOverlap(node->branch_[i].box_, box)) {
                 if (node->isLeaf()) {
                     SpICallBackValue cv;
-                    cv.box = &node->branch_[i].box_;
+                    cv.box = bbm_.Copy(node->branch_[i].box_);
                     if (node->branch_[i].data_ == nullptr) {
                         node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
                     } 
@@ -947,7 +951,7 @@ class SpatialIndex {
             if (bbm_.ContainsRange(node->branch_[i].box_, box)) {
                 if (node->isLeaf()) {
                     SpICallBackValue cv;
-                    cv.box = &node->branch_[i].box_;
+                    cv.box = bbm_.Copy(node->branch_[i].box_);
                     if (node->branch_[i].data_ == nullptr) {
                         node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
                     } 
@@ -974,7 +978,7 @@ class SpatialIndex {
         for (int i = 0; i < node->childSize_; i++) {
             if (node->isLeaf() && bbm_.ContainsRange(box, node->branch_[i].box_)) {
                     SpICallBackValue cv;
-                    cv.box = &node->branch_[i].box_;
+                    cv.box = bbm_.Copy(node->branch_[i].box_);
                     if (node->branch_[i].data_ == nullptr) {
                         node->branch_[i].data_ = getData(node->branch_[i].toAddr_);
                     } 
