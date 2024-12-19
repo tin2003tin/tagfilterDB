@@ -76,7 +76,11 @@ namespace tagfilterdb {
         }
 
         BlockAddress Delete(BlockAddress addr) {
-            return *freedList_.Add(addr);    
+            if (signedList_.Contains(addr)) {
+                // signedList_.Remove(addr); // TODO Remove
+                return *freedList_.Add(addr);
+            }
+            return  addr;
         }
         
         bool Flush() {
@@ -117,6 +121,10 @@ namespace tagfilterdb {
                 delete []iter->sdata.data;
                 ++iter;
             }
+        }
+
+        List<AdjustData>* GetAdjust() {
+            return &adjustList_;
         }
     };
 }

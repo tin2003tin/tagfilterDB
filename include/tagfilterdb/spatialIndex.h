@@ -39,6 +39,7 @@
 #include "fixedPage.h"
 #include "dataView.h"
 #include "memPool.h"
+#include "jsonMgr.h"
 
 #include <algorithm>
 #include <vector>
@@ -62,6 +63,8 @@ struct SpatialIndexOptions {
     size_t PAGE_MAX_BYTES = 1024*8;
     long CACHE_CHARGE = PAGE_MAX_BYTES * 100;
     std::string FILENAME = "spatialindex.tin";
+    bool IS_CHCEK_ALL = false;
+    std::vector<std::pair<std::string,std::string>> DNAME;
 };
 
 struct SpICallBackValue {
@@ -403,7 +406,7 @@ class SpatialIndex {
     bool removeBranch(const BB &box, SignableData* data , Node **refNode) {
         assert(*refNode);
         ListNode* reInsertList = NULL;
-        if (!recursivelyRemove(box,data, *refNode, &reInsertList)) {
+        if (!recursivelyRemove(box, data, *refNode, &reInsertList)) {
             while (reInsertList != nullptr)
             {
                 Node* tempNode = reInsertList->node_;
@@ -470,6 +473,12 @@ class SpatialIndex {
 
         if (node->isLeaf()) {
             for (size_t index = 0; index < node->childSize_; index++) {
+                // fetch the data
+                if (node->branch_[index].data_ == nullptr) {
+                    node->branch_[index].data_ = getData(node->branch_[index].toAddr_);
+                }
+                assert(node->branch_[index].data_ != nullptr);
+                SignableData* s = node->branch_[index].data_;
                 if ((node->branch_[index].data_->data) == (data->data)) {
                         deleteBranch(node,index);
                         return false;
@@ -513,9 +522,12 @@ class SpatialIndex {
         assert(node && (index >= 0) && (index < op_.MAX_CHILD));
         assert(node->childSize_ > 0);
 
+        memPool_->Delete(node->addr);
+
         node->branch_[index].box_.dims_ = node->branch_[node->childSize_ - 1].box_.dims_;
         node->branch_[index].child_ = node->branch_[node->childSize_ - 1].child_;
         node->branch_[index].data_ = node->branch_[node->childSize_ - 1].data_;
+        node->branch_[index].toAddr_ = node->branch_[node->childSize_ - 1].toAddr_;
 
         size_--;
         node->childSize_--;
@@ -998,6 +1010,7 @@ class SpatialIndex {
 
     private:
     SpatialIndexOptions op_;
+
     FixedPageMgr manager_;
     ShareLRUCache<FixedPage> cache_;
 
