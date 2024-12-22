@@ -65,6 +65,14 @@ using OffsetType = int;
 struct BlockAddress {
     PageIDType pageID;
     OffsetType offset;
+
+    bool isSigned() {
+        return pageID > 0;
+    }
+
+    bool operator==(const BlockAddress& other) const {
+        return pageID == other.pageID && offset == other.offset;
+    } 
 };
     
 struct SignableData {

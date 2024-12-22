@@ -218,6 +218,30 @@ class SpatialIndex {
         assert(data);
         assert(data->data.data);
         return removeBranch(box,data,&root_);
+        // TODO Delete node in Page
+    }
+
+    bool AdjustOffset(const BB &box, BlockAddress oldAddr, BlockAddress newAddr) {
+        assert(oldAddr.isSigned());
+        assert(newAddr.isSigned());
+
+        return recursivelyAdjustOffset(box, root_, oldAddr, newAddr);   
+    }   
+
+    bool recursivelyAdjustOffset(const BB &box, Node* node, BlockAddress oldAddr, BlockAddress newAddr) {
+        assert(node);
+
+        for (int index = 0; index < node->childSize_; index++) {
+            if (node->isLeaf() && node->branch_[index].toAddr_ == oldAddr) {
+                node->branch_[index].toAddr_ = newAddr;
+                return true;
+            }
+            if (!node->isLeaf() && bbm_.ContainsRange(node->branch_[index].box_, box)) {
+                if (recursivelyAdjustOffset(box, getChild(node,index), oldAddr, newAddr)) return true;
+            }
+        }
+        return false;
+
     }
 
     void Load() {
@@ -272,6 +296,10 @@ class SpatialIndex {
 
     ShareLRUCache<FixedPage>* GetCache() {
         return &cache_;
+    }
+
+    SpatialIndexOptions* getOption() {
+        return &op_;
     }
 
     size_t getNodeSize() {  

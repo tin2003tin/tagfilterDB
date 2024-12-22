@@ -57,10 +57,13 @@ namespace tagfilterdb {
             return signableData;
         }
 
-        SignableData* Get(BlockAddress addr) {
+        SignableData* Get(BlockAddress addr, bool isFetch = true) {
             SignableData* signedData = signedList_.Get(addr);
             if (signedData != nullptr) {
                 return signedData;
+            }
+            if (!isFetch) {
+                return nullptr;
             }
 
             DataView data = manager_.FetchData(addr);

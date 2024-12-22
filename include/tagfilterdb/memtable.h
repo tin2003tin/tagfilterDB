@@ -38,13 +38,30 @@ namespace tagfilterdb {
             auto adjustData = memPool_.GetAdjust();
             auto iter = adjustData->begin();
             while (iter != adjustData->end()) {
-                // get new bb 
-                // Fix the R tree Offset !! 
+                // fix just exist in signed skip list
+                auto sData = memPool_.Get(iter->oldAddr, false);
+                if (sData) {
+                    sData->addr = iter->newAddr;
+                } else {
+                    // Fix the R tree Offset !! 
+                    BBManager::BB box;
+                    std::vector<BBManager::BB::Edge> ve;
+                    json jData = JsonMgr::ToJson(iter->sdata);
+                    std::string s = jData.dump();
+                    jsonMgr_.GetPairDouble(sp_.getOption()->DNAME, ve, jData);
+                    box = BBManager::CreateBox(ve,sp_.getOption()->DIMENSION);
+
+                    bool adjusted = sp_.AdjustOffset(box,iter->oldAddr,iter->newAddr);
+                    assert(adjustData);
+                    box.Destroy();
+                }
+               
                 ++iter;
             }
             sp_.flush();
-            std::cout <<  "Memory Usage: " << arena_.MemoryUsage() << std::endl;
             // TODO: WAL
+            // TODO: Cache
+            return true;
         }
 
         void Load() {

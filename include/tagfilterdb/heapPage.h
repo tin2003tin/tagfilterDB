@@ -1033,7 +1033,7 @@ namespace tagfilterdb {
                 // Copy the page to pages 
                 pages_[pageID] = *(res.first);
                 cache_->Release(res.second);
-                delete res.first;
+                // delete res.first;
 
                 return &pages_[pageID];
             }

@@ -18,12 +18,12 @@ namespace tagfilterdb {
         public:
         JsonMgr(JsonMgrOp op) : op_(op) {}
 
-        nlohmann::json ToJson(DataView* view) {
-            std::string jsonString = std::string(view->data,view->size);
+        static nlohmann::json ToJson(DataView view) {
+            std::string jsonString = std::string(view.data,view.size);
             json data;
             try
             {
-                data = nlohmann::json(jsonString);
+                data = nlohmann::json::parse(jsonString);
             }
             catch(const std::exception& e)
             {
@@ -36,12 +36,18 @@ namespace tagfilterdb {
                             std::vector<std::pair<double,double>>& out, nlohmann::json &data) {
             out.resize(ref.size());
             for (int i = 0; i < 2; i++) {
+                auto r = ref[i];
                 if (op_.checkAll && (!data.contains(ref[i].first) || 
                                     !data.contains(ref[i].second))) {
                     return false;
                 }
-                if (data.contains(ref[i].first)) out[i].first = data[ref[i].first];   
-                if (data.contains(ref[i].second)) out[i].second = data[ref[i].second];
+
+                if (data.contains(ref[i].first)) {
+                    out[i].first = data[ref[i].first];
+                }    
+                if (data.contains(ref[i].second)) {
+                    out[i].second = data[ref[i].second];
+                }
             }
             return true;
         }

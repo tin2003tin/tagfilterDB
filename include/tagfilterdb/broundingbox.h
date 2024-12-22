@@ -137,17 +137,22 @@ class BBManager {
     }
 
     BB CreateBox() {
-        BB box(dimension_);
+        return BBManager::CreateBox(dimension_);
+    }
+
+    static BB CreateBox(int d) {
+        BB box(d);
         return box;
     }
 
-    BB CreateBox(std::vector<BB::Edge> a_vec) {
-        if (a_vec.size() > dimension_) {
-            a_vec.resize(dimension_);
-        }
-        BB b = CreateBox();
-        for (std::size_t i_axis = 0; i_axis < a_vec.size(); i_axis++) {
-            SetAxis(b, i_axis, a_vec[i_axis].first, a_vec[i_axis].second);
+    BB CreateBox(std::vector<BB::Edge> vec) {
+        return BBManager::CreateBox(vec, dimension_);
+    }
+
+    static BB CreateBox(std::vector<BB::Edge> vec, int d) {
+        BB b = BBManager::CreateBox(d);
+        for (std::size_t i_axis = 0; i_axis < d; i_axis++) {
+            BBManager::SetAxis(b, i_axis, vec[i_axis].first, vec[i_axis].second, d);
         }
         return b;
     }
@@ -169,8 +174,8 @@ class BBManager {
         return true;
     }
 
-    bool SetAxis(BB& box, int a_axis, RangeType a_start, RangeType a_end) {
-        if (a_axis < 0 || a_axis > dimension_) {
+    static bool SetAxis(BB& box, int a_axis, RangeType a_start, RangeType a_end, int  d) {
+        if (a_axis < 0 || a_axis > d) {
             return false;
         }
         if (a_start > a_end) {
