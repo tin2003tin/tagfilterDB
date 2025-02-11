@@ -527,7 +527,7 @@ class LRUCache {
             cap_ = newCap;
         }
 
-        // [TODO] deletor
+        // TODO: deletor
         bool removeNode(std::string key) {
             size_t index = support::MurmurHash::Hash(key.data(),key.size(),0) % cap_;  
             BucketValueNode* curr = (BucketValueNode*)  data_[index].next_;

@@ -19,7 +19,7 @@ namespace tagfilterdb {
         JsonMgr(JsonMgrOp op) : op_(op) {}
 
         static nlohmann::json ToJson(DataView view) {
-            std::string jsonString = std::string(view.data,view.size);
+            std::string jsonString = std::string(view.data(),view.size());
             json data;
             try
             {

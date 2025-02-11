@@ -20,9 +20,9 @@ class MemPoolTest {
   MemPoolTest(int seed) :
   memPool_(MemPool(MemPoolOpinion(), &arena_))  {
       SetupHeapFile(seed);
-    //   FetchData();
-    //   FlushTest();
-    //   ScanTest();
+      FetchData();
+      FlushTest();
+      ScanTest();
   }
 
   private:
@@ -31,8 +31,8 @@ class MemPoolTest {
     std::cout << "Trying.. Add/Free data and Save to file" << std::endl;
 
     MemPoolOpinion op;
-    ShareLRUCache<PageHeap> tempCache(op.CACHE_CHARGE);
-    PageHeapManager manager(1024*4, &tempCache);
+    ShareLRUCache<HeapPage> tempCache(op.CACHE_CHARGE);
+    HeapPageMgr manager("test", 1024*4, &tempCache);
     RandomTestCase1(seed, &manager, numOperations, sample_, sampleSize);
     std::cout << "Finished!! Add/Free data and Save to file" << std::endl;
     // Scan(&memPool_.manager_);
@@ -46,12 +46,12 @@ class MemPoolTest {
     std::cout << "TotalPage: " << memPool_.manager_.LastPageID() << std::endl;
 
     for (auto& addr : sample_) {
-      DataView* data = memPool_.Get(addr);
+      SignableData * data = memPool_.Get(addr);
       if (data == nullptr) {
         continue;
       }
       try {
-        std::string jsonString = std::string(data->data, data->size);
+        std::string jsonString = std::string(data->data.data(), data->data.size());
         json jsonData = json(jsonString);
         std::cout << "Retrieved JSON: " << jsonData.dump(4) << std::endl;
       } catch (const json::parse_error& e) {
@@ -92,8 +92,8 @@ class MemPoolTest {
 
   void ScanTest() {
     MemPoolOpinion op;
-    ShareLRUCache<PageHeap> tempCache(op.CACHE_CHARGE);
-    PageHeapManager manager(1024*4, &tempCache);
+    ShareLRUCache<HeapPage> tempCache(op.CACHE_CHARGE);
+    HeapPageMgr manager("test", 1024*4, &tempCache);
     manager.Load();
     std::cout << "-----Scan-----" << std::endl;
     Scan(&manager);

@@ -53,7 +53,7 @@ class JsonCallBack : public SpICallBack {
         if (index > v.size()) {
             return json();
         }
-        if (v[index].second->data.data == nullptr) {
+        if (v[index].second->data.data() == nullptr) {
             return json();
         }
         return JsonMgr::ToJson(v[index].second->data);    
@@ -68,6 +68,7 @@ class JsonCallBack : public SpICallBack {
 
 void FirstSave() {
     SpatialIndexOptions sop;
+    sop.DIMENSION = 2;
     sop.DNAME = {{"x1","x2"},{"y1","y2"}};
     sop.FILENAME = "sExample3.tin";
     MemPoolOpinion mop;
@@ -329,12 +330,12 @@ void DeleteAllOverlap(VE query_v) {
 
     std::cout << "Found: " << callback.v.size() << std::endl;
     for (int i = 0; i < callback.v.size(); i++) {
-        if (callback.v[i].second->data.data == nullptr) {
+        if (callback.v[i].second->data.data() == nullptr) {
             callback.v[i].second = m.GetMempool()->Get(callback.v[i].second->addr);
         }
         json loc = callback.getAt(i);
         std::cout << "Delete: "<< loc.dump() << std::endl;
-        assert(callback.v[i].second->data.data);
+        assert(callback.v[i].second->data.data());
         m.GetSPI()->Remove(callback.v[i].first, callback.v[i].second);
         // m.GetSPI()->Print(LocationToString);
         int temp;

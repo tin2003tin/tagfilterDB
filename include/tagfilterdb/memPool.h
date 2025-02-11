@@ -109,7 +109,7 @@ namespace tagfilterdb {
             while (unsignedIter != unsignedList_.end())
             {
                 BlockAddress signedAddr = 
-                     manager_.AddRecord(unsignedIter->data.data, unsignedIter->data.size, &adjustList_);
+                     manager_.AddRecord(unsignedIter->data.data(), unsignedIter->data.size(), &adjustList_);
                 unsignedIter->addr = signedAddr;
                 ++unsignedIter;
             }
@@ -121,7 +121,7 @@ namespace tagfilterdb {
         void ClearAdjust() {
             auto iter = adjustList_.begin();
             while (iter != adjustList_.end()) {
-                delete []iter->sdata.data;
+                delete []iter->sdata.data();
                 ++iter;
             }
         }

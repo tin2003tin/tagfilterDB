@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <cstring>
 
 class Bitset {
 public:

@@ -9,31 +9,35 @@
 namespace tagfilterdb {
     class DataView {
 public:
-    const char* data;  // Pointer to the data
-    size_t size;       // Size of the data
+    const char* data_;  // Pointer to the data
+    size_t size_;       // Size of the data
 
 
-    DataView() : data(nullptr), size(0) {}
+    DataView() : data_(nullptr), size_(0) {}
 
-    DataView(const char* d, size_t s) : data(d), size(s) {}
+    DataView(const char* d, size_t s) : data_(d), size_(s) {}
+    
+    DataView(const std::string& s) : data_(s.data()), size_(s.size()) {}
 
-    DataView(const char* d, size_t s, Arena* arena) : data(d), size(s) {
+    DataView(const char* d, size_t s, Arena* arena) : data_(d), size_(s) {
         Align(arena);
     }
 
+    std::string ToString() const { return std::string(data_, size_); }
+
     void Align(Arena* arena) {
-        char* memory = arena->AllocateAligned(size);
+        char* memory = arena->AllocateAligned(size_);
         if (!memory) {
             return; 
         }
 
-        std::memcpy(memory, data, size);
-        delete []data;
-        data = memory;
+        std::memcpy(memory, data_, size_);
+        delete []data_;
+        data_ = memory;
     }
 
     const char& operator[](size_t idx) const {
-        return data[idx];
+        return data_[idx];
     }
 
     bool operator==(const DataView& other) const {
@@ -43,21 +47,32 @@ public:
         return thisChecksum == otherChecksum;
     }
 
+    bool starts_with(const DataView& x) const {
+        return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
+    }
+
     std::size_t ComputeChecksum() const {
         std::size_t hash = 0;
 
-        if (data && size > 0) {
-            hash = support::MurmurHash::Hash(data, size, 0); 
+        if (data_ && size_ > 0) {
+            hash = support::MurmurHash::Hash(data_, size_, 0); 
         }
 
         return hash;
     }
 
+    size_t size() const {
+        return size_;
+    }
+
+    const char* data() const {
+        return data_;
+    }
+
     std::string toString() const {
-        return std::string(data, size);
+        return std::string(data_, size_);
     }
 };
-
 
 using PageIDType = long;
 using OffsetType = int;

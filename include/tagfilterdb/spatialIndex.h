@@ -216,7 +216,7 @@ class SpatialIndex {
     bool Remove(const BB &box, SignableData* data) {
         std::unique_lock lock(mutex_);
         assert(data);
-        assert(data->data.data);
+        assert(data->data.data());
         return removeBranch(box,data,&root_);
         // TODO Delete node in Page
     }
@@ -246,11 +246,11 @@ class SpatialIndex {
 
     void Load() {
         auto rootView = manager_.Load();
-        if (rootView.data.size == 0) {
+        if (rootView.data.size() == 0) {
             return;
         } 
         root_ = deserialize(rootView);
-        delete []rootView.data.data;
+        delete []rootView.data.data();
     }
 
     void SearchOverlap(const BB &box, SpICallBack* callback) {
@@ -601,7 +601,7 @@ class SpatialIndex {
         assert(node);
         assert(node->childSize_ == op_.MAX_CHILD);
         bool firstTime;
-        // [MARK] make overflowBuffer
+        // TODO: make overflowBuffer
         GroupAssign groupAssign(op_, &bbm_);
         Branch overflowBuffer[op_.MAX_CHILD + 1];
         AreaType overflowBufferArea[op_.MAX_CHILD + 1];
@@ -878,7 +878,7 @@ class SpatialIndex {
     Node* deserialize(SignableData sData) {
         Node* node = newNode();
         int offset = 0;
-        char* loc = (char*) sData.data.data;
+        char* loc = (char*) sData.data.data();
         std::memcpy(&node->height_, loc + offset, sizeof(node->height_));
         offset += sizeof(node->height_);
 

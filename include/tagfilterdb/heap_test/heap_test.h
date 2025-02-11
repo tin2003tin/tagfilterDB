@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tagfilterdb/pageH.h"
+#include "tagfilterdb/heapPage.h"
 #include "json.hpp"
 #include <string>
 #include <iostream>
@@ -13,19 +13,19 @@
 using namespace nlohmann;
 using namespace tagfilterdb;
 
-BlockAddress SetJson(PageHeapManager* pageManager, const json& json) {
+BlockAddress SetJson(HeapPageMgr* pageManager, const json& json) {
     std::string jsonData = json.dump();  
     Arena arena;
     List<AdjustData> clist(&arena);
     return pageManager->AddRecord(jsonData.data(), jsonData.size(), &clist);
 }
 
-json GetJson(PageHeapManager* pageManager, BlockAddress addr) {
+json GetJson(HeapPageMgr* pageManager, BlockAddress addr) {
     auto result = pageManager->GetData(addr);
 
-    std::string jsonString(result.data, result.size);
+    std::string jsonString(result.data(), result.size());
     // std::cout << jsonString << std::endl;
-    delete[] result.data;
+    delete[] result.data();
 
     try {
         return json::parse(jsonString);
@@ -35,7 +35,7 @@ json GetJson(PageHeapManager* pageManager, BlockAddress addr) {
 }
 
 
-void Scan(PageHeapManager *pageManager) {
+void Scan(HeapPageMgr *pageManager) {
     if (pageManager->Size() == 0) {
         return;
     }
@@ -53,7 +53,7 @@ void Scan(PageHeapManager *pageManager) {
     // }
 }
 
-BlockAddress Move(PageHeapManager* pageManager, int m) {
+BlockAddress Move(HeapPageMgr* pageManager, int m) {
      auto iter = pageManager->begin();
      for (int i = 0 ; i < m; i++) {
         ++iter;
@@ -62,7 +62,7 @@ BlockAddress Move(PageHeapManager* pageManager, int m) {
 }
 
 
-void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
+void RandomTestCase1(int seed, HeapPageMgr* pageManager, int numOperations,
                     std::vector<BlockAddress>& sample, int sampleSize) {
     std::srand(seed); // Seed randomness
     Arena arena;
@@ -144,7 +144,7 @@ void RandomTestCase1(int seed, PageHeapManager* pageManager, int numOperations,
 
     auto iter = clist.begin();
     while (iter != clist.end()) {
-        delete []iter->sdata.data;
+        delete []iter->sdata.data();
         ++iter;
     }
 }
@@ -188,7 +188,7 @@ void GenerateSmallData(json& data, int seed) {
     };
 }
 
-void RandomTestCase2(int seed, PageHeapManager& pageManager, int numOperations) {
+void RandomTestCase2(int seed, HeapPageMgr& pageManager, int numOperations) {
     std::srand(seed); 
 
     for (int i = 0; i < numOperations; ++i) {
@@ -242,9 +242,9 @@ void heap_test() {
     for (int i = 0; i < 10000; i++) {
         {
             int rn = std::rand() % 10000; 
-            ShareLRUCache<PageHeap> cache;
+            ShareLRUCache<HeapPage> cache;
             std::vector<BlockAddress> sample;
-            PageHeapManager pageManager(1024 * 4, &cache);
+            HeapPageMgr pageManager("test", 1024 * 4, &cache);
             RandomTestCase1(rn, &pageManager, rn, sample, 10);
             // pageManager.PrintPageInfo();
             // Scan(&pageManager);
@@ -252,8 +252,8 @@ void heap_test() {
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap> cache;
-            PageHeapManager pageManager(1024 * 4, &cache);
+            ShareLRUCache<HeapPage> cache;
+            HeapPageMgr pageManager("test", 1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);
             // pageManager.LoadAtPage(2);
@@ -263,8 +263,8 @@ void heap_test() {
         }
          {
             int rn = std::rand() % 2000; 
-            ShareLRUCache<PageHeap> cache;
-            PageHeapManager pageManager(1024 * 4, &cache);
+            ShareLRUCache<HeapPage> cache;
+            HeapPageMgr pageManager("test", 1024 * 4, &cache);
             RandomTestCase2(rn, pageManager, rn);
             // pageManager.PrintPageInfo();
             Scan(&pageManager);
@@ -272,8 +272,8 @@ void heap_test() {
             pageManager.Save();
         }
         {
-            ShareLRUCache<PageHeap> cache;
-            PageHeapManager pageManager(1024 * 4, &cache);
+            ShareLRUCache<HeapPage> cache;
+            HeapPageMgr pageManager("test", 1024 * 4, &cache);
             pageManager.Load();
             // pageManager.LoadAtPage(1);
             // pageManager.LoadAtPage(2);

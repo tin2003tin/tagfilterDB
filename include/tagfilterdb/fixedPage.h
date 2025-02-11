@@ -465,9 +465,7 @@ namespace tagfilterdb {
             in.read(reinterpret_cast<char*>(&rootAddr.offset), sizeof(OffsetType));
 
             auto res = fetchPage(rootAddr.pageID);
-            DataView view;
-            view.data = res.first->GetBlock(rootAddr.offset);
-            view.size = blockSize_;
+            DataView view(res.first->GetBlock(rootAddr.offset), blockSize_);
 
             HandleCache(res.first,res.second);
 

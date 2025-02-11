@@ -410,4 +410,4 @@ void SKIPLIST_CLASS::Remove(const Key& key) {
 
 }  
 
-#endif  // STORAGE_LEVELDB_DB_SKIPLIST_H_
+#endif  

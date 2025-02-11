@@ -32,7 +32,7 @@ namespace tagfilterdb {
     };
     #pragma pack()
 
-    // [MARK] clean the HeapPage class structure
+    // TODO: clean the HeapPage class structure
     class HeapPage {
         struct FreeList {
             OffsetType offset_ = -1;
@@ -1175,7 +1175,7 @@ namespace tagfilterdb {
         return loadedPage;
     }
 
-    // [OPTION]
+    // TODO: 
     HeapPage LoadPageMedata(PageIDType pageID) {
     if (pageID < 0 || pageID > lastPageId_) {
         throw std::out_of_range("Invalid page index");

@@ -78,11 +78,11 @@ public:
     }
 
     static Location Deserialize(const DataView& dataView) {
-        if (!dataView.data || dataView.size == 0) {
+        if (!dataView.data() || dataView.size() == 0) {
            return Location();
         }
 
-        const char* ptr = dataView.data;
+        const char* ptr = dataView.data();
 
         // Extract ID size and ID
         size_t id_size;
