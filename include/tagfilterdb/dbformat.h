@@ -1,6 +1,7 @@
 #ifndef TAGFILTERDB_DB_FORMAT_H
 #define TAGFILTERDB_DB_FORMAT_H
 
+#include "filter_policy.h"
 #include "dataView.h"
 #include "comparator.h"
 #include "coding.h"
@@ -78,6 +79,28 @@ namespace tagfilterdb {
         private:
             const Comparator* user_comparator_;
     };
+
+    class InternalFilterPolicy : public FilterPolicy {
+        private:
+         const FilterPolicy* const user_policy_;
+       
+        public:
+         explicit InternalFilterPolicy(const FilterPolicy* p) : user_policy_(p) {}
+         std::string Name() const override {
+            return user_policy_->Name(); 
+         }
+        void CreateFilter(const DataView* keys,int n,std::string *dst) const override {
+            DataView* mkey = const_cast<DataView*>(keys);
+            for (int i = 0; i < n; i++) {
+              mkey[i] = ExtractUserKey(keys[i]);
+              // TODO(sanjay): Suppress dups?
+            }
+            user_policy_->CreateFilter(keys, n, dst);
+         }
+         bool KeyMayMatch(const DataView& key, const DataView& filter) const override {
+            return user_policy_->KeyMayMatch(ExtractUserKey(key), filter);
+         }
+       };       
 }
 
 #endif

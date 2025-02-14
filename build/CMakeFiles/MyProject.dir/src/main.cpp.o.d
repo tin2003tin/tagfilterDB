@@ -149,7 +149,8 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc \
- /home/tin2003tin/tagfilterDB/include/tagfilterdb/dbformat.h \
+ /home/tin2003tin/tagfilterDB/include/tagfilterdb/boom_filter.h \
+ /home/tin2003tin/tagfilterDB/include/tagfilterdb/filter_policy.h \
  /home/tin2003tin/tagfilterDB/include/tagfilterdb/dataView.h \
  /usr/include/c++/13/memory /usr/include/c++/13/bits/stl_tempbuf.h \
  /usr/include/c++/13/bits/stl_uninitialized.h \
@@ -177,6 +178,4 @@ CMakeFiles/MyProject.dir/src/main.cpp.o: \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
  /usr/include/c++/13/bits/vector.tcc \
- /home/tin2003tin/tagfilterDB/include/tagfilterdb/murmurHash.h \
- /home/tin2003tin/tagfilterDB/include/tagfilterdb/comparator.h \
- /home/tin2003tin/tagfilterDB/include/tagfilterdb/coding.h
+ /home/tin2003tin/tagfilterDB/include/tagfilterdb/murmurHash.h

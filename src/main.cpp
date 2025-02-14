@@ -1,30 +1,35 @@
 #include <iostream>
-#include "tagfilterdb/dbformat.h"
+#include "tagfilterdb/boom_filter.h"
 
 using namespace tagfilterdb;
 
 int main() {
-    BytewiseComparatorImpl user_cmp;
-    InternalKeyComparator internal_cmp(&user_cmp);
+    // Create a Bloom filter with 10 bits per key
+    BloomFilterPolicy bloomFilter(10);
 
-    std::string user_key1 = "aaa";
-    std::string user_key2 = "rab";
+    // Sample keys to insert
+    std::vector<std::string> keys = {"apple", "banana", "cherry"};
 
-    uint64_t seq1 = 100;
-    uint64_t seq2 = 100;
+    // Convert keys to DataView (assuming DataView is similar to std::string_view)
+    std::vector<DataView> keyViews;
+    for (const auto& key : keys) {
+        keyViews.emplace_back(key);
+    }
 
-    std::string internal_key_1 = user_key1 + EncodeFixed64ToString(seq1);
-    std::string internal_key_2 = user_key2 + EncodeFixed64ToString(seq2);
+    // Create the filter
+    std::string filter;
+    bloomFilter.CreateFilter(keyViews.data(), keyViews.size(), &filter);
 
-    int cmp_result = internal_cmp.Compare(internal_key_1, internal_key_2);
-
-    std::cout << "Comparison Result: " << cmp_result << std::endl;
-
-    std::cout << "Before: " << internal_key_1 << std::endl;
-
-    internal_cmp.FindShortSuccessor(&internal_key_1);
-
-    std::cout << "After: " << internal_key_1 << std::endl;
+    // Test for key existence
+    std::vector<std::string> testKeys = {"apple", "grape", "banana", "orange"};
+    DataView bloom(filter);
+    for (const auto& key : testKeys) {
+        if (bloomFilter.KeyMayMatch(DataView(key), bloom)) {
+            std::cout << key << " might be in the set.\n";
+        } else {
+            std::cout << key << " is definitely not in the set.\n";
+        }
+    }
 
     return 0;
 }

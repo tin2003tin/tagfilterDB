@@ -2,6 +2,9 @@
 #define TAGFILTER_COMPARATOR_H
 
 #include <string>
+#include <memory>
+#include "dataView.h"
+#include "no_destructor.h"
 
 namespace tagfilterdb {
     class DataView;
@@ -64,6 +67,11 @@ namespace tagfilterdb {
             }
         }
     };
+
+    const Comparator* BytewiseComparator() {
+        static NoDestructor<BytewiseComparatorImpl> singleton;
+        return singleton.get();
+    }
 }
 
 #endif

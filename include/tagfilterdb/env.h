@@ -25,6 +25,8 @@ namespace tagfilterdb {
 
         virtual ~Env() = default;
 
+        static Env* Default();
+
         virtual Status NewSequentialFile(const std::string& fname,
             SequentialFile** result) = 0;
 

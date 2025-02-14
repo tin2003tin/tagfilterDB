@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <memory>
+#include <string>
 
 namespace tagfilterdb {
     inline void EncodeFixed64(char* dst, uint64_t value) {
@@ -46,9 +47,6 @@ namespace tagfilterdb {
       }
 
     inline uint64_t DecodeFixed64FromString(const std::string& str) {
-        if (str.size() < 8) {
-            throw std::runtime_error("DecodeFixed64FromString: input string too short");
-        }
         return DecodeFixed64(str.data());
     }
 }

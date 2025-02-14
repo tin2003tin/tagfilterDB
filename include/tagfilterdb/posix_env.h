@@ -78,6 +78,103 @@ namespace tagfilterdb {
     static bool IsManifest(const std::string& filename) {
         return Basename(filename).starts_with(DataView("MANIFEST"));
     }
+
+    class PosixEnv : public Env {
+        public: 
+        PosixEnv() {}
+        ~PosixEnv() override {
+          static const char msg[] =
+              "PosixEnv singleton destroyed. Unsupported behavior!\n";
+          std::fwrite(msg, 1, sizeof(msg), stderr);
+          std::abort();
+        }
+        Status NewSequentialFile(const std::string& filename,
+            SequentialFile** result) override {
+            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
+            if (fd < 0) {
+                *result = nullptr;
+                return PosixError(filename, errno);
+            }
+        
+            *result = new PosixSequentialFile(filename, fd);
+            return Status::OK();
+        }
+
+        Status NewRandomAccessFile(const std::string& fname,
+        RandomAccessFile** result) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status NewWritableFile(const std::string& filename,
+            WritableFile** result) override {
+                int fd = ::open(filename.c_str(),
+                                O_TRUNC | O_WRONLY | O_CREAT | kOpenBaseFlags, 0644);
+                if (fd < 0) {
+                *result = nullptr;
+                return PosixError(filename, errno);
+                }
+
+                *result = new PosixWritableFile(filename, fd);
+                return Status::OK();
+            }
+
+        Status NewAppendableFile(const std::string& fname,
+            WritableFile** result) override {
+                return Status::NotSupported("Not implemented");
+            }
+
+        bool FileExists(const std::string& fname)override {
+            return false;
+        }
+
+        Status GetChildren(const std::string& dir, std::vector<std::string>* result)override {
+            return Status::NotSupported("Not implemented");
+        }
+    
+        Status RemoveFile(const std::string& fname) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status DeleteFile(const std::string& fname) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status CreateDir(const std::string& dirname)override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status RemoveDir(const std::string& dirname) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status DeleteDir(const std::string& dirname) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status GetFileSize(const std::string& fname, uint64_t* file_size) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status RenameFile(const std::string& src,const std::string& target) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status LockFile(const std::string& fname, FileLock** lock) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status UnlockFile(FileLock* lock) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status NewLogger(const std::string& fname, Logger** result) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status GetTestDirectory(std::string* path) override {
+            return Status::NotSupported("Not implemented");
+        }
+    };
     
     class PosixSequentialFile final : public SequentialFile {
         public:
@@ -258,6 +355,56 @@ namespace tagfilterdb {
             const std::string filename_;
             const std::string dirname_; 
     };
+
+    template <typename EnvType>
+    class SingletonEnv {
+    public:
+    SingletonEnv() {
+    #if !defined(NDEBUG)
+        env_initialized_.store(true, std::memory_order_relaxed);
+    #endif  // !defined(NDEBUG)
+        static_assert(sizeof(env_storage_) >= sizeof(EnvType),
+                    "env_storage_ will not fit the Env");
+        static_assert(std::is_standard_layout_v<SingletonEnv<EnvType>>);
+        static_assert(
+            offsetof(SingletonEnv<EnvType>, env_storage_) % alignof(EnvType) == 0,
+            "env_storage_ does not meet the Env's alignment needs");
+        static_assert(alignof(SingletonEnv<EnvType>) % alignof(EnvType) == 0,
+                    "env_storage_ does not meet the Env's alignment needs");
+        new (env_storage_) EnvType();
+    }
+    ~SingletonEnv() = default;
+
+    SingletonEnv(const SingletonEnv&) = delete;
+    SingletonEnv& operator=(const SingletonEnv&) = delete;
+
+    Env* env() { return reinterpret_cast<Env*>(&env_storage_); }
+
+    static void AssertEnvNotInitialized() {
+    #if !defined(NDEBUG)
+        assert(!env_initialized_.load(std::memory_order_relaxed));
+    #endif  // !defined(NDEBUG)
+    }
+
+    private:
+    alignas(EnvType) char env_storage_[sizeof(EnvType)];
+    #if !defined(NDEBUG)
+    static std::atomic<bool> env_initialized_;
+    #endif  // !defined(NDEBUG)
+    };
+
+    #if !defined(NDEBUG)
+    template <typename EnvType>
+    std::atomic<bool> SingletonEnv<EnvType>::env_initialized_;
+    #endif  // !defined(NDEBUG)
+
+    using PosixDefaultEnv = SingletonEnv<PosixEnv>;
+
+      
+    Env* Env::Default() {
+        static PosixDefaultEnv env_container;
+        return env_container.env();
+    }
 }
 
 #endif 
