@@ -3,15 +3,16 @@
 
 #include <string>
 #include <memory>
+#include <cstring>
 #include "arena.h"
 #include "murmurHash.h"
 
 namespace tagfilterdb {
-    class DataView {
+
+class DataView {
 public:
     const char* data_;  // Pointer to the data
     size_t size_;       // Size of the data
-
 
     DataView() : data_(nullptr), size_(0) {}
 
@@ -32,7 +33,7 @@ public:
         }
 
         std::memcpy(memory, data_, size_);
-        delete []data_;
+        delete[] data_;  // This is incorrect because `data_` may not be dynamically allocated
         data_ = memory;
     }
 
@@ -41,24 +42,52 @@ public:
     }
 
     bool operator==(const DataView& other) const {
-        auto thisChecksum = ComputeChecksum();
-        auto otherChecksum = other.ComputeChecksum();
+        return size_ == other.size_ && std::memcmp(data_, other.data_, size_) == 0;
+    }
 
-        return thisChecksum == otherChecksum;
+    bool operator!=(const DataView& other) const {
+        return !(*this == other);
+    }
+
+    bool operator<(const DataView& b) const {
+        size_t min_len = (size_ < b.size_) ? size_ : b.size_;
+        int r = std::memcmp(data_, b.data_, min_len);
+        if (r == 0) {
+            return size_ < b.size_;
+        }
+        return r < 0;
+    }
+
+    bool operator>(const DataView& b) const {
+        return b < *this;
+    }
+
+    bool operator<=(const DataView& b) const {
+        return !(b < *this);
+    }
+
+    bool operator>=(const DataView& b) const {
+        return !(*this < b);
     }
 
     bool starts_with(const DataView& x) const {
-        return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
+        return ((size_ >= x.size_) && (std::memcmp(data_, x.data_, x.size_) == 0));
     }
 
     std::size_t ComputeChecksum() const {
-        std::size_t hash = 0;
+        return (data_ && size_ > 0) ? support::MurmurHash::Hash(data_, size_, 0) : 0;
+    }
 
-        if (data_ && size_ > 0) {
-            hash = support::MurmurHash::Hash(data_, size_, 0); 
-        }
-
-        return hash;
+    int compare(const DataView& b) const {
+    const size_t min_len = (size_ < b.size_) ? size_ : b.size_;
+    int r = memcmp(data_, b.data_, min_len);
+    if (r == 0) {
+        if (size_ < b.size_)
+        r = -1;
+        else if (size_ > b.size_)
+        r = +1;
+    }
+    return r;
     }
 
     size_t size() const {
@@ -74,6 +103,7 @@ public:
     }
 };
 
+// Block Address
 using PageIDType = long;
 using OffsetType = int;
 
@@ -81,15 +111,20 @@ struct BlockAddress {
     PageIDType pageID;
     OffsetType offset;
 
-    bool isSigned() {
+    bool isSigned() const {
         return pageID > 0;
     }
 
     bool operator==(const BlockAddress& other) const {
         return pageID == other.pageID && offset == other.offset;
-    } 
+    }
+
+    bool operator!=(const BlockAddress& other) const {
+        return !(*this == other);
+    }
 };
-    
+
+// Signable Data
 struct SignableData {
     DataView data;
     BlockAddress addr;
@@ -97,19 +132,20 @@ struct SignableData {
     SignableData(DataView aData, BlockAddress aAddr) 
         : data(aData), addr(aAddr) {}
 
-    SignableData() : data(), addr(BlockAddress{0,0}) {}
+    SignableData() : data(), addr(BlockAddress{0, 0}) {}
 
-    bool IsSigned() {
+    bool IsSigned() const {
         return addr.pageID == 0;
     }
 };
 
+// Adjust Data
 struct AdjustData {
     DataView sdata;
     BlockAddress oldAddr;
     BlockAddress newAddr;
 };
 
-}
+} // namespace tagfilterdb
 
 #endif

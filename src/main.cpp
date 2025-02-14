@@ -1,61 +1,30 @@
-#include "tagfilterdb/posix_env.h"
 #include <iostream>
-#include <fcntl.h>
-#include <unistd.h>
+#include "tagfilterdb/dbformat.h"
+
+using namespace tagfilterdb;
 
 int main() {
-    const std::string filename = "test.txt";
+    BytewiseComparatorImpl user_cmp;
+    InternalKeyComparator internal_cmp(&user_cmp);
 
-    int fd = ::open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0) {
-        std::cerr << "Error opening file for writing\n";
-        return 1;
-    }
+    std::string user_key1 = "aaa";
+    std::string user_key2 = "rab";
 
-    tagfilterdb::PosixWritableFile file(filename, fd);
+    uint64_t seq1 = 100;
+    uint64_t seq2 = 100;
 
-    std::string data = "Hello, world!\n";
-    tagfilterdb::DataView dataView(data.c_str(), data.size());
+    std::string internal_key_1 = user_key1 + EncodeFixed64ToString(seq1);
+    std::string internal_key_2 = user_key2 + EncodeFixed64ToString(seq2);
 
-    tagfilterdb::Status status = file.Append(dataView);
-    if (!status.ok()) {
-        std::cerr << "Error writing to file\n";
-        return 1;
-    }
+    int cmp_result = internal_cmp.Compare(internal_key_1, internal_key_2);
 
-    status = file.Sync();
-    if (!status.ok()) {
-        std::cerr << "Error syncing file\n";
-        return 1;
-    }
+    std::cout << "Comparison Result: " << cmp_result << std::endl;
 
-    status = file.Close();
-    if (!status.ok()) {
-        std::cerr << "Error closing file\n";
-        return 1;
-    }
+    std::cout << "Before: " << internal_key_1 << std::endl;
 
-    std::cout << "File written and synced successfully.\n";
+    internal_cmp.FindShortSuccessor(&internal_key_1);
 
-    fd = ::open(filename.c_str(), O_RDONLY);
-    if (fd < 0) {
-        std::cerr << "Error opening file for reading\n";
-        return 1;
-    }
-
-    tagfilterdb::PosixSequentialFile seqFile(filename, fd);
-
-    char scratch[1024];
-    tagfilterdb::DataView result;
-
-    status = seqFile.Read(512, &result, scratch);
-    if (status.ok()) {
-        std::cout << "Data read: " << result.ToString() << std::endl;
-    } else {
-        std::cerr << "Read error: " << status.ToString() << std::endl;
-    }
-
-    close(fd);
+    std::cout << "After: " << internal_key_1 << std::endl;
 
     return 0;
 }
