@@ -171,146 +171,6 @@ namespace tagfilterdb {
     static bool IsManifest(const std::string& filename) {
         return Basename(filename).starts_with(DataView("MANIFEST"));
     }
-
-    class PosixEnv : public Env {
-        public: 
-        PosixEnv() : mmap_limiter_(MaxMmaps()),
-        fd_limiter_(MaxOpenFiles()) {}
-        ~PosixEnv() override {
-          static const char msg[] =
-              "PosixEnv singleton destroyed. Unsupported behavior!\n";
-          std::fwrite(msg, 1, sizeof(msg), stderr);
-          std::abort();
-        }
-        Status NewSequentialFile(const std::string& filename,
-            SequentialFile** result) override {
-            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
-            if (fd < 0) {
-                *result = nullptr;
-                return PosixError(filename, errno);
-            }
-        
-            *result = new PosixSequentialFile(filename, fd);
-            return Status::OK();
-        }
-
-        Status NewRandomAccessFile(const std::string& filename,
-        RandomAccessFile** result) override {
-            *result = nullptr;
-            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
-            if (fd < 0) {
-              return PosixError(filename, errno);
-            }
-        
-            if (!mmap_limiter_.Acquire()) {
-              *result = new PosixRandomAccessFile(filename, fd, &fd_limiter_);
-              return Status::OK();
-            }
-        
-            uint64_t file_size;
-            Status status = GetFileSize(filename, &file_size);
-            if (status.ok()) {
-              void* mmap_base =
-                  ::mmap(/*addr=*/nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
-              if (mmap_base != MAP_FAILED) {
-                *result = new PosixMmapReadableFile(filename,
-                                                    reinterpret_cast<char*>(mmap_base),
-                                                    file_size, &mmap_limiter_);
-              } else {
-                status = PosixError(filename, errno);
-              }
-            }
-            ::close(fd);
-            if (!status.ok()) {
-              mmap_limiter_.Release();
-            }
-            return status;
-        }
-
-        Status NewWritableFile(const std::string& filename,
-            WritableFile** result) override {
-                int fd = ::open(filename.c_str(),
-                                O_TRUNC | O_WRONLY | O_CREAT | kOpenBaseFlags, 0644);
-                if (fd < 0) {
-                *result = nullptr;
-                return PosixError(filename, errno);
-                }
-
-                *result = new PosixWritableFile(filename, fd);
-                return Status::OK();
-            }
-
-        Status NewAppendableFile(const std::string& filename,
-            WritableFile** result) override {
-                return Status::NotSupported("Not implemented");
-            }
-
-        bool FileExists(const std::string& filename)override {
-            return ::access(filename.c_str(), F_OK){
-        }
-
-        Status GetChildren(const std::string& dir, std::vector<std::string>* result)override {
-            result->clear();
-            ::DIR* dir = ::opendir(directory_path.c_str());
-            if (dir == nullptr) {
-              return PosixError(directory_path, errno);
-            }
-            struct ::dirent* entry;
-            while ((entry = ::readdir(dir)) != nullptr) {
-              result->emplace_back(entry->d_name);
-            }
-            ::closedir(dir);
-            return Status::OK();
-        }
-    
-        Status RemoveFile(const std::string& filename) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status DeleteFile(const std::string& filename) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status CreateDir(const std::string& dirname)override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status RemoveDir(const std::string& dirname) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status DeleteDir(const std::string& dirname) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status GetFileSize(const std::string& filename, uint64_t* file_size) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status RenameFile(const std::string& src,const std::string& target) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status LockFile(const std::string& filename, FileLock** lock) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status UnlockFile(FileLock* lock) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status NewLogger(const std::string& filename, Logger** result) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        Status GetTestDirectory(std::string* path) override {
-            return Status::NotSupported("Not implemented");
-        }
-
-        private:
-        Limiter mmap_limiter_;  // Thread-safe.
-        Limiter fd_limiter_;    // Thread-safe.
-    };
     
     class PosixSequentialFile final : public SequentialFile {
         public:
@@ -582,6 +442,153 @@ namespace tagfilterdb {
             const bool is_manifest_;  // True if the file's name starts with MANIFEST.
             const std::string filename_;
             const std::string dirname_; 
+    };
+
+    class PosixEnv : public Env {
+        public: 
+        PosixEnv() : mmap_limiter_(MaxMmaps()),
+        fd_limiter_(MaxOpenFiles()) {}
+        ~PosixEnv() override {
+          static const char msg[] =
+              "PosixEnv singleton destroyed. Unsupported behavior!\n";
+          std::fwrite(msg, 1, sizeof(msg), stderr);
+          std::abort();
+        }
+        Status NewSequentialFile(const std::string& filename,
+            SequentialFile** result) override {
+            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
+            if (fd < 0) {
+                *result = nullptr;
+                return PosixError(filename, errno);
+            }
+        
+            *result = new PosixSequentialFile(filename, fd);
+            return Status::OK();
+        }
+
+        Status NewRandomAccessFile(const std::string& filename,
+        RandomAccessFile** result) override {
+            *result = nullptr;
+            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
+            if (fd < 0) {
+              return PosixError(filename, errno);
+            }
+        
+            if (!mmap_limiter_.Acquire()) {
+              *result = new PosixRandomAccessFile(filename, fd, &fd_limiter_);
+              return Status::OK();
+            }
+        
+            uint64_t file_size;
+            Status status = GetFileSize(filename, &file_size);
+            if (status.ok()) {
+              void* mmap_base =
+                  ::mmap(/*addr=*/nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
+              if (mmap_base != MAP_FAILED) {
+                *result = new PosixMmapReadableFile(filename,
+                                                    reinterpret_cast<char*>(mmap_base),
+                                                    file_size, &mmap_limiter_);
+              } else {
+                status = PosixError(filename, errno);
+              }
+            }
+            ::close(fd);
+            if (!status.ok()) {
+              mmap_limiter_.Release();
+            }
+            return status;
+        }
+
+        Status NewWritableFile(const std::string& filename,
+            WritableFile** result) override {
+                int fd = ::open(filename.c_str(),
+                                O_TRUNC | O_WRONLY | O_CREAT | kOpenBaseFlags, 0644);
+                if (fd < 0) {
+                *result = nullptr;
+                return PosixError(filename, errno);
+                }
+
+                *result = new PosixWritableFile(filename, fd);
+                return Status::OK();
+            }
+
+        Status NewAppendableFile(const std::string& filename,
+            WritableFile** result) override {
+                return Status::NotSupported("Not implemented");
+            }
+
+        bool FileExists(const std::string& filename)override {
+            return ::access(filename.c_str(), F_OK);
+        }
+
+        Status GetChildren(const std::string& directory_path, std::vector<std::string>* result)override {
+            result->clear();
+            ::DIR* dir = ::opendir(directory_path.c_str());
+            if (dir == nullptr) {
+              return PosixError(directory_path, errno);
+            }
+            struct ::dirent* entry;
+            while ((entry = ::readdir(dir)) != nullptr) {
+              result->emplace_back(entry->d_name);
+            }
+            ::closedir(dir);
+            return Status::OK();
+        }
+    
+        Status RemoveFile(const std::string& filename) override {
+            if (::unlink(filename.c_str()) != 0) {
+                return PosixError(filename, errno);
+              }
+              return Status::OK();        
+        }
+
+        Status CreateDir(const std::string& dirname)override {
+            if (::mkdir(dirname.c_str(), 0755) != 0) {
+                return PosixError(dirname, errno);
+              }
+              return Status::OK();        }
+
+        Status RemoveDir(const std::string& dirname) override {
+            if (::rmdir(dirname.c_str()) != 0) {
+                return PosixError(dirname, errno);
+              }
+              return Status::OK();        }
+
+        Status GetFileSize(const std::string& filename, uint64_t* size) override {
+            struct ::stat file_stat;
+            if (::stat(filename.c_str(), &file_stat) != 0) {
+              *size = 0;
+              return PosixError(filename, errno);
+            }
+            *size = file_stat.st_size;
+            return Status::OK();        }
+
+        Status RenameFile(const std::string& from,const std::string& to) override {
+            if (std::rename(from.c_str(), to.c_str()) != 0) {
+                return PosixError(from, errno);
+              }
+              return Status::OK();        
+        }
+
+        Status LockFile(const std::string& filename, FileLock** lock) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status UnlockFile(FileLock* lock) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status NewLogger(const std::string& filename, Logger** result) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        Status GetTestDirectory(std::string* path) override {
+            return Status::NotSupported("Not implemented");
+        }
+
+        private:
+        Limiter mmap_limiter_;  // Thread-safe.
+        Limiter fd_limiter_;    // Thread-safe.
     };
 
     template <typename EnvType>

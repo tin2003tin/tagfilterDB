@@ -9,56 +9,47 @@
 int posix_env_example() {
     const std::string filename = "test.txt";
 
-    int fd = ::open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0) {
-        std::cerr << "Error opening file for writing\n";
-        return 1;
-    }
+    tagfilterdb::Env* env = tagfilterdb::Env::Default(); 
 
-    tagfilterdb::PosixWritableFile file(filename, fd);
+    tagfilterdb::WritableFile* writeFile;
+    env->NewWritableFile(filename, &writeFile);
 
     std::string data = "Hello, world!\n";
     tagfilterdb::DataView dataView(data.c_str(), data.size());
 
-    tagfilterdb::Status status = file.Append(dataView);
+    tagfilterdb::Status status = writeFile->Append(dataView);
     if (!status.ok()) {
         std::cerr << "Error writing to file\n";
         return 1;
     }
 
-    status = file.Sync();
+    status = writeFile->Sync();
     if (!status.ok()) {
-        std::cerr << "Error syncing file\n";
+        std::cerr << status.ToString() << std::endl;    
         return 1;
     }
 
-    status = file.Close();
+    status = writeFile->Close();
     if (!status.ok()) {
-        std::cerr << "Error closing file\n";
+        std::cerr << status.ToString() << std::endl;  
         return 1;
     }
 
     std::cout << "File written and synced successfully.\n";
 
-    fd = ::open(filename.c_str(), O_RDONLY);
-    if (fd < 0) {
-        std::cerr << "Error opening file for reading\n";
-        return 1;
-    }
-
-    tagfilterdb::PosixSequentialFile seqFile(filename, fd);
+    tagfilterdb::SequentialFile* seqFile;
+    env->NewSequentialFile(filename, &seqFile);
 
     char scratch[1024];
     tagfilterdb::DataView result;
 
-    status = seqFile.Read(512, &result, scratch);
+    status = seqFile->Read(512, &result, scratch);
     if (status.ok()) {
         std::cout << "Data read: " << result.ToString() << std::endl;
     } else {
-        std::cerr << "Read error: " << status.ToString() << std::endl;
+        std::cerr << status.ToString() << std::endl;    
+        return 1;
     }
-
-    close(fd);
 
     return 0;
 }

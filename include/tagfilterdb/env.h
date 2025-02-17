@@ -27,41 +27,37 @@ namespace tagfilterdb {
 
         static Env* Default();
 
-        virtual Status NewSequentialFile(const std::string& fname,
+        virtual Status NewSequentialFile(const std::string& filename,
             SequentialFile** result) = 0;
 
-        virtual Status NewRandomAccessFile(const std::string& fname,
+        virtual Status NewRandomAccessFile(const std::string& filename,
             RandomAccessFile** result) = 0;
 
-        virtual Status NewWritableFile(const std::string& fname,
+        virtual Status NewWritableFile(const std::string& filename,
             WritableFile** result) = 0;
 
-        virtual Status NewAppendableFile(const std::string& fname,
+        virtual Status NewAppendableFile(const std::string& filename,
             WritableFile** result) = 0;
 
-        virtual bool FileExists(const std::string& fname) = 0;
+        virtual bool FileExists(const std::string& filename) = 0;
 
         virtual Status GetChildren(const std::string& dir, std::vector<std::string>* result) = 0;
     
-        virtual Status RemoveFile(const std::string& fname) = 0;
-
-        virtual Status DeleteFile(const std::string& fname) = 0;
+        virtual Status RemoveFile(const std::string& filename) = 0;
 
         virtual Status CreateDir(const std::string& dirname) = 0;
 
         virtual Status RemoveDir(const std::string& dirname) = 0;
 
-        virtual Status DeleteDir(const std::string& dirname) = 0;
-
-        virtual Status GetFileSize(const std::string& fname, uint64_t* file_size) = 0;
+        virtual Status GetFileSize(const std::string& filename, uint64_t* file_size) = 0;
 
         virtual Status RenameFile(const std::string& src,const std::string& target) = 0;
 
-        virtual Status LockFile(const std::string& fname, FileLock** lock) = 0;
+        virtual Status LockFile(const std::string& filename, FileLock** lock) = 0;
 
         virtual Status UnlockFile(FileLock* lock) = 0;
 
-        virtual Status NewLogger(const std::string& fname, Logger** result) = 0;
+        virtual Status NewLogger(const std::string& filename, Logger** result) = 0;
 
         virtual Status GetTestDirectory(std::string* path) = 0;
     };

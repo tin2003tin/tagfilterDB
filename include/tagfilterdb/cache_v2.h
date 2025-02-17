@@ -28,13 +28,14 @@
  */
 
 
-#ifndef TAGFILTERDB_CACHE_H
-#define TAGFILTERDB_CACHE_H
+#ifndef TAGFILTERDB_CACHE_V2_H
+#define TAGFILTERDB_CACHE_V2_H
 
 #include <iostream>
 #include <cassert>
 #include <mutex>
 #include "murmurHash.h"
+#include "dataView.h"
 
 namespace tagfilterdb {
 
@@ -73,7 +74,6 @@ const size_t LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE = 1000;
  *
  * @tparam Value Type of the value in the cache.
  */
-template <typename Value>
 class LRUCache {
     public :
 
@@ -119,11 +119,11 @@ class LRUCache {
         protected:
         std::string key_; ///< The key of the cache item.
         uint32_t hash_;
-        Value value_; ///< The value of the cache item.
+        void* value_; ///< The value of the cache item.
         size_t charge_; ///< The charge (size) of the cache item.
         size_t ref_ = 1; 
 
-        BucketValueNode(std::string key, Value value, size_t charge,uint32_t hash) : 
+        BucketValueNode(const DataView* key, void* value, size_t charge,uint32_t hash) : 
         key_(key), value_(value), charge_(charge), hash_(hash) {
     }       
         public:
@@ -214,7 +214,7 @@ class LRUCache {
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-     BucketValueNode* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
+     BucketValueNode* Insert(const DataView& key, void* value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
         uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
         return Insert(key,value,hash,charge);
      }
@@ -227,7 +227,7 @@ class LRUCache {
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    BucketValueNode* Insert(std::string key, Value value,uint32_t hash, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
+    BucketValueNode* Insert(std::string key, DataView* value,uint32_t hash, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
         if (charge > total_charge_) {
             return nullptr;
         }
