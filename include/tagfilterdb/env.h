@@ -84,7 +84,6 @@ namespace tagfilterdb {
         public:
         RandomAccessFile() = default;
 
-        
         RandomAccessFile(const RandomAccessFile&) = delete;
         RandomAccessFile& operator=(const RandomAccessFile&) = delete;
 

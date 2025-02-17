@@ -33,6 +33,14 @@
 
 namespace tagfilterdb {
 
+    int g_open_read_only_file_limit = -1;
+
+    constexpr const int kDefaultMmapLimit = (sizeof(void*) >= 8) ? 1000 : 0;
+
+    int g_mmap_limit = kDefaultMmapLimit;
+    
+    int MaxMmaps() { return g_mmap_limit; }
+
     constexpr const size_t kWritableFileBufferSize = 65536;
 
     // Common flags defined for all posix open operations
@@ -41,6 +49,91 @@ namespace tagfilterdb {
     #else
     constexpr const int kOpenBaseFlags = 0;
     #endif  // defined(HAVE_O_CLOEXEC)
+
+    int MaxOpenFiles() {
+    if (g_open_read_only_file_limit >= 0) {
+        return g_open_read_only_file_limit;
+    }
+    #ifdef __Fuchsia__
+    // Fuchsia doesn't implement getrlimit.
+    g_open_read_only_file_limit = 50;
+    #else
+    struct ::rlimit rlim;
+    if (::getrlimit(RLIMIT_NOFILE, &rlim)) {
+        // getrlimit failed, fallback to hard-coded default.
+        g_open_read_only_file_limit = 50;
+    } else if (rlim.rlim_cur == RLIM_INFINITY) {
+        g_open_read_only_file_limit = std::numeric_limits<int>::max();
+    } else {
+        // Allow use of 20% of available file descriptors for read-only files.
+        g_open_read_only_file_limit = rlim.rlim_cur / 5;
+    }
+    #endif
+    return g_open_read_only_file_limit;
+    }
+
+    // Helper class to limit resource usage to avoid exhaustion.
+    // Currently used to limit read-only file descriptors and mmap file usage
+    // so that we do not run out of file descriptors or virtual memory, or run into
+    // kernel performance problems for very large databases.
+    class Limiter {
+    public:
+        // Limit maximum number of resources to |max_acquires|.
+        Limiter(int max_acquires)
+            :
+    #if !defined(NDEBUG)
+            max_acquires_(max_acquires),
+    #endif  // !defined(NDEBUG)
+            acquires_allowed_(max_acquires) {
+        assert(max_acquires >= 0);
+        }
+
+        Limiter(const Limiter&) = delete;
+        Limiter operator=(const Limiter&) = delete;
+
+        // If another resource is available, acquire it and return true.
+        // Else return false.
+        bool Acquire() {
+        int old_acquires_allowed =
+            acquires_allowed_.fetch_sub(1, std::memory_order_relaxed);
+
+        if (old_acquires_allowed > 0) return true;
+
+        int pre_increment_acquires_allowed =
+            acquires_allowed_.fetch_add(1, std::memory_order_relaxed);
+
+        // Silence compiler warnings about unused arguments when NDEBUG is defined.
+        (void)pre_increment_acquires_allowed;
+        // If the check below fails, Release() was called more times than acquire.
+        assert(pre_increment_acquires_allowed < max_acquires_);
+
+        return false;
+        }
+
+        // Release a resource acquired by a previous call to Acquire() that returned
+        // true.
+        void Release() {
+        int old_acquires_allowed =
+            acquires_allowed_.fetch_add(1, std::memory_order_relaxed);
+
+        // Silence compiler warnings about unused arguments when NDEBUG is defined.
+        (void)old_acquires_allowed;
+        // If the check below fails, Release() was called more times than acquire.
+        assert(old_acquires_allowed < max_acquires_);
+        }
+
+    private:
+    #if !defined(NDEBUG)
+        // Catches an excessive number of Release() calls.
+        const int max_acquires_;
+    #endif  // !defined(NDEBUG)
+
+        // The number of available resources.
+        //
+        // This is a counter and is not tied to the invariants of any other class, so
+        // it can be operated on safely using std::memory_order_relaxed.
+        std::atomic<int> acquires_allowed_;
+    };
 
     Status PosixError(const std::string& context, int error_number) {
         if (error_number == ENOENT) {
@@ -81,7 +174,8 @@ namespace tagfilterdb {
 
     class PosixEnv : public Env {
         public: 
-        PosixEnv() {}
+        PosixEnv() : mmap_limiter_(MaxMmaps()),
+        fd_limiter_(MaxOpenFiles()) {}
         ~PosixEnv() override {
           static const char msg[] =
               "PosixEnv singleton destroyed. Unsupported behavior!\n";
@@ -100,9 +194,37 @@ namespace tagfilterdb {
             return Status::OK();
         }
 
-        Status NewRandomAccessFile(const std::string& fname,
+        Status NewRandomAccessFile(const std::string& filename,
         RandomAccessFile** result) override {
-            return Status::NotSupported("Not implemented");
+            *result = nullptr;
+            int fd = ::open(filename.c_str(), O_RDONLY | kOpenBaseFlags);
+            if (fd < 0) {
+              return PosixError(filename, errno);
+            }
+        
+            if (!mmap_limiter_.Acquire()) {
+              *result = new PosixRandomAccessFile(filename, fd, &fd_limiter_);
+              return Status::OK();
+            }
+        
+            uint64_t file_size;
+            Status status = GetFileSize(filename, &file_size);
+            if (status.ok()) {
+              void* mmap_base =
+                  ::mmap(/*addr=*/nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
+              if (mmap_base != MAP_FAILED) {
+                *result = new PosixMmapReadableFile(filename,
+                                                    reinterpret_cast<char*>(mmap_base),
+                                                    file_size, &mmap_limiter_);
+              } else {
+                status = PosixError(filename, errno);
+              }
+            }
+            ::close(fd);
+            if (!status.ok()) {
+              mmap_limiter_.Release();
+            }
+            return status;
         }
 
         Status NewWritableFile(const std::string& filename,
@@ -118,24 +240,34 @@ namespace tagfilterdb {
                 return Status::OK();
             }
 
-        Status NewAppendableFile(const std::string& fname,
+        Status NewAppendableFile(const std::string& filename,
             WritableFile** result) override {
                 return Status::NotSupported("Not implemented");
             }
 
-        bool FileExists(const std::string& fname)override {
-            return false;
+        bool FileExists(const std::string& filename)override {
+            return ::access(filename.c_str(), F_OK){
         }
 
         Status GetChildren(const std::string& dir, std::vector<std::string>* result)override {
-            return Status::NotSupported("Not implemented");
+            result->clear();
+            ::DIR* dir = ::opendir(directory_path.c_str());
+            if (dir == nullptr) {
+              return PosixError(directory_path, errno);
+            }
+            struct ::dirent* entry;
+            while ((entry = ::readdir(dir)) != nullptr) {
+              result->emplace_back(entry->d_name);
+            }
+            ::closedir(dir);
+            return Status::OK();
         }
     
-        Status RemoveFile(const std::string& fname) override {
+        Status RemoveFile(const std::string& filename) override {
             return Status::NotSupported("Not implemented");
         }
 
-        Status DeleteFile(const std::string& fname) override {
+        Status DeleteFile(const std::string& filename) override {
             return Status::NotSupported("Not implemented");
         }
 
@@ -151,7 +283,7 @@ namespace tagfilterdb {
             return Status::NotSupported("Not implemented");
         }
 
-        Status GetFileSize(const std::string& fname, uint64_t* file_size) override {
+        Status GetFileSize(const std::string& filename, uint64_t* file_size) override {
             return Status::NotSupported("Not implemented");
         }
 
@@ -159,7 +291,7 @@ namespace tagfilterdb {
             return Status::NotSupported("Not implemented");
         }
 
-        Status LockFile(const std::string& fname, FileLock** lock) override {
+        Status LockFile(const std::string& filename, FileLock** lock) override {
             return Status::NotSupported("Not implemented");
         }
 
@@ -167,13 +299,17 @@ namespace tagfilterdb {
             return Status::NotSupported("Not implemented");
         }
 
-        Status NewLogger(const std::string& fname, Logger** result) override {
+        Status NewLogger(const std::string& filename, Logger** result) override {
             return Status::NotSupported("Not implemented");
         }
 
         Status GetTestDirectory(std::string* path) override {
             return Status::NotSupported("Not implemented");
         }
+
+        private:
+        Limiter mmap_limiter_;  // Thread-safe.
+        Limiter fd_limiter_;    // Thread-safe.
     };
     
     class PosixSequentialFile final : public SequentialFile {
@@ -209,6 +345,98 @@ namespace tagfilterdb {
         private:
             const int fd_;
             const std::string filename_;
+    };
+
+    class PosixRandomAccessFile : public RandomAccessFile {
+        public:
+        PosixRandomAccessFile(std::string filename, int fd, Limiter* fd_limiter)
+        : has_permanent_fd_(fd_limiter->Acquire()),
+        fd_(has_permanent_fd_ ? fd : -1),
+        fd_limiter_(fd_limiter),
+        filename_(std::move(filename)) {
+            if (!has_permanent_fd_) {
+                assert(fd == -1);
+                ::close(fd);
+            }
+        }
+
+        ~PosixRandomAccessFile() override {
+            if (has_permanent_fd_) {
+                assert(fd_ != -1);
+                ::close(fd_);
+                fd_limiter_->Release();
+            }
+        }
+
+        Status Read(uint64_t offset, size_t n, DataView* result,
+            char* scratch) const override {
+            int fd = fd_;
+            if(!has_permanent_fd_) {
+                fd = ::open(filename_.c_str(), O_RDONLY | kOpenBaseFlags);
+                if (fd < 0) {
+                    return PosixError(filename_, errno);
+                }
+            }
+            assert(fd != -1);
+            Status status;
+            ssize_t read_size = ::pread(fd, scratch, n, static_cast<off_t>(offset));
+            *result = DataView(scratch, (read_size < 0) ? 0 : read_size);
+            if (read_size < 0) {
+                // An error: return a non-ok status.
+                status = PosixError(filename_, errno);
+              }
+              if (!has_permanent_fd_) {
+                // Close the temporary file descriptor opened earlier.
+                assert(fd != fd_);
+                ::close(fd);
+              }
+              return status;
+        }
+
+        private:
+        const bool has_permanent_fd_;  // If false, the file is opened on every read.
+        const int fd_;                 // -1 if has_permanent_fd_ is false.
+        Limiter* const fd_limiter_;
+        const std::string filename_;
+    };
+
+    class PosixMmapReadableFile final : public RandomAccessFile {
+    public:
+        // mmap_base[0, length-1] points to the memory-mapped contents of the file. It
+        // must be the result of a successful call to mmap(). This instances takes
+        // over the ownership of the region.
+        //
+        // |mmap_limiter| must outlive this instance. The caller must have already
+        // acquired the right to use one mmap region, which will be released when this
+        // instance is destroyed.
+        PosixMmapReadableFile(std::string filename, char* mmap_base, size_t length,
+                            Limiter* mmap_limiter)
+            : mmap_base_(mmap_base),
+            length_(length),
+            mmap_limiter_(mmap_limiter),
+            filename_(std::move(filename)) {}
+    
+        ~PosixMmapReadableFile() override {
+        ::munmap(static_cast<void*>(mmap_base_), length_);
+        mmap_limiter_->Release();
+        }
+    
+        Status Read(uint64_t offset, size_t n, DataView* result,
+                    char* scratch) const override {
+        if (offset + n > length_) {
+            *result = DataView();
+            return PosixError(filename_, EINVAL);
+        }
+    
+        *result = DataView(mmap_base_ + offset, n);
+        return Status::OK();
+        }
+    
+    private:
+        char* const mmap_base_;
+        const size_t length_;
+        Limiter* const mmap_limiter_;
+        const std::string filename_;
     };
 
     class PosixWritableFile final : public WritableFile {
