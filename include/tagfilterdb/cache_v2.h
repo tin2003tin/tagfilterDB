@@ -1,25 +1,26 @@
 /**
  * @file cache.h
  * @brief Cache header file for the LevelDB implementation.
- * 
+ *
  * This code is based on the cache implementation from the LevelDB project.
  * The original implementation can be found at:
  * https://github.com/google/leveldb
- * 
+ *
  * Credit: Cache implementation by Google (LevelDB).
- * 
- * @note This code is based on the original work in the `google/leveldb` repository.
- * 
+ *
+ * @note This code is based on the original work in the `google/leveldb`
+ * repository.
+ *
  * @license Apache License, Version 2.0
- * 
+ *
  * Copyright 2012 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,83 +28,61 @@
  * limitations under the License.
  */
 
-
 #ifndef TAGFILTERDB_CACHE_V2_H
 #define TAGFILTERDB_CACHE_V2_H
 
-#include <iostream>
-#include <cassert>
-#include <mutex>
-#include "murmurHash.h"
 #include "dataView.h"
+#include "murmurHash.h"
+#include <cassert>
+#include <iostream>
+#include <mutex>
 
 namespace tagfilterdb {
 
-/**
- * @struct BaseBucketNode
- * @brief A base structure for nodes in cache buckets.
- */
-struct CacheResponse {};
+struct CacheResponse {
+    virtual ~CacheResponse() = default;
 
-/**
- * @class LRUConfig
- * @brief A configuration class to hold cache-related constants.
- */
-class LRUConfig {
-public:
-    static const double DEFAULT_CACHE_RATIO; ///< The default cache ratio for expansion.
-    static const size_t DEFAULT_CACHE_CAP; ///< The default cache capacity.
-    static const size_t DEFAULT_CAHCE_EXPAND; ///< The default expansion factor for the cache.
-    static const size_t DEFAULT_CACHE_CHARGE_PER; ///< The default charge per cache item.
-    static const size_t DEFAULT_CACHE_TOTAL_CHANGE; ///< The default total cache charge.
+    virtual DataView GetKey() const = 0;
+
+    virtual void *GetValue() const = 0;
 };
 
-const double LRUConfig::DEFAULT_CACHE_RATIO = 0.8;
-const size_t LRUConfig::DEFAULT_CACHE_CAP = 2;
-const size_t LRUConfig::DEFAULT_CAHCE_EXPAND = 2;
-const size_t LRUConfig::DEFAULT_CACHE_CHARGE_PER = 8;
-const size_t LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE = 1000;
+class Cache {
+  public:
+    virtual ~Cache() = default;
 
-/**
- * @class LRUCache
- * @brief A Least Recently Used (LRU) Cache implementation.
- * 
- * This class manages a cache using the LRU eviction policy. It stores key-value pairs 
- * and ensures that the least recently used items are evicted when the cache exceeds its 
- * total charge limit.
- *
- * @tparam Value Type of the value in the cache.
- */
-class LRUCache {
-    public :
+    virtual CacheResponse *Insert(const DataView &key, void *value,
+                                  size_t charge) = 0;
 
-    /**
-     * @class CacheMux
-     * @brief A class to handle locking mechanisms for cache access.
-     */
-    class CacheMux {
-        protected:
-        std::mutex* mux_;
-        CacheMux(std::mutex* mux) {
-            this->mux_ = mux;
-            mux_->lock();
-        }
-        ~CacheMux() {
-            mux_->unlock();
-        }
+    virtual CacheResponse *Get(const DataView &key) = 0;
 
-        friend LRUCache;
+    virtual bool Remove(const DataView &key) = 0;
+
+    virtual void Prune() = 0;
+
+    virtual CacheResponse *Release(CacheResponse *node) = 0;
+
+    virtual void Print() const = 0;
+
+    virtual size_t TotalUsage() const = 0;
+    virtual size_t TotalCharge() const = 0;
+};
+
+class LRUCache final : public Cache {
+  public:
+    // Configuration for the LRU cache
+    struct Config {
+        size_t CACHE_TOTAL_CHANGE = 1000; ///<  total charge for the cache.
+        size_t CACHE_EXPAND = 2;          ///<  expansion factor for the cache.
+        size_t CACHE_RATIO = 0.8;         ///<  cache ratio for expansion.
     };
 
-     /**
-     * @class BucketNode
-     * @brief A class representing a node in the bucket list.
-     */
+    // BucketNode class to store cache data
     class BucketNode {
-        protected:
-        BucketNode* next_; ///< Pointer to the next node in the bucket.
-        BucketNode* lNext_; ///< Pointer to the next node in the LRU list.
-        BucketNode* lPrev_; ///< Pointer to the previous node in the LRU list.
+      protected:
+        BucketNode *next_;  ///< Pointer to the next node in the bucket.
+        BucketNode *lNext_; ///< Pointer to the next node in the LRU list.
+        BucketNode *lPrev_; ///< Pointer to the previous node in the LRU list.
 
         BucketNode() : next_(nullptr), lNext_(nullptr), lPrev_(nullptr) {}
         virtual ~BucketNode() = default;
@@ -111,124 +90,100 @@ class LRUCache {
         friend LRUCache;
     };
 
-    /**
-     * @class BucketValueNode
-     * @brief A class representing a value node in the cache.
-     */
-    class BucketValueNode final : public BucketNode, public CacheResponse {
-        protected:
-        std::string key_; ///< The key of the cache item.
-        uint32_t hash_;
-        void* value_; ///< The value of the cache item.
-        size_t charge_; ///< The charge (size) of the cache item.
-        size_t ref_ = 1; 
+    // CachedBucketNode class to store cached data
+    class CachedBucketNode final : public BucketNode, public CacheResponse {
+      protected:
+        char *key_;       ///< The key of the cache item.
+        size_t key_size_; ///< The size of the key.
+        uint32_t hash_;   ///< The hash of the cache item.
+        void *value_;     ///< The value of the cache item.
+        ssize_t size_;    ///< The size of the cache item.
+        size_t charge_;   ///< The charge (size) of the cache item.
+        size_t ref_ = 1;  ///< The reference count of the cache item.
 
-        BucketValueNode(const DataView* key, void* value, size_t charge,uint32_t hash) : 
-        key_(key), value_(value), charge_(charge), hash_(hash) {
-    }       
-        public:
-        /**
-         * @brief Returns the value stored in the cache node.
-         * @return The value of the cache item.
-         */
-        Value& getValue() {
-            assert(this);
-            return value_; 
+      public:
+        CachedBucketNode(const DataView &key, void *value, size_t charge,
+                         uint32_t hash)
+            : value_(value), charge_(charge), hash_(hash) {
+            key_size_ = key.size();
+            key_ = new char[key_size_];
+            memcpy(key_, key.data(), key_size_);
         }
 
-         /**
-         * @brief Returns the key of the cache node.
-         * @return The key of the cache item.
-         */
-        std::string getKey() {
+        void *GetValue() const override {
             assert(this);
-            return key_;
+            return value_;
+        }
+
+        DataView GetKey() const override {
+            assert(this);
+            return DataView(key_, key_size_);
         }
 
         friend LRUCache;
     };
-    private: 
-    BucketNode* data_; ///< Array of bucket nodes to store the cache data.
-    size_t cap_; ///< The capacity of the cache.
-    size_t size_; ///< The current size of the cache.
-    size_t total_charge_; ///< The total charge available for the cache.
-    size_t total_usage_; ///< The total usage of cache space.
 
-    BucketNode* inUsed_head_; ///< Head of the LRU "in-use" list.
-    BucketNode* inUsed_tail_; ///< Tail of the LRU "in-use" list.
-
-    BucketNode* outdated_head_; ///< Head of the LRU "outdated" list.
-    BucketNode* outdated_tail_; ///< Tail of the LRU "outdated" list.
-
-    std::mutex mux_; ///< Mutex used to synchronize cache access.
-
-    public: 
-    
-     /**
-     * @brief Default constructor that initializes the cache with default configuration.
-     */
-    LRUCache() {
-        setup(LRUConfig::DEFAULT_CACHE_CAP, LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE);
-    }
-
+  public:
+    // default constructor for LRUCache
+    LRUCache() : config_(Config{}) { setup(); }
     /**
-     * @brief Constructor that initializes the cache with a specified capacity and total charge.
+     * @brief Constructor that initializes the cache with a specified capacity
+     * and total charge.
      * @param cap The capacity of the cache.
      * @param total_change The total charge available for the cache.
      */
-    LRUCache(size_t cap, size_t total_change = LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE) {
-        setup(cap,total_change);
-    }
+    explicit LRUCache(Config config) : config_(config) { setup(); }
 
     /**
      * @brief Destructor that cleans up the allocated memory.
      */
-    ~LRUCache() { 
-        for (size_t i = 0 ; i < cap_; i++) {
-            BucketNode* curr = data_[i].next_;
+    ~LRUCache() {
+        for (size_t i = 0; i < capacity_; i++) {
+            BucketNode *curr = data_[i].next_;
             while (curr != nullptr) {
-                BucketNode* next = curr->next_;
+                BucketNode *next = curr->next_;
+                // if curr can cast to CachedBucketNode delete the key
+                if (isCachedBucketNode(curr)) {
+                    delete[] ((CachedBucketNode *)curr)->key_;
+                }
                 delete curr;
                 curr = next;
             }
         }
-        delete []data_;
+        delete[] data_;
         delete outdated_head_;
         delete outdated_tail_;
         delete inUsed_head_;
         delete inUsed_tail_;
-    } 
-
-    /**
-     * @brief Sets the charge for the cache.
-     * @param charge The new total charge for the cache.
-     */
-    void SetCharge(size_t charge) {
-        total_charge_ = charge;
     }
 
-    /** 
-     * @brief Inserts a new key-value pair into the cache.
-     * @param key The key to insert.
-     * @param value The value to insert.
-     * @param charge The charge (size) of the item to insert.
-     * @return A pointer to the inserted cache node.
-     */
-     BucketValueNode* Insert(const DataView& key, void* value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return Insert(key,value,hash,charge);
-     }
+    static LRUCache *Create(Config config) { return new LRUCache(config); }
 
     /**
      * @brief Inserts a new key-value pair into the cache.
      * @param key The key to insert.
      * @param value The value to insert.
-     * @param hash The hash to insert.
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    BucketValueNode* Insert(std::string key, DataView* value,uint32_t hash, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        if (charge > total_charge_) {
+    CachedBucketNode *Insert(const DataView &key, void *value,
+                             size_t charge) override {
+        // print value cast to string
+        uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
+        return Insert(key, hash, value, charge);
+    }
+
+    /**
+     * @brief Inserts a new key-value pair into the cache.
+     * @param key The key to insert.
+     * @param hash The hash of the key.
+     * @param value The value to insert.
+     * @param charge The charge (size) of the item to insert.
+     * @return A pointer to the inserted cache node.
+     */
+    CachedBucketNode *Insert(const DataView &key, uint32_t hash, void *value,
+                             size_t charge) {
+        if (charge > config_.CACHE_TOTAL_CHANGE) {
             return nullptr;
         }
         assert(charge > 0);
@@ -236,17 +191,17 @@ class LRUCache {
         CacheMux m(&mux_);
 
         if (isExpand()) {
-            expand(cap_ * LRUConfig::DEFAULT_CAHCE_EXPAND);
+            expand(capacity_ * config_.CACHE_EXPAND);
         }
 
-        BucketValueNode* newNode =  new BucketValueNode(key,value,charge,hash);
+        CachedBucketNode *newNode =
+            new CachedBucketNode(key, value, charge, hash);
 
-        size_t index = hash % cap_;
-        BucketNode* prev = &data_[index];
+        size_t index = hash % capacity_;
+        BucketNode *prev = &data_[index];
 
-        while (prev != nullptr && prev->next_ != nullptr)
-        {
-            if (((BucketValueNode* )(prev->next_))->key_ == key) {
+        while (prev != nullptr && prev->next_ != nullptr) {
+            if (((CachedBucketNode *)(prev->next_))->GetKey() == key) {
                 break;
             }
             prev = prev->next_;
@@ -259,16 +214,17 @@ class LRUCache {
             newNode->next_ = prev->next_->next_;
 
             removeList(prev->next_);
-            total_usage_ -= ((BucketValueNode* )(prev->next_))->charge_;
+            total_usage_ -= ((CachedBucketNode *)(prev->next_))->charge_;
             delete prev->next_;
 
             prev->next_ = newNode;
         }
 
         // Remove in OutDated List if excess a total charge
-        while (total_usage_ + charge > total_charge_ 
-               && outdated_tail_->lPrev_ != outdated_head_) {
-            bool s = removeNode(((BucketValueNode* )(outdated_head_->lNext_))->key_);
+        while (total_usage_ + charge > config_.CACHE_TOTAL_CHANGE &&
+               outdated_tail_->lPrev_ != outdated_head_) {
+            bool s = removeNode(
+                ((CachedBucketNode *)(outdated_head_->lNext_))->GetKey());
             assert(s);
         }
 
@@ -276,7 +232,7 @@ class LRUCache {
         total_usage_ += charge;
 
         assert(total_usage_ > 0);
-        assert(total_usage_ <= total_charge_);
+        assert(total_usage_ <= config_.CACHE_TOTAL_CHANGE);
         ref(newNode);
         return newNode;
     }
@@ -286,9 +242,9 @@ class LRUCache {
      * @param key The key to remove.
      * @return True if the item was successfully removed, false otherwise.
      */
-    bool Remove(std::string key) {
-       CacheMux m(&mux_);
-       return removeNode(key);
+    bool Remove(const DataView &key) override {
+        CacheMux m(&mux_);
+        return removeNode(key);
     }
 
     /**
@@ -296,18 +252,18 @@ class LRUCache {
      * @param key The key to search for.
      * @return A pointer to the cache node if found, nullptr otherwise.
      */
-    BucketValueNode* Get(std::string key) {
+    CacheResponse *Get(const DataView &key) override {
         CacheMux m(&mux_);
 
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        size_t index = hash % cap_;
-        BucketValueNode* curr = (BucketValueNode*)  data_[index].next_;
+        uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
+        size_t index = hash % capacity_;
+        CachedBucketNode *curr = (CachedBucketNode *)data_[index].next_;
         while (curr != nullptr) {
-            if (curr->key_ == key) {
+            if (curr->GetKey() == key) {
                 ref(curr);
-                return curr;
+                return (CacheResponse *)curr;
             }
-            curr = (BucketValueNode*) curr->next_;
+            curr = (CachedBucketNode *)curr->next_;
         }
         return nullptr;
     }
@@ -315,69 +271,67 @@ class LRUCache {
     /**
      * @brief Prunes the cache by removing all outdated nodes.
      */
-    void Prune() {
-        BucketNode* curr = outdated_head_->lNext_;
+    void Prune() override {
+        BucketNode *curr = outdated_head_->lNext_;
         while (curr != outdated_tail_) {
-            BucketNode* next = curr->lNext_;
-            assert((((BucketValueNode *) curr)->ref_ == 1));
-            bool s = removeNode(((BucketValueNode *)curr)->key_);
+            BucketNode *next = curr->lNext_;
+            assert((((CachedBucketNode *)curr)->ref_ == 1));
+            bool s = removeNode(((CachedBucketNode *)curr)->GetKey());
             assert(s);
             curr = next;
         }
     }
 
-     /**
+    /**
      * @brief Releases a cache node, decreasing its reference count.
      * @param node The node to release.
      */
-    void Release(BucketValueNode* node) {
+    CacheResponse *Release(CacheResponse *node) override {
         if (node != nullptr) {
-            unref(node);
+            unref((CachedBucketNode *)node);
         }
+        return node;
     }
 
     /**
      * @brief Prints the current state of the cache.
      */
-    void Print() const {
-        for (size_t i = 0; i < cap_; i++) {
+    void Print() const override {
+        for (size_t i = 0; i < capacity_; i++) {
             std::cout << i << " ";
-            BucketValueNode* curr = (BucketValueNode*)  data_[i].next_;
-            while (curr != nullptr)
-            {
-                std::cout << "("<< curr->key_ << ", " << curr->value_ << ", " << curr->charge_<< ", " << curr->ref_ <<  ") ";
-                curr =  (BucketValueNode*) curr->next_;
+            CachedBucketNode *curr = (CachedBucketNode *)data_[i].next_;
+            while (curr != nullptr) {
+                std::cout << "(" << curr->key_ << ", " << curr->value_ << ", "
+                          << curr->charge_ << ", " << curr->ref_ << ") ";
+                curr = (CachedBucketNode *)curr->next_;
             }
             std::cout << std::endl;
         }
     }
 
-     /**
+    Config &EditConfig() { return config_; }
+
+    /**
      * @brief Returns the total charge of the cache.
      * @return The total charge.
      */
-    size_t TotalCharge() const {
-        return total_charge_;
-    }
+    size_t TotalCharge() const override { return config_.CACHE_TOTAL_CHANGE; }
 
-     /**
+    /**
      * @brief Returns the total usage of the cache.
      * @return The total usage.
      */
-    size_t TotalUsage() const {
-        return total_usage_;
-    }
+    size_t TotalUsage() const override { return total_usage_; }
 
-     /**
+    /**
      * @brief Prints the nodes in the "outdated" list.
      */
     void PrintOutDated() const {
-        BucketNode* curr = outdated_head_->lNext_;
+        BucketNode *curr = outdated_head_->lNext_;
         std::cout << "OutDated: ";
-        while (curr != outdated_tail_)
-        {
-            BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->key_ << ", "  << node->value_ << ") ";
+        while (curr != outdated_tail_) {
+            CachedBucketNode *node = (CachedBucketNode *)curr;
+            std::cout << "(" << node->key_ << ", " << node->value_ << ") ";
             curr = curr->lNext_;
         }
         std::cout << std::endl;
@@ -386,39 +340,27 @@ class LRUCache {
     /**
      * @brief Prints the nodes in the "in-use" list.
      */
-     void PrintInUsed() const {
-        BucketNode* curr = inUsed_head_->lNext_;
+    void PrintInUsed() const {
+        BucketNode *curr = inUsed_head_->lNext_;
         std::cout << "InUsed: ";
-        while (curr != inUsed_tail_)
-        {
-            BucketValueNode* node = ( BucketValueNode* ) curr;
-            std::cout << "(" << node->key_ << ", "  << node->value_ << ") ";
+        while (curr != inUsed_tail_) {
+            CachedBucketNode *node = (CachedBucketNode *)curr;
+            std::cout << "(" << node->key_ << ", " << node->value_ << ") ";
             curr = curr->lNext_;
         }
         std::cout << std::endl;
     }
 
-     /**
+    /**
      * @brief Prints detailed information about the cache.
      */
     void Detail() const {
         std::cout << "Detail:" << std::endl;
-        std::cout << "- Capacity: " << cap_ << std::endl;
+        std::cout << "- Capacity: " << capacity_ << std::endl;
         std::cout << "- Size: " << size_ << std::endl;
-        std::cout << "- Total Charge: " << total_charge_ << std::endl;
+        std::cout << "- Total Charge: " << config_.CACHE_TOTAL_CHANGE
+                  << std::endl;
         std::cout << "- Total Usage: " << total_usage_ << std::endl;
-    }
-
-     /**
-     * @brief Retrieves the value stored in a cache node.
-     * @param node The cache node.
-     * @return The value of the cache item.
-     */
-    static Value GetValue(CacheResponse* node) {
-        if (node == nullptr) {
-            return Value();
-        }
-        return ((BucketValueNode *) node)->value_;
     }
 
     /**
@@ -426,244 +368,276 @@ class LRUCache {
      * @param node The cache node.
      * @return The key of the cache item.
      */
-    static std::string GetKey(BucketValueNode* node) {
+    static std::string GetKey(CachedBucketNode *node) {
         if (node == nullptr) {
             return "";
         }
         return node->key_;
     }
 
-    private:
-        void setup(size_t cap, size_t total_charge) {
-            assert(cap > 0);
-            assert(total_charge > 0);
-
-            data_ = new BucketNode[cap];
-            cap_ = cap;
-            size_ = 0;
-            total_charge_ = total_charge;
-            total_usage_ = 0;
-
-            outdated_head_ = new BucketNode;
-            outdated_tail_ = new BucketNode;
-            outdated_head_->lNext_ = outdated_tail_;
-            outdated_head_->lPrev_ = outdated_tail_;
-            outdated_tail_->lNext_ = outdated_head_;
-            outdated_tail_->lPrev_ = outdated_head_;
-
-            inUsed_head_ = new BucketNode;
-            inUsed_tail_ = new BucketNode;
-            inUsed_head_->lNext_ = inUsed_tail_;
-            inUsed_head_->lPrev_ = inUsed_tail_;
-            inUsed_tail_->lNext_ = inUsed_head_;
-            inUsed_tail_->lPrev_ = inUsed_head_;
+  private:
+    class CacheMux {
+      protected:
+        std::mutex *mux_;
+        CacheMux(std::mutex *mux) {
+            this->mux_ = mux;
+            mux_->lock();
         }
+        ~CacheMux() { mux_->unlock(); }
 
-        void ref(BucketValueNode *refNode) {
-            assert(refNode->ref_ >= 1);
-            refNode->ref_++;
-            if (refNode->ref_ == 2) {
-                 removeList(refNode);
-                appendToList(refNode, inUsed_tail_);
-            }
+        friend LRUCache;
+    };
+
+    void setup() {
+        capacity_ = 2;
+        assert(capacity_ > 0);
+        assert(config_.CACHE_TOTAL_CHANGE > 0);
+
+        data_ = new BucketNode[capacity_];
+
+        size_ = 0;
+        total_usage_ = 0;
+
+        outdated_head_ = new BucketNode;
+        outdated_tail_ = new BucketNode;
+        outdated_head_->lNext_ = outdated_tail_;
+        outdated_head_->lPrev_ = outdated_tail_;
+        outdated_tail_->lNext_ = outdated_head_;
+        outdated_tail_->lPrev_ = outdated_head_;
+
+        inUsed_head_ = new BucketNode;
+        inUsed_tail_ = new BucketNode;
+        inUsed_head_->lNext_ = inUsed_tail_;
+        inUsed_head_->lPrev_ = inUsed_tail_;
+        inUsed_tail_->lNext_ = inUsed_head_;
+        inUsed_tail_->lPrev_ = inUsed_head_;
+    }
+
+    void ref(CachedBucketNode *refNode) {
+        assert(refNode->ref_ >= 1);
+        refNode->ref_++;
+        if (refNode->ref_ == 2) {
+            removeList(refNode);
+            appendToList(refNode, inUsed_tail_);
         }
+    }
 
-        void unref(BucketValueNode *refNode) {
-            assert(refNode->ref_ >= 1);
-            refNode->ref_--;
-            if (refNode->ref_ == 1) {
-                removeList(refNode);
-                appendToList(refNode, outdated_tail_);
-            } else if (refNode->ref_ == 0) {
-                removeNode(refNode->key_);
-            }
+    void unref(CachedBucketNode *refNode) {
+        assert(refNode->ref_ >= 1);
+        refNode->ref_--;
+        if (refNode->ref_ == 1) {
+            removeList(refNode);
+            appendToList(refNode, outdated_tail_);
+        } else if (refNode->ref_ == 0) {
+            removeNode(refNode->GetKey());
         }
+    }
 
-        bool isExpand() {
-            return cap_ * LRUConfig::DEFAULT_CACHE_RATIO <  size_;
-        }
+    bool isExpand() { return capacity_ * config_.CACHE_RATIO < size_; }
 
-        bool isBucketValueNode(BucketNode* node) {
-            return dynamic_cast<BucketValueNode*>(node) != nullptr;
-        }
+    bool isCachedBucketNode(BucketNode *node) {
+        return dynamic_cast<CachedBucketNode *>(node) != nullptr;
+    }
 
-        void expand(size_t newCap) {
-            BucketNode* newLoc = new BucketNode[newCap];    
-            // rehash
-            for (size_t i = 0 ; i < cap_; i++) {
-                BucketValueNode* curr = (BucketValueNode*) data_[i].next_;
-                while (curr != nullptr) {
-                    BucketValueNode* next = (BucketValueNode*)  curr->next_;
-                    curr->next_ = nullptr;
-                    size_t index = support::MurmurHash::Hash(curr->key_.data(),curr->key_.size(),0) % newCap;  
-                    if (newLoc[index].next_ == nullptr) {
-                        newLoc[index].next_ = curr;
-                    } else {
-                        BucketNode* b = newLoc[index].next_;
-                        while (b->next_ != nullptr)
-                        {
-                            b= b->next_;
-                        }
-                        b->next_ = curr;
+    void expand(size_t newCap) {
+        BucketNode *newLoc = new BucketNode[newCap];
+        // rehash
+        for (size_t i = 0; i < capacity_; i++) {
+            CachedBucketNode *curr = (CachedBucketNode *)data_[i].next_;
+            while (curr != nullptr) {
+                CachedBucketNode *next = (CachedBucketNode *)curr->next_;
+                curr->next_ = nullptr;
+                size_t index =
+                    support::MurmurHash::Hash(curr->GetKey().data(),
+                                              curr->GetKey().size(), 0) %
+                    newCap;
+                if (newLoc[index].next_ == nullptr) {
+                    newLoc[index].next_ = curr;
+                } else {
+                    BucketNode *b = newLoc[index].next_;
+                    while (b->next_ != nullptr) {
+                        b = b->next_;
                     }
-                    curr = next;
+                    b->next_ = curr;
                 }
+                curr = next;
             }
-            delete[] data_;
-            data_ = newLoc;
-            cap_ = newCap;
         }
+        delete[] data_;
+        data_ = newLoc;
+        capacity_ = newCap;
+    }
 
-        // TODO: deletor
-        bool removeNode(std::string key) {
-            size_t index = support::MurmurHash::Hash(key.data(),key.size(),0) % cap_;  
-            BucketValueNode* curr = (BucketValueNode*)  data_[index].next_;
-            BucketNode* prev = &data_[index];
-            while (curr != nullptr && curr->key_ != key) {
-                    prev = curr;
-                    curr = (BucketValueNode*)  curr->next_;
-            } 
-            if (curr == nullptr) {
-                return false;
-            }
-            total_usage_ -= curr->charge_; 
-            size_--;
-            prev->next_ = curr->next_;
-            removeList(curr);
-            delete curr;
-            return true;
+    // TODO: deleter
+    bool removeNode(const DataView &key) {
+        size_t index =
+            support::MurmurHash::Hash(key.data(), key.size(), 0) % capacity_;
+        CachedBucketNode *curr = (CachedBucketNode *)data_[index].next_;
+        BucketNode *prev = &data_[index];
+
+        while (curr != nullptr && curr->GetKey() != key) {
+            prev = curr;
+            curr = (CachedBucketNode *)curr->next_;
         }
-
-        void appendToList(BucketNode* node, BucketNode* tail) {
-            assert(node != nullptr);
-            BucketNode* prev = tail->lPrev_;
-            node->lNext_ = tail;
-            node->lPrev_ = prev;
-            prev->lNext_ = node;
-            tail->lPrev_ = node;
+        if (curr == nullptr) {
+            return false;
         }
+        delete curr->key_;
+        total_usage_ -= curr->charge_;
+        size_--;
+        prev->next_ = curr->next_;
+        removeList(curr);
+        delete curr;
+        return true;
+    }
 
-        void removeList(BucketNode* node) {
-            assert(node != nullptr);
-            if (node->lNext_ == nullptr && node->lPrev_ == nullptr) {
-                return;
-            }
-            BucketNode* next = node->lNext_;                
-            BucketNode* prev = node->lPrev_;
-            prev->lNext_ = next;
-            next->lPrev_ = prev;
+    void appendToList(BucketNode *node, BucketNode *tail) {
+        assert(node != nullptr);
+        BucketNode *prev = tail->lPrev_;
+        node->lNext_ = tail;
+        node->lPrev_ = prev;
+        prev->lNext_ = node;
+        tail->lPrev_ = node;
+    }
 
-            node->lNext_ = nullptr;
-            node->lPrev_ = nullptr;
+    void removeList(BucketNode *node) {
+        assert(node != nullptr);
+        if (node->lNext_ == nullptr && node->lPrev_ == nullptr) {
+            return;
         }
+        BucketNode *next = node->lNext_;
+        BucketNode *prev = node->lPrev_;
+        prev->lNext_ = next;
+        next->lPrev_ = prev;
+
+        node->lNext_ = nullptr;
+        node->lPrev_ = nullptr;
+    }
+
+  private:
+    BucketNode *data_;   ///< Array of bucket nodes to store the cache data.
+    size_t size_;        ///< The current size of the cache.
+    size_t capacity_;    ///< The capacity of the cache.
+    size_t total_usage_; ///< The total usage of cache space.
+
+    BucketNode *inUsed_head_; ///< Head of the LRU "in-use" list.
+    BucketNode *inUsed_tail_; ///< Tail of the LRU "in-use" list.
+
+    BucketNode *outdated_head_; ///< Head of the LRU "outdated" list.
+    BucketNode *outdated_tail_; ///< Tail of the LRU "outdated" list.
+
+    std::mutex mux_; ///< Mutex used to synchronize cache access.
+
+    Config config_; ///< Configuration for the LRU cache.
 };
 
-/**
- * @class ShareLRUConfig
- * @brief A configuration class to hold constants related to the shared LRU cache.
- */
-class ShareLRUConfig {
-public:
-    static const size_t DEFAULT_SHARECACHE_BIT; ///< Default bit of LRU caches.
-    static const size_t DEFAULT_SHARECACHE_N; ///< Default number of LRU caches.
-    static const size_t DEFAULT_SHARECACHE_TOTAL_CHARGE; ///< Default total charge to be divided among caches.
-};
+class ShareLRUCache final : public Cache {
+  public:
+    struct Config {
+        size_t SHARECACHE_BIT = 4; ///< Default bit of LRU caches.
+        size_t SHARECACHE_N = 1 << SHARECACHE_BIT; ///< Default number of
+                                                   ///< LRU caches.
+        size_t SHARECACHE_TOTAL_CHARGE = 4000; ///< Default total charge to be
+                                               ///< divided among caches.
+    };
 
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_BIT = 4;
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_N = 1 << ShareLRUConfig::DEFAULT_SHARECACHE_BIT;
-const size_t ShareLRUConfig::DEFAULT_SHARECACHE_TOTAL_CHARGE = 4000;
-
-/**
- * @class ShareLRUCache
- * @brief A shared LRU cache that divides a total charge across multiple LRU caches.
- * 
- * This class manages multiple LRU caches and ensures the cache is shared across them 
- * using a hash-based distribution. The cache is divided into a specified number of
- * individual LRU caches, each of which manages its own items and charges.
- *
- * @tparam Key Type of the key in the cache.
- * @tparam Value Type of the value in the cache.
- */
-template <typename Value>
-class ShareLRUCache {
-    private :
-    LRUCache<Value>* m_caches; ///< Array of LRUCache instances.
-    size_t m_count; ///< Number of LRUCache instances.
-    size_t total_charge_; ///< Total charge shared among caches.
-
-     static uint32_t Shard(uint32_t hash) { return hash >> (32 - ShareLRUConfig::DEFAULT_SHARECACHE_BIT); }
-
-    public :
     /**
-     * @brief Constructs a shared LRU cache with a specified number of caches.
+     * @brief Constructs a shared LRU cache with a specified number of
+     caches.
      * @param charge The total charge to divide among caches.
      */
-    ShareLRUCache(size_t charge = LRUConfig::DEFAULT_CACHE_TOTAL_CHANGE) {
-        assert(charge > 0);
-        m_count = ShareLRUConfig::DEFAULT_SHARECACHE_N;
-        m_caches = new LRUCache<Value>[m_count];
-        for (size_t i = 0 ; i < m_count; i++) {
-        m_caches[i].SetCharge((charge + m_count - 1) / m_count);
+    ShareLRUCache(Config config) {
+        assert(config.SHARECACHE_TOTAL_CHARGE > 0);
+        config_ = config;
+        // new with config
+        LRUCache::Config lru_config = LRUCache::Config{
+            .CACHE_TOTAL_CHANGE =
+                (config_.SHARECACHE_TOTAL_CHARGE + config_.SHARECACHE_N - 1) /
+                config_.SHARECACHE_N,
+        };
+        // new with config
+        m_caches = new LRUCache[config_.SHARECACHE_N];
+        // m_caches = new LRUCache(config_)[config_.SHARECACHE_N];
+
+        // m_caches = new LRUCache[config_.SHARECACHE_N];
+        for (size_t i = 0; i < config_.SHARECACHE_N; i++) {
+            m_caches[i].EditConfig().CACHE_TOTAL_CHANGE =
+                (config_.SHARECACHE_TOTAL_CHARGE + config_.SHARECACHE_N - 1) /
+                config_.SHARECACHE_N;
+            m_caches[i].EditConfig().CACHE_EXPAND = 2;
+            m_caches[i].EditConfig().CACHE_RATIO = 0.8;
         }
-        total_charge_ = charge;
-    }  
+    }
 
     /**
      * @brief Destructor that cleans up the allocated memory.
      */
-    ~ShareLRUCache() {
-        delete [] m_caches;
+    ~ShareLRUCache() { delete[] m_caches; }
+
+    static ShareLRUCache *Create(Config config) {
+        return new ShareLRUCache(config);
     }
 
-     /**
+    /**
      * @brief Inserts a new key-value pair into the shared cache.
      * @param key The key to insert.
      * @param value The value to insert.
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    CacheResponse* Insert(std::string key, Value value, size_t charge = LRUConfig::DEFAULT_CACHE_CHARGE_PER) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        return  (CacheResponse *) m_caches[Shard(hash)].Insert(key, value, hash, charge);
+    CacheResponse *Insert(const DataView &key, void *value,
+                          size_t charge) override {
+        uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
+        return (CacheResponse *)m_caches[Shard(hash)].Insert(key, hash, value,
+                                                             charge);
     }
 
     /**
      * @brief Removes a key-value pair from the shared cache.
      * @param key The key to remove.
      */
-    void Remove(std::string key) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
-        m_caches[Shard(hash)].Remove(key);
-    } 
+    bool Remove(const DataView &key) override {
+        uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
+        return m_caches[Shard(hash)].Remove(key);
+    }
 
     /**
      * @brief Retrieves a value from the shared cache using a key.
      * @param key The key to search for.
      * @return A pointer to the cache node if found, nullptr otherwise.
      */
-    CacheResponse* Get(std::string key) {
-        uint32_t hash = support::MurmurHash::Hash(key.data(),key.size(),0);
+    CacheResponse *Get(const DataView &key) override {
+        uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
         return m_caches[Shard(hash)].Get(key);
-    } 
+    }
 
-     /**
+    /**
      * @brief Calculates the total cache usage across all individual caches.
      * @return The total usage of the shared cache.
      */
-    size_t TotalUsage() {
+    size_t TotalUsage() const override {
         size_t t = 0;
-        for (size_t i = 0; i <m_count; i++) {
+        for (size_t i = 0; i < config_.SHARECACHE_N; i++) {
             t += m_caches[i].TotalUsage();
         }
         return t;
     }
 
     /**
-     * @brief Prints the state of each individual LRU cache in the shared cache.
+     * @brief Returns the total charge of the cache.
+     * @return The total charge.
      */
-    void Print() {
-        for (size_t i = 0 ; i < m_count; i++) {
-            std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
+    size_t TotalCharge() const override {
+        return config_.SHARECACHE_TOTAL_CHARGE;
+    }
+
+    /**
+     * @brief Prints the state of each individual LRU cache in the shared
+     cache.
+     */
+    void Print() const override {
+        for (size_t i = 0; i < config_.SHARECACHE_N; i++) {
+            std::cout << "Cache: " << i + 1 << " =====" << std::endl;
             m_caches[i].Print();
             m_caches[i].Detail();
             m_caches[i].PrintInUsed();
@@ -673,12 +647,14 @@ class ShareLRUCache {
     }
 
     /**
-     * @brief Prints detailed information about the shared cache and its individual caches.
+     * @brief Prints detailed information about the shared cache and its
+     individual caches.
      */
     void Detail() {
-        std::cout << "Total Charge: " << total_charge_ << std::endl; 
-        std::cout << "Total Usage: " << TotalUsage() << std::endl; 
-        // for (size_t i = 0 ; i < m_count; i++) {
+        std::cout << "Total Charge: " << config_.SHARECACHE_TOTAL_CHARGE
+                  << std::endl;
+        std::cout << "Total Usage: " << TotalUsage() << std::endl;
+        // for (size_t i = 0 ; i < config_.SHARECACHE_N; i++) {
         //     std::cout <<"Cache: " << i + 1 << " =====" << std::endl;
         //     m_caches[i].Detail();
         // }
@@ -689,32 +665,29 @@ class ShareLRUCache {
      * @param index The index of the LRU cache to retrieve.
      * @return A pointer to the specified LRU cache.
      */
-    LRUCache<Value>* GetLRU(size_t index) {
-        return &m_caches[index];
-    }
+    LRUCache *GetLRU(size_t index) { return &m_caches[index]; }
 
     /**
      * @brief Prunes all individual caches by removing outdated nodes.
      */
-    void Prune() {
-        for (size_t i = 0 ; i < m_count; i++) {
+    void Prune() override {
+        for (size_t i = 0; i < config_.SHARECACHE_N; i++) {
             m_caches[i].Prune();
         }
     }
 
-     /**
+    /**
      * @brief Releases a cache node, decreasing its reference count.
      * @param bnode The cache node to release.
      */
-    CacheResponse* Release(CacheResponse* bnode) {
-        if (bnode == nullptr) {
+    CacheResponse *Release(CacheResponse *node) {
+        if (node == nullptr) {
             return nullptr;
         }
-        typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);\
-            uint32_t hash = support::MurmurHash::Hash(node->getKey().data(),node->getKey().size(),0);
-            m_caches[Shard(hash)].Release(node);
-        return bnode;
+        uint32_t hash = support::MurmurHash::Hash(node->GetKey().data(),
+                                                  node->GetKey().size(), 0);
+        m_caches[Shard(hash)].Release(node);
+        return node;
     }
 
     /**
@@ -722,28 +695,23 @@ class ShareLRUCache {
      * @param bnode The cache node.
      * @return The value of the cache item.
      */
-    static Value& GetValue(CacheResponse* bnode) {
-        // if (bnode == nullptr) {
-        //     return Value();
-        // }
-         typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);
-        return node->getValue();
-    }
+    static void *GetValue(CacheResponse *node) { return node->GetValue(); }
 
-     /**
+    /**
      * @brief Retrieves the key of a cache node.
      * @param bnode The cache node.
      * @return The key of the cache item.
      */
-    static std::string GetKey(CacheResponse* bnode) {
-        if (bnode == nullptr) {
-            return Value();
-        }
-         typename LRUCache<Value>::BucketValueNode* node = 
-            static_cast<typename LRUCache<Value>::BucketValueNode*>(bnode);
-        return node->getKey();
+    static DataView GetKey(CacheResponse *node) { return node->GetKey(); }
+
+  private:
+    uint32_t Shard(uint32_t hash) {
+        return hash >> (32 - config_.SHARECACHE_BIT);
     }
+
+    LRUCache *m_caches; ///< Array of LRUCache instances.
+
+    Config config_; ///< Configuration for the shared LRU cache.
 };
 
 } // namespace tagfilterdb

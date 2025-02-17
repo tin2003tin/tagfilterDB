@@ -1,7 +1,6 @@
-#include <iostream>
-#include "tagfilterdb/cache_example.h"
+#include "tagfilterdb/cache_example_v2.h"
 
 int main() {
-    cache_example();
+    cache_example_v2();
     return 0;
 }

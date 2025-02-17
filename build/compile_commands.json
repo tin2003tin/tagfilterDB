@@ -1,14 +1,14 @@
 [
 {
-  "directory": "/home/tin2003tin/tagfilterDB/build",
-  "command": "/usr/bin/g++  -I/home/tin2003tin/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/tin2003tin/tagfilterDB/tagfilterdb/test.cpp",
-  "file": "/home/tin2003tin/tagfilterDB/tagfilterdb/test.cpp",
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp",
   "output": "CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
 },
 {
-  "directory": "/home/tin2003tin/tagfilterDB/build",
-  "command": "/usr/bin/g++  -I/home/tin2003tin/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/MyProject.dir/src/main.cpp.o -c /home/tin2003tin/tagfilterDB/src/main.cpp",
-  "file": "/home/tin2003tin/tagfilterDB/src/main.cpp",
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/MyProject.dir/src/main.cpp.o -c /home/tinsiriwid/tagfilterDB/src/main.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/src/main.cpp",
   "output": "CMakeFiles/MyProject.dir/src/main.cpp.o"
 }
 ]

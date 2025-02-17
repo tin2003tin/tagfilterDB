@@ -10,7 +10,8 @@ void cache_example() {
     SLC cache(1000);
 
     // Case 1: Insert a new key-value pair
-    cache.Release(cache.Insert("630414821", "Siriwid Thongon"));
+    // cache.Release(cache.Insert("630414821", "Siriwid Thongon"));
+    cache.Print();
 
     // Case 2: Insert another key-value pair
     cache.Release(cache.Insert("65123", "John Doe"));
@@ -20,7 +21,8 @@ void cache_example() {
 
     // Case 4: Retrieve a value from cache
     if (auto n = cache.Release(cache.Get("630414821")); n != nullptr) {
-        std::cout << "Found 630414821: " << ShareLRUCache<std::string>::GetValue(n) << std::endl;
+        std::cout << "Found 630414821: " <<
+        ShareLRUCache<std::string>::GetValue(n) << std::endl;
     }
 
     // Case 5: Try to retrieve a non-existent key
@@ -33,7 +35,8 @@ void cache_example() {
 
     // Case 7: Retrieve a key with custom charge
     if (auto n = cache.Release(cache.Get("10001")); n != nullptr) {
-        std::cout << "Found 10001: " << ShareLRUCache<std::string>::GetValue(n) << std::endl;
+        std::cout << "Found 10001: " <<
+        ShareLRUCache<std::string>::GetValue(n) << std::endl;
     }
 
     // Case 8: Check total cache usage
@@ -62,12 +65,13 @@ void cache_example() {
     cache.Release(cache.Insert("1501", "Heidi"));
     cache.Release(cache.Insert("1502", "Ivy"));
     cache.Release(cache.Insert("1503", "Jack"));
-    
+
     cache.Print();
 
     // Case 15: Try to get value after cache eviction
     if (auto n = cache.Release(cache.Get("630414821")); n == nullptr) {
-        std::cout << "Key 630414821 has been evicted from the cache." << std::endl;
+        std::cout << "Key 630414821 has been evicted from the cache." <<
+        std::endl;
     }
 
     // Case 16: Insert another key after eviction and check cache status
@@ -76,7 +80,8 @@ void cache_example() {
 
     // Case 17: Check if a key exists after being removed
     if (auto n = cache.Release(cache.Get("65123")); n == nullptr) {
-        std::cout << "Key 65123 was removed and is no longer in the cache." << std::endl;
+        std::cout << "Key 65123 was removed and is no longer in the cache."
+        << std::endl;
     }
 
     // Case 18: Release a handle to free cache space
@@ -90,6 +95,7 @@ void cache_example() {
 
     // Case 20: Attempt to get a key again after handle release
     if (auto n = cache.Release(cache.Get("1001")); n == nullptr) {
-        std::cout << "Key 1001 is not found after handle release." << std::endl;
+        std::cout << "Key 1001 is not found after handle release." <<
+        std::endl;
     }
 }
