@@ -4,6 +4,10 @@
 #include <iostream>
 
 using namespace tagfilterdb;
+void deleter(const DataView &key, void *value) {
+    std::cout << "Deleting " << "Key: " << key.toString()
+              << ", Value: " << ((DataView *)value)->toString() << std::endl;
+}
 
 void cache_example_v2() {
     using namespace tagfilterdb;
@@ -20,27 +24,27 @@ void cache_example_v2() {
     std::string name1 = "John Doe";
     DataView nameData1(name1);
     cache->Release(
-        cache->Insert(DataView("101"), &nameData1, nameData1.size()));
+        cache->Insert(DataView("101"), &nameData1, nameData1.size(), deleter));
     std::string name2 = "Siriwid";
     DataView nameData2(name2);
     cache->Release(
-        cache->Insert(DataView("102"), &nameData2, nameData2.size()));
+        cache->Insert(DataView("102"), &nameData2, nameData2.size(), deleter));
     std::string name3 = "Thongon";
     DataView nameData3(name3);
     cache->Release(
-        cache->Insert(DataView("103"), &nameData3, nameData3.size()));
+        cache->Insert(DataView("103"), &nameData3, nameData3.size(), deleter));
     std::string name4 = "Job";
     DataView nameData4(name4);
     cache->Release(
-        cache->Insert(DataView("104"), &nameData4, nameData4.size()));
+        cache->Insert(DataView("104"), &nameData4, nameData4.size(), deleter));
     cache->Print();
 
     // Case 2: Insert another key-value pair
     std::cout << "Case 2: Insert another key-value pair" << std::endl;
-    DataView key("65123");
-    DataView value("John Doe");
-    CacheResponse *res =
-        cache->Release(cache->Insert(key, (void *)&value, value.size()));
+    std::string svalue = "John Doe";
+    DataView value(svalue);
+    CacheResponse *res = cache->Release(
+        cache->Insert(DataView("65123"), (void *)&value, value.size(), deleter));
     if (res != nullptr) {
         std::cout << "Found 65123: " << value.toString() << std::endl;
     }

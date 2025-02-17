@@ -51,8 +51,9 @@ class Cache {
   public:
     virtual ~Cache() = default;
 
-    virtual CacheResponse *Insert(const DataView &key, void *value,
-                                  size_t charge) = 0;
+    virtual CacheResponse *
+    Insert(const DataView &key, void *value, size_t charge,
+           void (*deleter)(const DataView &, void *value)) = 0;
 
     virtual CacheResponse *Get(const DataView &key) = 0;
 
@@ -65,6 +66,7 @@ class Cache {
     virtual void Print() const = 0;
 
     virtual size_t TotalUsage() const = 0;
+
     virtual size_t TotalCharge() const = 0;
 };
 
@@ -100,11 +102,15 @@ class LRUCache final : public Cache {
         ssize_t size_;    ///< The size of the cache item.
         size_t charge_;   ///< The charge (size) of the cache item.
         size_t ref_ = 1;  ///< The reference count of the cache item.
+        void (*deleter_)(const DataView &,
+                         void *value); /// The deleter function
+                                       /// for the cache item.
 
       public:
-        CachedBucketNode(const DataView &key, void *value, size_t charge,
-                         uint32_t hash)
-            : value_(value), charge_(charge), hash_(hash) {
+        CachedBucketNode(const DataView &key, uint32_t hash, void *value,
+                         size_t charge,
+                         void (*deleter)(const DataView &, void *value))
+            : value_(value), charge_(charge), hash_(hash), deleter_(deleter) {
             key_size_ = key.size();
             key_ = new char[key_size_];
             memcpy(key_, key.data(), key_size_);
@@ -166,11 +172,12 @@ class LRUCache final : public Cache {
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    CachedBucketNode *Insert(const DataView &key, void *value,
-                             size_t charge) override {
+    CachedBucketNode *Insert(const DataView &key, void *value, size_t charge,
+                             void (*deleter)(const DataView &,
+                                             void *value)) override {
         // print value cast to string
         uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
-        return Insert(key, hash, value, charge);
+        return Insert(key, hash, value, charge, deleter);
     }
 
     /**
@@ -182,7 +189,8 @@ class LRUCache final : public Cache {
      * @return A pointer to the inserted cache node.
      */
     CachedBucketNode *Insert(const DataView &key, uint32_t hash, void *value,
-                             size_t charge) {
+                             size_t charge,
+                             void (*deleter)(const DataView &, void *value)) {
         if (charge > config_.CACHE_TOTAL_CHANGE) {
             return nullptr;
         }
@@ -195,7 +203,7 @@ class LRUCache final : public Cache {
         }
 
         CachedBucketNode *newNode =
-            new CachedBucketNode(key, value, charge, hash);
+            new CachedBucketNode(key, hash, value, charge, deleter);
 
         size_t index = hash % capacity_;
         BucketNode *prev = &data_[index];
@@ -468,7 +476,6 @@ class LRUCache final : public Cache {
         capacity_ = newCap;
     }
 
-    // TODO: deleter
     bool removeNode(const DataView &key) {
         size_t index =
             support::MurmurHash::Hash(key.data(), key.size(), 0) % capacity_;
@@ -482,6 +489,11 @@ class LRUCache final : public Cache {
         if (curr == nullptr) {
             return false;
         }
+
+        if (curr->deleter_ != nullptr) {
+            (*curr->deleter_)(curr->GetKey(), curr->GetValue());
+        }
+
         delete curr->key_;
         total_usage_ -= curr->charge_;
         size_--;
@@ -585,11 +597,12 @@ class ShareLRUCache final : public Cache {
      * @param charge The charge (size) of the item to insert.
      * @return A pointer to the inserted cache node.
      */
-    CacheResponse *Insert(const DataView &key, void *value,
-                          size_t charge) override {
+    CacheResponse *Insert(const DataView &key, void *value, size_t charge,
+                          void (*deleter)(const DataView &,
+                                          void *value)) override {
         uint32_t hash = support::MurmurHash::Hash(key.data(), key.size(), 0);
         return (CacheResponse *)m_caches[Shard(hash)].Insert(key, hash, value,
-                                                             charge);
+                                                             charge, deleter);
     }
 
     /**
