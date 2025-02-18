@@ -163,8 +163,6 @@ class LRUCache final : public Cache {
         delete inUsed_tail_;
     }
 
-    static LRUCache *Create(Config config) { return new LRUCache(config); }
-
     /**
      * @brief Inserts a new key-value pair into the cache.
      * @param key The key to insert.
@@ -586,10 +584,6 @@ class ShareLRUCache final : public Cache {
      */
     ~ShareLRUCache() { delete[] m_caches; }
 
-    static ShareLRUCache *Create(Config config) {
-        return new ShareLRUCache(config);
-    }
-
     /**
      * @brief Inserts a new key-value pair into the shared cache.
      * @param key The key to insert.
@@ -726,6 +720,13 @@ class ShareLRUCache final : public Cache {
 
     Config config_; ///< Configuration for the shared LRU cache.
 };
+
+inline LRUCache *NewLRUCache(LRUCache::Config config) {
+    return new LRUCache(config);
+}
+inline ShareLRUCache *NewShareLRUCache(ShareLRUCache::Config config) {
+    return new ShareLRUCache(config);
+}
 
 } // namespace tagfilterdb
 

@@ -17,7 +17,7 @@ void cache_example_v2() {
         ShareLRUCache::Config{.SHARECACHE_BIT = 2,
                               .SHARECACHE_N = 1 << 2,
                               .SHARECACHE_TOTAL_CHARGE = 1000};
-    Cache *cache = ShareLRUCache::Create(config);
+    Cache *cache = NewShareLRUCache(config);
 
     // Case 1: Insert a new key-value pair
     std::cout << "Case 1: Insert a new key - value pair" << std::endl;
@@ -43,8 +43,8 @@ void cache_example_v2() {
     std::cout << "Case 2: Insert another key-value pair" << std::endl;
     std::string svalue = "John Doe";
     DataView value(svalue);
-    CacheResponse *res = cache->Release(
-        cache->Insert(DataView("65123"), (void *)&value, value.size(), deleter));
+    CacheResponse *res = cache->Release(cache->Insert(
+        DataView("65123"), (void *)&value, value.size(), deleter));
     if (res != nullptr) {
         std::cout << "Found 65123: " << value.toString() << std::endl;
     }
