@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/tinsiriwid/tagfilterDB/include
+CXX_INCLUDES = -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include
 
 CXX_FLAGS = -g -O0 -std=gnu++17
 

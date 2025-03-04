@@ -69,31 +69,287 @@ include CMakeFiles/tagfilterdb.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/tagfilterdb.dir/flags.make
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
-CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp
-CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -MF CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o.d -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp
+CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o: /home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp
+CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o -MF CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o.d -o CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o -c /home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp > CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i
+CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp > CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.i
 
-CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s
+CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp -o CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/status.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/status.cpp.o: /home/tinsiriwid/tagfilterDB/util/status.cpp
+CMakeFiles/tagfilterdb.dir/util/status.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/tagfilterdb.dir/util/status.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/status.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/status.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/status.cpp.o -c /home/tinsiriwid/tagfilterDB/util/status.cpp
+
+CMakeFiles/tagfilterdb.dir/util/status.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/status.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/status.cpp > CMakeFiles/tagfilterdb.dir/util/status.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/status.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/status.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/status.cpp -o CMakeFiles/tagfilterdb.dir/util/status.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o: /home/tinsiriwid/tagfilterDB/util/filter_policy.cpp
+CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o -c /home/tinsiriwid/tagfilterDB/util/filter_policy.cpp
+
+CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/filter_policy.cpp > CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/filter_policy.cpp -o CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/coding.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/coding.cpp.o: /home/tinsiriwid/tagfilterDB/util/coding.cpp
+CMakeFiles/tagfilterdb.dir/util/coding.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/tagfilterdb.dir/util/coding.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/coding.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/coding.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/coding.cpp.o -c /home/tinsiriwid/tagfilterDB/util/coding.cpp
+
+CMakeFiles/tagfilterdb.dir/util/coding.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/coding.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/coding.cpp > CMakeFiles/tagfilterdb.dir/util/coding.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/coding.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/coding.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/coding.cpp -o CMakeFiles/tagfilterdb.dir/util/coding.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/hash.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/hash.cpp.o: /home/tinsiriwid/tagfilterDB/util/hash.cpp
+CMakeFiles/tagfilterdb.dir/util/hash.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/tagfilterdb.dir/util/hash.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/hash.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/hash.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/hash.cpp.o -c /home/tinsiriwid/tagfilterDB/util/hash.cpp
+
+CMakeFiles/tagfilterdb.dir/util/hash.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/hash.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/hash.cpp > CMakeFiles/tagfilterdb.dir/util/hash.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/hash.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/hash.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/hash.cpp -o CMakeFiles/tagfilterdb.dir/util/hash.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/env.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/env.cpp.o: /home/tinsiriwid/tagfilterDB/util/env.cpp
+CMakeFiles/tagfilterdb.dir/util/env.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/tagfilterdb.dir/util/env.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/env.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/env.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/env.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env.cpp
+
+CMakeFiles/tagfilterdb.dir/util/env.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/env.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/env.cpp > CMakeFiles/tagfilterdb.dir/util/env.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/env.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/env.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/env.cpp -o CMakeFiles/tagfilterdb.dir/util/env.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o: /home/tinsiriwid/tagfilterDB/util/env_posix.cpp
+CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env_posix.cpp
+
+CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/env_posix.cpp > CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/env_posix.cpp -o CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o: /home/tinsiriwid/tagfilterDB/util/bloom.cpp
+CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o -c /home/tinsiriwid/tagfilterDB/util/bloom.cpp
+
+CMakeFiles/tagfilterdb.dir/util/bloom.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/bloom.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/bloom.cpp > CMakeFiles/tagfilterdb.dir/util/bloom.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/bloom.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/bloom.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/bloom.cpp -o CMakeFiles/tagfilterdb.dir/util/bloom.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/logging.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/logging.cpp.o: /home/tinsiriwid/tagfilterDB/util/logging.cpp
+CMakeFiles/tagfilterdb.dir/util/logging.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/tagfilterdb.dir/util/logging.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/logging.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/logging.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/logging.cpp.o -c /home/tinsiriwid/tagfilterDB/util/logging.cpp
+
+CMakeFiles/tagfilterdb.dir/util/logging.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/logging.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/logging.cpp > CMakeFiles/tagfilterdb.dir/util/logging.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/logging.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/logging.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/logging.cpp -o CMakeFiles/tagfilterdb.dir/util/logging.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o: /home/tinsiriwid/tagfilterDB/util/testutil.cpp
+CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o -c /home/tinsiriwid/tagfilterDB/util/testutil.cpp
+
+CMakeFiles/tagfilterdb.dir/util/testutil.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/testutil.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/testutil.cpp > CMakeFiles/tagfilterdb.dir/util/testutil.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/testutil.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/testutil.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/testutil.cpp -o CMakeFiles/tagfilterdb.dir/util/testutil.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/arena.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/arena.cpp.o: /home/tinsiriwid/tagfilterDB/util/arena.cpp
+CMakeFiles/tagfilterdb.dir/util/arena.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/tagfilterdb.dir/util/arena.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/arena.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/arena.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/arena.cpp.o -c /home/tinsiriwid/tagfilterDB/util/arena.cpp
+
+CMakeFiles/tagfilterdb.dir/util/arena.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/arena.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/arena.cpp > CMakeFiles/tagfilterdb.dir/util/arena.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/arena.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/arena.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/arena.cpp -o CMakeFiles/tagfilterdb.dir/util/arena.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/cache.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/cache.cpp.o: /home/tinsiriwid/tagfilterDB/util/cache.cpp
+CMakeFiles/tagfilterdb.dir/util/cache.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/tagfilterdb.dir/util/cache.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/cache.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/cache.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/cache.cpp.o -c /home/tinsiriwid/tagfilterDB/util/cache.cpp
+
+CMakeFiles/tagfilterdb.dir/util/cache.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/cache.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/cache.cpp > CMakeFiles/tagfilterdb.dir/util/cache.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/cache.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/cache.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/cache.cpp -o CMakeFiles/tagfilterdb.dir/util/cache.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o: /home/tinsiriwid/tagfilterDB/util/histogram.cpp
+CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o -c /home/tinsiriwid/tagfilterDB/util/histogram.cpp
+
+CMakeFiles/tagfilterdb.dir/util/histogram.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/histogram.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/histogram.cpp > CMakeFiles/tagfilterdb.dir/util/histogram.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/histogram.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/histogram.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/histogram.cpp -o CMakeFiles/tagfilterdb.dir/util/histogram.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o: /home/tinsiriwid/tagfilterDB/util/crc32c.cpp
+CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o -c /home/tinsiriwid/tagfilterDB/util/crc32c.cpp
+
+CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/crc32c.cpp > CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/crc32c.cpp -o CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.s
+
+CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o: /home/tinsiriwid/tagfilterDB/util/comparator.cpp
+CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o -MF CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o.d -o CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o -c /home/tinsiriwid/tagfilterDB/util/comparator.cpp
+
+CMakeFiles/tagfilterdb.dir/util/comparator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/util/comparator.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/util/comparator.cpp > CMakeFiles/tagfilterdb.dir/util/comparator.cpp.i
+
+CMakeFiles/tagfilterdb.dir/util/comparator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/util/comparator.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/util/comparator.cpp -o CMakeFiles/tagfilterdb.dir/util/comparator.cpp.s
+
+CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o: /home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp
+CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o -MF CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o.d -o CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp
+
+CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp > CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.i
+
+CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp -o CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.s
+
+CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o: CMakeFiles/tagfilterdb.dir/flags.make
+CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o: /home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp
+CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o: CMakeFiles/tagfilterdb.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o -MF CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o.d -o CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp
+
+CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp > CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.i
+
+CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp -o CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.s
 
 # Object files for target tagfilterdb
 tagfilterdb_OBJECTS = \
-"CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
+"CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/status.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/coding.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/hash.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/env.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/logging.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/arena.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/cache.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o" \
+"CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o"
 
 # External object files for target tagfilterdb
 tagfilterdb_EXTERNAL_OBJECTS =
 
-libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/status.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/coding.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/hash.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/env.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/logging.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/arena.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/cache.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o
+libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o
 libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/build.make
 libtagfilterdb.a: CMakeFiles/tagfilterdb.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libtagfilterdb.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tinsiriwid/tagfilterDB/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Linking CXX static library libtagfilterdb.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/tagfilterdb.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tagfilterdb.dir/link.txt --verbose=$(VERBOSE)
 

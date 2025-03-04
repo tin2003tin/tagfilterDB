@@ -95,6 +95,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"gmock\" \"gtest\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/tinsiriwid/tagfilterDB/build/CMakeFiles /home/tinsiriwid/tagfilterDB/build//CMakeFiles/progress.marks
@@ -152,6 +197,191 @@ MyProject/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyProject.dir/build.make CMakeFiles/MyProject.dir/build
 .PHONY : MyProject/fast
 
+#=============================================================================
+# Target rules for targets named tagfilterdb_tests
+
+# Build rule for target.
+tagfilterdb_tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tagfilterdb_tests
+.PHONY : tagfilterdb_tests
+
+# fast build rule for target.
+tagfilterdb_tests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/build
+.PHONY : tagfilterdb_tests/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/googletest/googlemock/CMakeFiles/gmock.dir/build.make third_party/googletest/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/googletest/googlemock/CMakeFiles/gmock_main.dir/build.make third_party/googletest/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/googletest/googletest/CMakeFiles/gtest.dir/build.make third_party/googletest/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/googletest/googletest/CMakeFiles/gtest_main.dir/build.make third_party/googletest/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
+
+db/index/bounding_box.o: db/index/bounding_box.cpp.o
+.PHONY : db/index/bounding_box.o
+
+# target to build an object file
+db/index/bounding_box.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o
+.PHONY : db/index/bounding_box.cpp.o
+
+db/index/bounding_box.i: db/index/bounding_box.cpp.i
+.PHONY : db/index/bounding_box.i
+
+# target to preprocess a source file
+db/index/bounding_box.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.i
+.PHONY : db/index/bounding_box.cpp.i
+
+db/index/bounding_box.s: db/index/bounding_box.cpp.s
+.PHONY : db/index/bounding_box.s
+
+# target to generate assembly for a file
+db/index/bounding_box.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.s
+.PHONY : db/index/bounding_box.cpp.s
+
+db/index/bounding_box_test.o: db/index/bounding_box_test.cpp.o
+.PHONY : db/index/bounding_box_test.o
+
+# target to build an object file
+db/index/bounding_box_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/bounding_box_test.cpp.o
+.PHONY : db/index/bounding_box_test.cpp.o
+
+db/index/bounding_box_test.i: db/index/bounding_box_test.cpp.i
+.PHONY : db/index/bounding_box_test.i
+
+# target to preprocess a source file
+db/index/bounding_box_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/bounding_box_test.cpp.i
+.PHONY : db/index/bounding_box_test.cpp.i
+
+db/index/bounding_box_test.s: db/index/bounding_box_test.cpp.s
+.PHONY : db/index/bounding_box_test.s
+
+# target to generate assembly for a file
+db/index/bounding_box_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/bounding_box_test.cpp.s
+.PHONY : db/index/bounding_box_test.cpp.s
+
+db/index/r_tree.o: db/index/r_tree.cpp.o
+.PHONY : db/index/r_tree.o
+
+# target to build an object file
+db/index/r_tree.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o
+.PHONY : db/index/r_tree.cpp.o
+
+db/index/r_tree.i: db/index/r_tree.cpp.i
+.PHONY : db/index/r_tree.i
+
+# target to preprocess a source file
+db/index/r_tree.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.i
+.PHONY : db/index/r_tree.cpp.i
+
+db/index/r_tree.s: db/index/r_tree.cpp.s
+.PHONY : db/index/r_tree.s
+
+# target to generate assembly for a file
+db/index/r_tree.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.s
+.PHONY : db/index/r_tree.cpp.s
+
+db/index/r_tree_test.o: db/index/r_tree_test.cpp.o
+.PHONY : db/index/r_tree_test.o
+
+# target to build an object file
+db/index/r_tree_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/r_tree_test.cpp.o
+.PHONY : db/index/r_tree_test.cpp.o
+
+db/index/r_tree_test.i: db/index/r_tree_test.cpp.i
+.PHONY : db/index/r_tree_test.i
+
+# target to preprocess a source file
+db/index/r_tree_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/r_tree_test.cpp.i
+.PHONY : db/index/r_tree_test.cpp.i
+
+db/index/r_tree_test.s: db/index/r_tree_test.cpp.s
+.PHONY : db/index/r_tree_test.s
+
+# target to generate assembly for a file
+db/index/r_tree_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/db/index/r_tree_test.cpp.s
+.PHONY : db/index/r_tree_test.cpp.s
+
+helpers/memenv/memenv.o: helpers/memenv/memenv.cpp.o
+.PHONY : helpers/memenv/memenv.o
+
+# target to build an object file
+helpers/memenv/memenv.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o
+.PHONY : helpers/memenv/memenv.cpp.o
+
+helpers/memenv/memenv.i: helpers/memenv/memenv.cpp.i
+.PHONY : helpers/memenv/memenv.i
+
+# target to preprocess a source file
+helpers/memenv/memenv.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.i
+.PHONY : helpers/memenv/memenv.cpp.i
+
+helpers/memenv/memenv.s: helpers/memenv/memenv.cpp.s
+.PHONY : helpers/memenv/memenv.s
+
+# target to generate assembly for a file
+helpers/memenv/memenv.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.s
+.PHONY : helpers/memenv/memenv.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -176,29 +406,605 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyProject.dir/build.make CMakeFiles/MyProject.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-tagfilterdb/test.o: tagfilterdb/test.cpp.o
-.PHONY : tagfilterdb/test.o
+util/arena.o: util/arena.cpp.o
+.PHONY : util/arena.o
 
 # target to build an object file
-tagfilterdb/test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o
-.PHONY : tagfilterdb/test.cpp.o
+util/arena.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/arena.cpp.o
+.PHONY : util/arena.cpp.o
 
-tagfilterdb/test.i: tagfilterdb/test.cpp.i
-.PHONY : tagfilterdb/test.i
+util/arena.i: util/arena.cpp.i
+.PHONY : util/arena.i
 
 # target to preprocess a source file
-tagfilterdb/test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.i
-.PHONY : tagfilterdb/test.cpp.i
+util/arena.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/arena.cpp.i
+.PHONY : util/arena.cpp.i
 
-tagfilterdb/test.s: tagfilterdb/test.cpp.s
-.PHONY : tagfilterdb/test.s
+util/arena.s: util/arena.cpp.s
+.PHONY : util/arena.s
 
 # target to generate assembly for a file
-tagfilterdb/test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.s
-.PHONY : tagfilterdb/test.cpp.s
+util/arena.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/arena.cpp.s
+.PHONY : util/arena.cpp.s
+
+util/arena_test.o: util/arena_test.cpp.o
+.PHONY : util/arena_test.o
+
+# target to build an object file
+util/arena_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/arena_test.cpp.o
+.PHONY : util/arena_test.cpp.o
+
+util/arena_test.i: util/arena_test.cpp.i
+.PHONY : util/arena_test.i
+
+# target to preprocess a source file
+util/arena_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/arena_test.cpp.i
+.PHONY : util/arena_test.cpp.i
+
+util/arena_test.s: util/arena_test.cpp.s
+.PHONY : util/arena_test.s
+
+# target to generate assembly for a file
+util/arena_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/arena_test.cpp.s
+.PHONY : util/arena_test.cpp.s
+
+util/bloom.o: util/bloom.cpp.o
+.PHONY : util/bloom.o
+
+# target to build an object file
+util/bloom.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o
+.PHONY : util/bloom.cpp.o
+
+util/bloom.i: util/bloom.cpp.i
+.PHONY : util/bloom.i
+
+# target to preprocess a source file
+util/bloom.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/bloom.cpp.i
+.PHONY : util/bloom.cpp.i
+
+util/bloom.s: util/bloom.cpp.s
+.PHONY : util/bloom.s
+
+# target to generate assembly for a file
+util/bloom.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/bloom.cpp.s
+.PHONY : util/bloom.cpp.s
+
+util/bloom_test.o: util/bloom_test.cpp.o
+.PHONY : util/bloom_test.o
+
+# target to build an object file
+util/bloom_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/bloom_test.cpp.o
+.PHONY : util/bloom_test.cpp.o
+
+util/bloom_test.i: util/bloom_test.cpp.i
+.PHONY : util/bloom_test.i
+
+# target to preprocess a source file
+util/bloom_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/bloom_test.cpp.i
+.PHONY : util/bloom_test.cpp.i
+
+util/bloom_test.s: util/bloom_test.cpp.s
+.PHONY : util/bloom_test.s
+
+# target to generate assembly for a file
+util/bloom_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/bloom_test.cpp.s
+.PHONY : util/bloom_test.cpp.s
+
+util/cache.o: util/cache.cpp.o
+.PHONY : util/cache.o
+
+# target to build an object file
+util/cache.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/cache.cpp.o
+.PHONY : util/cache.cpp.o
+
+util/cache.i: util/cache.cpp.i
+.PHONY : util/cache.i
+
+# target to preprocess a source file
+util/cache.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/cache.cpp.i
+.PHONY : util/cache.cpp.i
+
+util/cache.s: util/cache.cpp.s
+.PHONY : util/cache.s
+
+# target to generate assembly for a file
+util/cache.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/cache.cpp.s
+.PHONY : util/cache.cpp.s
+
+util/cache_test.o: util/cache_test.cpp.o
+.PHONY : util/cache_test.o
+
+# target to build an object file
+util/cache_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/cache_test.cpp.o
+.PHONY : util/cache_test.cpp.o
+
+util/cache_test.i: util/cache_test.cpp.i
+.PHONY : util/cache_test.i
+
+# target to preprocess a source file
+util/cache_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/cache_test.cpp.i
+.PHONY : util/cache_test.cpp.i
+
+util/cache_test.s: util/cache_test.cpp.s
+.PHONY : util/cache_test.s
+
+# target to generate assembly for a file
+util/cache_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/cache_test.cpp.s
+.PHONY : util/cache_test.cpp.s
+
+util/coding.o: util/coding.cpp.o
+.PHONY : util/coding.o
+
+# target to build an object file
+util/coding.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/coding.cpp.o
+.PHONY : util/coding.cpp.o
+
+util/coding.i: util/coding.cpp.i
+.PHONY : util/coding.i
+
+# target to preprocess a source file
+util/coding.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/coding.cpp.i
+.PHONY : util/coding.cpp.i
+
+util/coding.s: util/coding.cpp.s
+.PHONY : util/coding.s
+
+# target to generate assembly for a file
+util/coding.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/coding.cpp.s
+.PHONY : util/coding.cpp.s
+
+util/coding_test.o: util/coding_test.cpp.o
+.PHONY : util/coding_test.o
+
+# target to build an object file
+util/coding_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/coding_test.cpp.o
+.PHONY : util/coding_test.cpp.o
+
+util/coding_test.i: util/coding_test.cpp.i
+.PHONY : util/coding_test.i
+
+# target to preprocess a source file
+util/coding_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/coding_test.cpp.i
+.PHONY : util/coding_test.cpp.i
+
+util/coding_test.s: util/coding_test.cpp.s
+.PHONY : util/coding_test.s
+
+# target to generate assembly for a file
+util/coding_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/coding_test.cpp.s
+.PHONY : util/coding_test.cpp.s
+
+util/comparator.o: util/comparator.cpp.o
+.PHONY : util/comparator.o
+
+# target to build an object file
+util/comparator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o
+.PHONY : util/comparator.cpp.o
+
+util/comparator.i: util/comparator.cpp.i
+.PHONY : util/comparator.i
+
+# target to preprocess a source file
+util/comparator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/comparator.cpp.i
+.PHONY : util/comparator.cpp.i
+
+util/comparator.s: util/comparator.cpp.s
+.PHONY : util/comparator.s
+
+# target to generate assembly for a file
+util/comparator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/comparator.cpp.s
+.PHONY : util/comparator.cpp.s
+
+util/crc32c.o: util/crc32c.cpp.o
+.PHONY : util/crc32c.o
+
+# target to build an object file
+util/crc32c.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o
+.PHONY : util/crc32c.cpp.o
+
+util/crc32c.i: util/crc32c.cpp.i
+.PHONY : util/crc32c.i
+
+# target to preprocess a source file
+util/crc32c.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.i
+.PHONY : util/crc32c.cpp.i
+
+util/crc32c.s: util/crc32c.cpp.s
+.PHONY : util/crc32c.s
+
+# target to generate assembly for a file
+util/crc32c.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.s
+.PHONY : util/crc32c.cpp.s
+
+util/crc32c_test.o: util/crc32c_test.cpp.o
+.PHONY : util/crc32c_test.o
+
+# target to build an object file
+util/crc32c_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/crc32c_test.cpp.o
+.PHONY : util/crc32c_test.cpp.o
+
+util/crc32c_test.i: util/crc32c_test.cpp.i
+.PHONY : util/crc32c_test.i
+
+# target to preprocess a source file
+util/crc32c_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/crc32c_test.cpp.i
+.PHONY : util/crc32c_test.cpp.i
+
+util/crc32c_test.s: util/crc32c_test.cpp.s
+.PHONY : util/crc32c_test.s
+
+# target to generate assembly for a file
+util/crc32c_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/crc32c_test.cpp.s
+.PHONY : util/crc32c_test.cpp.s
+
+util/env.o: util/env.cpp.o
+.PHONY : util/env.o
+
+# target to build an object file
+util/env.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env.cpp.o
+.PHONY : util/env.cpp.o
+
+util/env.i: util/env.cpp.i
+.PHONY : util/env.i
+
+# target to preprocess a source file
+util/env.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env.cpp.i
+.PHONY : util/env.cpp.i
+
+util/env.s: util/env.cpp.s
+.PHONY : util/env.s
+
+# target to generate assembly for a file
+util/env.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env.cpp.s
+.PHONY : util/env.cpp.s
+
+util/env_posix.o: util/env_posix.cpp.o
+.PHONY : util/env_posix.o
+
+# target to build an object file
+util/env_posix.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o
+.PHONY : util/env_posix.cpp.o
+
+util/env_posix.i: util/env_posix.cpp.i
+.PHONY : util/env_posix.i
+
+# target to preprocess a source file
+util/env_posix.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.i
+.PHONY : util/env_posix.cpp.i
+
+util/env_posix.s: util/env_posix.cpp.s
+.PHONY : util/env_posix.s
+
+# target to generate assembly for a file
+util/env_posix.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.s
+.PHONY : util/env_posix.cpp.s
+
+util/env_posix_test.o: util/env_posix_test.cpp.o
+.PHONY : util/env_posix_test.o
+
+# target to build an object file
+util/env_posix_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_posix_test.cpp.o
+.PHONY : util/env_posix_test.cpp.o
+
+util/env_posix_test.i: util/env_posix_test.cpp.i
+.PHONY : util/env_posix_test.i
+
+# target to preprocess a source file
+util/env_posix_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_posix_test.cpp.i
+.PHONY : util/env_posix_test.cpp.i
+
+util/env_posix_test.s: util/env_posix_test.cpp.s
+.PHONY : util/env_posix_test.s
+
+# target to generate assembly for a file
+util/env_posix_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_posix_test.cpp.s
+.PHONY : util/env_posix_test.cpp.s
+
+util/env_test.o: util/env_test.cpp.o
+.PHONY : util/env_test.o
+
+# target to build an object file
+util/env_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_test.cpp.o
+.PHONY : util/env_test.cpp.o
+
+util/env_test.i: util/env_test.cpp.i
+.PHONY : util/env_test.i
+
+# target to preprocess a source file
+util/env_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_test.cpp.i
+.PHONY : util/env_test.cpp.i
+
+util/env_test.s: util/env_test.cpp.s
+.PHONY : util/env_test.s
+
+# target to generate assembly for a file
+util/env_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/env_test.cpp.s
+.PHONY : util/env_test.cpp.s
+
+util/filter_policy.o: util/filter_policy.cpp.o
+.PHONY : util/filter_policy.o
+
+# target to build an object file
+util/filter_policy.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o
+.PHONY : util/filter_policy.cpp.o
+
+util/filter_policy.i: util/filter_policy.cpp.i
+.PHONY : util/filter_policy.i
+
+# target to preprocess a source file
+util/filter_policy.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.i
+.PHONY : util/filter_policy.cpp.i
+
+util/filter_policy.s: util/filter_policy.cpp.s
+.PHONY : util/filter_policy.s
+
+# target to generate assembly for a file
+util/filter_policy.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.s
+.PHONY : util/filter_policy.cpp.s
+
+util/hash.o: util/hash.cpp.o
+.PHONY : util/hash.o
+
+# target to build an object file
+util/hash.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/hash.cpp.o
+.PHONY : util/hash.cpp.o
+
+util/hash.i: util/hash.cpp.i
+.PHONY : util/hash.i
+
+# target to preprocess a source file
+util/hash.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/hash.cpp.i
+.PHONY : util/hash.cpp.i
+
+util/hash.s: util/hash.cpp.s
+.PHONY : util/hash.s
+
+# target to generate assembly for a file
+util/hash.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/hash.cpp.s
+.PHONY : util/hash.cpp.s
+
+util/hash_test.o: util/hash_test.cpp.o
+.PHONY : util/hash_test.o
+
+# target to build an object file
+util/hash_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/hash_test.cpp.o
+.PHONY : util/hash_test.cpp.o
+
+util/hash_test.i: util/hash_test.cpp.i
+.PHONY : util/hash_test.i
+
+# target to preprocess a source file
+util/hash_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/hash_test.cpp.i
+.PHONY : util/hash_test.cpp.i
+
+util/hash_test.s: util/hash_test.cpp.s
+.PHONY : util/hash_test.s
+
+# target to generate assembly for a file
+util/hash_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/hash_test.cpp.s
+.PHONY : util/hash_test.cpp.s
+
+util/histogram.o: util/histogram.cpp.o
+.PHONY : util/histogram.o
+
+# target to build an object file
+util/histogram.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o
+.PHONY : util/histogram.cpp.o
+
+util/histogram.i: util/histogram.cpp.i
+.PHONY : util/histogram.i
+
+# target to preprocess a source file
+util/histogram.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/histogram.cpp.i
+.PHONY : util/histogram.cpp.i
+
+util/histogram.s: util/histogram.cpp.s
+.PHONY : util/histogram.s
+
+# target to generate assembly for a file
+util/histogram.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/histogram.cpp.s
+.PHONY : util/histogram.cpp.s
+
+util/logging.o: util/logging.cpp.o
+.PHONY : util/logging.o
+
+# target to build an object file
+util/logging.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/logging.cpp.o
+.PHONY : util/logging.cpp.o
+
+util/logging.i: util/logging.cpp.i
+.PHONY : util/logging.i
+
+# target to preprocess a source file
+util/logging.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/logging.cpp.i
+.PHONY : util/logging.cpp.i
+
+util/logging.s: util/logging.cpp.s
+.PHONY : util/logging.s
+
+# target to generate assembly for a file
+util/logging.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/logging.cpp.s
+.PHONY : util/logging.cpp.s
+
+util/logging_test.o: util/logging_test.cpp.o
+.PHONY : util/logging_test.o
+
+# target to build an object file
+util/logging_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/logging_test.cpp.o
+.PHONY : util/logging_test.cpp.o
+
+util/logging_test.i: util/logging_test.cpp.i
+.PHONY : util/logging_test.i
+
+# target to preprocess a source file
+util/logging_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/logging_test.cpp.i
+.PHONY : util/logging_test.cpp.i
+
+util/logging_test.s: util/logging_test.cpp.s
+.PHONY : util/logging_test.s
+
+# target to generate assembly for a file
+util/logging_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/logging_test.cpp.s
+.PHONY : util/logging_test.cpp.s
+
+util/no_destructor_test.o: util/no_destructor_test.cpp.o
+.PHONY : util/no_destructor_test.o
+
+# target to build an object file
+util/no_destructor_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/no_destructor_test.cpp.o
+.PHONY : util/no_destructor_test.cpp.o
+
+util/no_destructor_test.i: util/no_destructor_test.cpp.i
+.PHONY : util/no_destructor_test.i
+
+# target to preprocess a source file
+util/no_destructor_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/no_destructor_test.cpp.i
+.PHONY : util/no_destructor_test.cpp.i
+
+util/no_destructor_test.s: util/no_destructor_test.cpp.s
+.PHONY : util/no_destructor_test.s
+
+# target to generate assembly for a file
+util/no_destructor_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/no_destructor_test.cpp.s
+.PHONY : util/no_destructor_test.cpp.s
+
+util/status.o: util/status.cpp.o
+.PHONY : util/status.o
+
+# target to build an object file
+util/status.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/status.cpp.o
+.PHONY : util/status.cpp.o
+
+util/status.i: util/status.cpp.i
+.PHONY : util/status.i
+
+# target to preprocess a source file
+util/status.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/status.cpp.i
+.PHONY : util/status.cpp.i
+
+util/status.s: util/status.cpp.s
+.PHONY : util/status.s
+
+# target to generate assembly for a file
+util/status.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/status.cpp.s
+.PHONY : util/status.cpp.s
+
+util/status_test.o: util/status_test.cpp.o
+.PHONY : util/status_test.o
+
+# target to build an object file
+util/status_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/status_test.cpp.o
+.PHONY : util/status_test.cpp.o
+
+util/status_test.i: util/status_test.cpp.i
+.PHONY : util/status_test.i
+
+# target to preprocess a source file
+util/status_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/status_test.cpp.i
+.PHONY : util/status_test.cpp.i
+
+util/status_test.s: util/status_test.cpp.s
+.PHONY : util/status_test.s
+
+# target to generate assembly for a file
+util/status_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb_tests.dir/build.make CMakeFiles/tagfilterdb_tests.dir/util/status_test.cpp.s
+.PHONY : util/status_test.cpp.s
+
+util/testutil.o: util/testutil.cpp.o
+.PHONY : util/testutil.o
+
+# target to build an object file
+util/testutil.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o
+.PHONY : util/testutil.cpp.o
+
+util/testutil.i: util/testutil.cpp.i
+.PHONY : util/testutil.i
+
+# target to preprocess a source file
+util/testutil.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/testutil.cpp.i
+.PHONY : util/testutil.cpp.i
+
+util/testutil.s: util/testutil.cpp.s
+.PHONY : util/testutil.s
+
+# target to generate assembly for a file
+util/testutil.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tagfilterdb.dir/build.make CMakeFiles/tagfilterdb.dir/util/testutil.cpp.s
+.PHONY : util/testutil.cpp.s
 
 # Help Target
 help:
@@ -207,16 +1013,112 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... MyProject"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
 	@echo "... tagfilterdb"
+	@echo "... tagfilterdb_tests"
+	@echo "... db/index/bounding_box.o"
+	@echo "... db/index/bounding_box.i"
+	@echo "... db/index/bounding_box.s"
+	@echo "... db/index/bounding_box_test.o"
+	@echo "... db/index/bounding_box_test.i"
+	@echo "... db/index/bounding_box_test.s"
+	@echo "... db/index/r_tree.o"
+	@echo "... db/index/r_tree.i"
+	@echo "... db/index/r_tree.s"
+	@echo "... db/index/r_tree_test.o"
+	@echo "... db/index/r_tree_test.i"
+	@echo "... db/index/r_tree_test.s"
+	@echo "... helpers/memenv/memenv.o"
+	@echo "... helpers/memenv/memenv.i"
+	@echo "... helpers/memenv/memenv.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... tagfilterdb/test.o"
-	@echo "... tagfilterdb/test.i"
-	@echo "... tagfilterdb/test.s"
+	@echo "... util/arena.o"
+	@echo "... util/arena.i"
+	@echo "... util/arena.s"
+	@echo "... util/arena_test.o"
+	@echo "... util/arena_test.i"
+	@echo "... util/arena_test.s"
+	@echo "... util/bloom.o"
+	@echo "... util/bloom.i"
+	@echo "... util/bloom.s"
+	@echo "... util/bloom_test.o"
+	@echo "... util/bloom_test.i"
+	@echo "... util/bloom_test.s"
+	@echo "... util/cache.o"
+	@echo "... util/cache.i"
+	@echo "... util/cache.s"
+	@echo "... util/cache_test.o"
+	@echo "... util/cache_test.i"
+	@echo "... util/cache_test.s"
+	@echo "... util/coding.o"
+	@echo "... util/coding.i"
+	@echo "... util/coding.s"
+	@echo "... util/coding_test.o"
+	@echo "... util/coding_test.i"
+	@echo "... util/coding_test.s"
+	@echo "... util/comparator.o"
+	@echo "... util/comparator.i"
+	@echo "... util/comparator.s"
+	@echo "... util/crc32c.o"
+	@echo "... util/crc32c.i"
+	@echo "... util/crc32c.s"
+	@echo "... util/crc32c_test.o"
+	@echo "... util/crc32c_test.i"
+	@echo "... util/crc32c_test.s"
+	@echo "... util/env.o"
+	@echo "... util/env.i"
+	@echo "... util/env.s"
+	@echo "... util/env_posix.o"
+	@echo "... util/env_posix.i"
+	@echo "... util/env_posix.s"
+	@echo "... util/env_posix_test.o"
+	@echo "... util/env_posix_test.i"
+	@echo "... util/env_posix_test.s"
+	@echo "... util/env_test.o"
+	@echo "... util/env_test.i"
+	@echo "... util/env_test.s"
+	@echo "... util/filter_policy.o"
+	@echo "... util/filter_policy.i"
+	@echo "... util/filter_policy.s"
+	@echo "... util/hash.o"
+	@echo "... util/hash.i"
+	@echo "... util/hash.s"
+	@echo "... util/hash_test.o"
+	@echo "... util/hash_test.i"
+	@echo "... util/hash_test.s"
+	@echo "... util/histogram.o"
+	@echo "... util/histogram.i"
+	@echo "... util/histogram.s"
+	@echo "... util/logging.o"
+	@echo "... util/logging.i"
+	@echo "... util/logging.s"
+	@echo "... util/logging_test.o"
+	@echo "... util/logging_test.i"
+	@echo "... util/logging_test.s"
+	@echo "... util/no_destructor_test.o"
+	@echo "... util/no_destructor_test.i"
+	@echo "... util/no_destructor_test.s"
+	@echo "... util/status.o"
+	@echo "... util/status.i"
+	@echo "... util/status.s"
+	@echo "... util/status_test.o"
+	@echo "... util/status_test.i"
+	@echo "... util/status_test.s"
+	@echo "... util/testutil.o"
+	@echo "... util/testutil.i"
+	@echo "... util/testutil.s"
 .PHONY : help
 
 

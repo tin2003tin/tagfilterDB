@@ -1,14 +1,212 @@
 [
 {
   "directory": "/home/tinsiriwid/tagfilterDB/build",
-  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o -c /home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp",
-  "file": "/home/tinsiriwid/tagfilterDB/tagfilterdb/test.cpp",
-  "output": "CMakeFiles/tagfilterdb.dir/tagfilterdb/test.cpp.o"
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o -c /home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/helpers/memenv/memenv.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/helpers/memenv/memenv.cpp.o"
 },
 {
   "directory": "/home/tinsiriwid/tagfilterDB/build",
-  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/MyProject.dir/src/main.cpp.o -c /home/tinsiriwid/tagfilterDB/src/main.cpp",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/status.cpp.o -c /home/tinsiriwid/tagfilterDB/util/status.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/status.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/status.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o -c /home/tinsiriwid/tagfilterDB/util/filter_policy.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/filter_policy.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/filter_policy.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/coding.cpp.o -c /home/tinsiriwid/tagfilterDB/util/coding.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/coding.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/coding.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/hash.cpp.o -c /home/tinsiriwid/tagfilterDB/util/hash.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/hash.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/hash.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/env.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/env.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/env.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env_posix.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/env_posix.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/env_posix.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o -c /home/tinsiriwid/tagfilterDB/util/bloom.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/bloom.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/bloom.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/logging.cpp.o -c /home/tinsiriwid/tagfilterDB/util/logging.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/logging.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/logging.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o -c /home/tinsiriwid/tagfilterDB/util/testutil.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/testutil.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/testutil.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/arena.cpp.o -c /home/tinsiriwid/tagfilterDB/util/arena.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/arena.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/arena.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/cache.cpp.o -c /home/tinsiriwid/tagfilterDB/util/cache.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/cache.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/cache.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o -c /home/tinsiriwid/tagfilterDB/util/histogram.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/histogram.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/histogram.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o -c /home/tinsiriwid/tagfilterDB/util/crc32c.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/crc32c.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/crc32c.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o -c /home/tinsiriwid/tagfilterDB/util/comparator.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/comparator.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/util/comparator.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/db/index/bounding_box.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/db/index/bounding_box.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++ -DTAGFILTERDB_COMPILE_LIBRARY -DTAGFILTERDB_PLATFORM_POSIX=1 -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/db/index/r_tree.cpp",
+  "output": "CMakeFiles/tagfilterdb.dir/db/index/r_tree.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/include -g -O0 -std=gnu++17 -o CMakeFiles/MyProject.dir/src/main.cpp.o -c /home/tinsiriwid/tagfilterDB/src/main.cpp",
   "file": "/home/tinsiriwid/tagfilterDB/src/main.cpp",
   "output": "CMakeFiles/MyProject.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/status_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/status_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/status_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/status_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/coding_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/coding_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/coding_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/coding_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/hash_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/hash_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/hash_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/hash_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/logging_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/logging_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/logging_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/logging_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/arena_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/arena_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/arena_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/arena_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/crc32c_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/crc32c_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/crc32c_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/crc32c_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/no_destructor_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/no_destructor_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/no_destructor_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/no_destructor_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/bloom_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/bloom_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/bloom_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/bloom_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/cache_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/cache_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/cache_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/cache_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/env_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/env_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/env_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/util/env_posix_test.cpp.o -c /home/tinsiriwid/tagfilterDB/util/env_posix_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/util/env_posix_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/util/env_posix_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/db/index/bounding_box_test.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/bounding_box_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/db/index/bounding_box_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/db/index/bounding_box_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/include -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=gnu++17 -o CMakeFiles/tagfilterdb_tests.dir/db/index/r_tree_test.cpp.o -c /home/tinsiriwid/tagfilterDB/db/index/r_tree_test.cpp",
+  "file": "/home/tinsiriwid/tagfilterDB/db/index/r_tree_test.cpp",
+  "output": "CMakeFiles/tagfilterdb_tests.dir/db/index/r_tree_test.cpp.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build/third_party/googletest/googlemock",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -I/home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=c++17 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-missing-field-initializers -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/src/gmock-all.cc",
+  "file": "/home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/src/gmock-all.cc",
+  "output": "third_party/googletest/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build/third_party/googletest/googlemock",
+  "command": "/usr/bin/c++  -isystem /home/tinsiriwid/tagfilterDB/build/include -isystem /home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=c++17 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/src/gmock_main.cc",
+  "file": "/home/tinsiriwid/tagfilterDB/third_party/googletest/googlemock/src/gmock_main.cc",
+  "output": "third_party/googletest/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build/third_party/googletest/googletest",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -I/home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -I/home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=c++17 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-missing-field-initializers -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/src/gtest-all.cc",
+  "file": "/home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/src/gtest-all.cc",
+  "output": "third_party/googletest/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/home/tinsiriwid/tagfilterDB/build/third_party/googletest/googletest",
+  "command": "/usr/bin/c++  -I/home/tinsiriwid/tagfilterDB/build/include -I/home/tinsiriwid/tagfilterDB/. -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/include -isystem /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest -g -O0 -std=c++17 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/src/gtest_main.cc",
+  "file": "/home/tinsiriwid/tagfilterDB/third_party/googletest/googletest/src/gtest_main.cc",
+  "output": "third_party/googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
 }
 ]

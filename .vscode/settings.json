@@ -84,6 +84,7 @@
         "cassert": "cpp"
     },
     "cSpell.words": [
-        "Bytewise"
+        "Bytewise",
+        "sstable"
     ]
 }

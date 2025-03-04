@@ -1,135 +1,123 @@
-#ifndef TAGFILTERDB_DATAVIEW_H
-#define TAGFILTERDB_DATAVIEW_H
+// Copyright (c) 2025-present, tin2003tin, User
+//   This source code is part of [TagfilterDB]
+//   (https://github.com/tin2003tin/tagfilterDB)
+//
+// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file. See the AUTHORS file for names of contributors.
+//
+// DataView is a simple structure containing a pointer into some external
+// storage and a size.  The user of a DataView must ensure that the DataView
+// is not used after the corresponding external storage has been
+// deallocated.
+//
+// Multiple threads can invoke const methods on a DataView without
+// external synchronization, but if any of the threads may call a
+// non-const method, all threads accessing the same DataView must use
+// external synchronization.
 
-#include "arena.h"
-#include "murmurHash.h"
+#ifndef STORAGE_TAGFILTERDB_INCLUDE_DataView_H_
+#define STORAGE_TAGFILTERDB_INCLUDE_DataView_H_
+
+#include <cassert>
+#include <cstddef>
 #include <cstring>
-#include <memory>
 #include <string>
+
+#include "tagfilterdb/export.h"
 
 namespace tagfilterdb {
 
-class DataView {
+class TAGFILTERDB_EXPORT DataView {
   public:
-    const char *data_; // Pointer to the data
-    size_t size_;      // Size of the data
+    // Create an empty DataView.
+    DataView() : data_(""), size_(0) {}
 
-    DataView() : data_(nullptr), size_(0) {}
+    // Create a DataView that refers to d[0,n-1].
+    DataView(const char *d, size_t n) : data_(d), size_(n) {}
 
-    DataView(const char *d, size_t s) : data_(d), size_(s) {}
-
+    // Create a DataView that refers to the contents of "s"
     DataView(const std::string &s) : data_(s.data()), size_(s.size()) {}
 
-    DataView(const char *d, size_t s, Arena *arena) : data_(d), size_(s) {
-        Align(arena);
-    }
+    // Create a DataView that refers to s[0,strlen(s)-1]
+    DataView(const char *s) : data_(s), size_(strlen(s)) {}
 
-    std::string ToString() const { return std::string(data_, size_); }
+    // Intentionally copyable.
+    DataView(const DataView &) = default;
+    DataView &operator=(const DataView &) = default;
 
-    void Align(Arena *arena) {
-        char *memory = arena->AllocateAligned(size_);
-        if (!memory) {
-            return;
-        }
-
-        std::memcpy(memory, data_, size_);
-        delete[] data_; // This is incorrect because `data_` may not be
-                        // dynamically allocated
-        data_ = memory;
-    }
-
-    const char &operator[](size_t idx) const { return data_[idx]; }
-
-    bool operator==(const DataView &other) const {
-        return size_ == other.size_ &&
-               std::memcmp(data_, other.data_, size_) == 0;
-    }
-
-    bool operator!=(const DataView &other) const { return !(*this == other); }
-
-    bool operator<(const DataView &b) const {
-        size_t min_len = (size_ < b.size_) ? size_ : b.size_;
-        int r = std::memcmp(data_, b.data_, min_len);
-        if (r == 0) {
-            return size_ < b.size_;
-        }
-        return r < 0;
-    }
-
-    bool operator>(const DataView &b) const { return b < *this; }
-
-    bool operator<=(const DataView &b) const { return !(b < *this); }
-
-    bool operator>=(const DataView &b) const { return !(*this < b); }
-
-    bool starts_with(const DataView &x) const {
-        return ((size_ >= x.size_) &&
-                (std::memcmp(data_, x.data_, x.size_) == 0));
-    }
-
-    std::size_t ComputeChecksum() const {
-        return (data_ && size_ > 0) ? support::MurmurHash::Hash(data_, size_, 0)
-                                    : 0;
-    }
-
-    int compare(const DataView &b) const {
-        const size_t min_len = (size_ < b.size_) ? size_ : b.size_;
-        int r = memcmp(data_, b.data_, min_len);
-        if (r == 0) {
-            if (size_ < b.size_)
-                r = -1;
-            else if (size_ > b.size_)
-                r = +1;
-        }
-        return r;
-    }
-
-    size_t size() const { return size_; }
-
+    // Return a pointer to the beginning of the referenced data
     const char *data() const { return data_; }
 
-    std::string toString() const { return std::string(data_, size_); }
-};
+    // Return the length (in bytes) of the referenced data
+    size_t size() const { return size_; }
 
-// Block Address
-using PageIDType = long;
-using OffsetType = int;
+    // Return true iff the length of the referenced data is zero
+    bool empty() const { return size_ == 0; }
 
-struct BlockAddress {
-    PageIDType pageID;
-    OffsetType offset;
+    const char *begin() const { return data(); }
+    const char *end() const { return data() + size(); }
 
-    bool isSigned() const { return pageID > 0; }
-
-    bool operator==(const BlockAddress &other) const {
-        return pageID == other.pageID && offset == other.offset;
+    // Return the ith byte in the referenced data.
+    // REQUIRES: n < size()
+    char operator[](size_t n) const {
+        assert(n < size());
+        return data_[n];
     }
 
-    bool operator!=(const BlockAddress &other) const {
-        return !(*this == other);
+    // Change this DataView to refer to an empty array
+    void clear() {
+        data_ = "";
+        size_ = 0;
     }
+
+    // Drop the first "n" bytes from this DataView.
+    void remove_prefix(size_t n) {
+        assert(n <= size());
+        data_ += n;
+        size_ -= n;
+    }
+
+    // Return a string that contains the copy of the referenced data.
+    std::string ToString() const { return std::string(data_, size_); }
+
+    // Three-way comparison.  Returns value:
+    //   <  0 iff "*this" <  "b",
+    //   == 0 iff "*this" == "b",
+    //   >  0 iff "*this" >  "b"
+    int compare(const DataView &b) const;
+
+    // Return true iff "x" is a prefix of "*this"
+    bool starts_with(const DataView &x) const {
+        return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
+    }
+
+  private:
+    const char *data_;
+    size_t size_;
 };
 
-// Signable Data
-struct SignableData {
-    DataView data;
-    BlockAddress addr;
+inline bool operator==(const DataView &x, const DataView &y) {
+    return ((x.size() == y.size()) &&
+            (memcmp(x.data(), y.data(), x.size()) == 0));
+}
 
-    SignableData(DataView aData, BlockAddress aAddr)
-        : data(aData), addr(aAddr) {}
+inline bool operator!=(const DataView &x, const DataView &y) {
+    return !(x == y);
+}
 
-    SignableData() : data(), addr(BlockAddress{0, 0}) {}
-
-    bool IsSigned() const { return addr.pageID == 0; }
-};
-
-// Adjust Data
-struct AdjustData {
-    DataView sdata;
-    BlockAddress oldAddr;
-    BlockAddress newAddr;
-};
+inline int DataView::compare(const DataView &b) const {
+    const size_t min_len = (size_ < b.size_) ? size_ : b.size_;
+    int r = memcmp(data_, b.data_, min_len);
+    if (r == 0) {
+        if (size_ < b.size_)
+            r = -1;
+        else if (size_ > b.size_)
+            r = +1;
+    }
+    return r;
+}
 
 } // namespace tagfilterdb
 
-#endif
+#endif // STORAGE_TAGFILTERDB_INCLUDE_DataView_H_

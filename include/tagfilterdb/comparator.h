@@ -1,77 +1,68 @@
-#ifndef TAGFILTER_COMPARATOR_H
-#define TAGFILTER_COMPARATOR_H
+// Copyright (c) 2025-present, tin2003tin, User
+//   This source code is part of [TagfilterDB]
+//   (https://github.com/tin2003tin/tagfilterDB)
+//
+// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file. See the AUTHORS file for names of contributors.
+
+#ifndef STORAGE_TAGFILTERDB_INCLUDE_COMPARATOR_H_
+#define STORAGE_TAGFILTERDB_INCLUDE_COMPARATOR_H_
 
 #include <string>
-#include <memory>
-#include "dataView.h"
-#include "no_destructor.h"
+
+#include "tagfilterdb/export.h"
 
 namespace tagfilterdb {
-    class DataView;
 
-    class Comparator {
-        public :
-        virtual ~Comparator() = default;
+class DataView;
 
-        virtual int Compare(const DataView& a, const DataView& b) const = 0;
+// A Comparator object provides a total order across DataViews that are
+// used as keys in an sstable or a database.  A Comparator implementation
+// must be thread-safe since tagfilterdb may invoke its methods concurrently
+// from multiple threads.
+class TAGFILTERDB_EXPORT Comparator {
+  public:
+    virtual ~Comparator();
 
-        virtual std::string Name() const = 0;
+    // Three-way comparison.  Returns value:
+    //   < 0 iff "a" < "b",
+    //   == 0 iff "a" == "b",
+    //   > 0 iff "a" > "b"
+    virtual int Compare(const DataView &a, const DataView &b) const = 0;
 
-        virtual void FindShortSuccessor(std::string* key) const = 0;
+    // The name of the comparator.  Used to check for comparator
+    // mismatches (i.e., a DB created with one comparator is
+    // accessed using a different comparator.
+    //
+    // The client of this package should switch to a new name whenever
+    // the comparator implementation changes in a way that will cause
+    // the relative ordering of any two keys to change.
+    //
+    // Names starting with "tagfilterdb." are reserved and should not be used
+    // by any clients of this package.
+    virtual const char *Name() const = 0;
 
-        virtual void FindShortestSeparator(std::string* start, const DataView& limit) const = 0;
-    };
+    // Advanced functions: these are used to reduce the space requirements
+    // for internal data structures like index blocks.
 
-    class BytewiseComparatorImpl : public Comparator {
-        public:
-        BytewiseComparatorImpl() = default;
-      
-        std::string Name() const override { return "tagfilterdb.BytewiseComparator"; }
+    // If *start < limit, changes *start to a short string in [start,limit).
+    // Simple comparator implementations may return with *start unchanged,
+    // i.e., an implementation of this method that does nothing is correct.
+    virtual void FindShortestSeparator(std::string *start,
+                                       const DataView &limit) const = 0;
 
-        int Compare(const DataView& a, const DataView& b) const override {
-            return a.compare(b);
-        }
+    // Changes *key to a short string >= *key.
+    // Simple comparator implementations may return with *key unchanged,
+    // i.e., an implementation of this method that does nothing is correct.
+    virtual void FindShortSuccessor(std::string *key) const = 0;
+};
 
-        void FindShortSuccessor(std::string* key) const override { 
-            size_t n = key->size();
-            for (size_t i = 0; i < n; i++) {
-              const uint8_t byte = (*key)[i];
-              if (byte != static_cast<uint8_t>(0xff)) {
-                (*key)[i] = byte + 1;
-                key->resize(i + 1);
-                return;
-              }
-            }
-        }
+// Return a builtin comparator that uses lexicographic byte-wise
+// ordering.  The result remains the property of this module and
+// must not be deleted.
+TAGFILTERDB_EXPORT const Comparator *BytewiseComparator();
 
-        void FindShortestSeparator(std::string* start,
-                             const DataView& limit) const override {
-            // Find length of common prefix
-            size_t min_length = std::min(start->size(), limit.size());
-            size_t diff_index = 0;
-            while ((diff_index < min_length) &&
-                ((*start)[diff_index] == limit[diff_index])) {
-                diff_index++;
-            }
+} // namespace tagfilterdb
 
-            if (diff_index >= min_length) {
-            // Do not shorten if one string is a prefix of the other
-            } else {
-            uint8_t diff_byte = static_cast<uint8_t>((*start)[diff_index]);
-            if (diff_byte < static_cast<uint8_t>(0xff) &&
-                diff_byte + 1 < static_cast<uint8_t>(limit[diff_index])) {
-                (*start)[diff_index]++;
-                start->resize(diff_index + 1);
-                assert(Compare(*start, limit) < 0);
-                }
-            }
-        }
-    };
-
-    const Comparator* BytewiseComparator() {
-        static NoDestructor<BytewiseComparatorImpl> singleton;
-        return singleton.get();
-    }
-}
-
-#endif
+#endif // STORAGE_TAGFILTERDB_INCLUDE_COMPARATOR_H_

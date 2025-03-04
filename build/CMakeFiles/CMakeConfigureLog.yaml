@@ -61,8 +61,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz"
-      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz"
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g -O0"
@@ -71,13 +71,13 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz'
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_b01ca/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_b01ca.dir/build.make CMakeFiles/cmTC_b01ca.dir/build
-        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz'
-        Building C object CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o
-        /usr/bin/c89-gcc   -v -o CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_68fb9/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_68fb9.dir/build.make CMakeFiles/cmTC_68fb9.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0'
+        Building C object CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o
+        /usr/bin/c89-gcc   -v -o CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=gcc
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -87,8 +87,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) 
-        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/'
-         /usr/libexec/gcc/x86_64-linux-gnu/13/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_b01ca.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -std=c90 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOIIZWy.s
+        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/'
+         /usr/libexec/gcc/x86_64-linux-gnu/13/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_68fb9.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -std=c90 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccZ9FeVU.s
         GNU C89 (Ubuntu 13.3.0-6ubuntu2~24.04) version 13.3.0 (x86_64-linux-gnu)
         	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
         
@@ -105,18 +105,18 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 38987c28e967c64056a6454abdef726e
-        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/'
-         as -v --64 -o CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o /tmp/ccOIIZWy.s
+        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/'
+         as -v --64 -o CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o /tmp/ccZ9FeVU.s
         GNU assembler version 2.42 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.'
-        Linking C static library libcmTC_b01ca.a
-        /usr/bin/cmake -P CMakeFiles/cmTC_b01ca.dir/cmake_clean_target.cmake
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b01ca.dir/link.txt --verbose=1
-        /usr/bin/ar qc libcmTC_b01ca.a CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o
-        /usr/bin/ranlib libcmTC_b01ca.a
-        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz'
+        COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.'
+        Linking C static library libcmTC_68fb9.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_68fb9.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_68fb9.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_68fb9.a CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o
+        /usr/bin/ranlib libcmTC_68fb9.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0'
         
       exitCode: 0
   -
@@ -150,13 +150,13 @@ events:
     message: |
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
-        ignore line: [Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz']
+        ignore line: [Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_b01ca/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_b01ca.dir/build.make CMakeFiles/cmTC_b01ca.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz']
-        ignore line: [Building C object CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/c89-gcc   -v -o CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_68fb9/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_68fb9.dir/build.make CMakeFiles/cmTC_68fb9.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0']
+        ignore line: [Building C object CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/c89-gcc   -v -o CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=gcc]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -166,8 +166,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/']
-        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/13/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_b01ca.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -std=c90 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOIIZWy.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/']
+        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/13/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_68fb9.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -std=c90 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccZ9FeVU.s]
         ignore line: [GNU C89 (Ubuntu 13.3.0-6ubuntu2~24.04) version 13.3.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 13.3.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version isl-0.26-GMP]
         ignore line: []
@@ -184,18 +184,18 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 38987c28e967c64056a6454abdef726e]
-        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o /tmp/ccOIIZWy.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o /tmp/ccZ9FeVU.s]
         ignore line: [GNU assembler version 2.42 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C static library libcmTC_b01ca.a]
-        ignore line: [/usr/bin/cmake -P CMakeFiles/cmTC_b01ca.dir/cmake_clean_target.cmake]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b01ca.dir/link.txt --verbose=1]
-        ignore line: [/usr/bin/ar qc libcmTC_b01ca.a CMakeFiles/cmTC_b01ca.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/ranlib libcmTC_b01ca.a]
-        ignore line: [gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-rxyLmz']
+        ignore line: [COLLECT_GCC_OPTIONS='-std=c90' '-v' '-o' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C static library libcmTC_68fb9.a]
+        ignore line: [/usr/bin/cmake -P CMakeFiles/cmTC_68fb9.dir/cmake_clean_target.cmake]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_68fb9.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/ar qc libcmTC_68fb9.a CMakeFiles/cmTC_68fb9.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/ranlib libcmTC_68fb9.a]
+        ignore line: [gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-D3env0']
         ignore line: []
         ignore line: []
         implicit libs: []
@@ -213,8 +213,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0"
-      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0"
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
@@ -223,13 +223,13 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0'
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f9ff1/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f9ff1.dir/build.make CMakeFiles/cmTC_f9ff1.dir/build
-        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0'
-        Building CXX object CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -o CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_491f0/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_491f0.dir/build.make CMakeFiles/cmTC_491f0.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK'
+        Building CXX object CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -o CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -239,8 +239,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/'
-         /usr/libexec/gcc/x86_64-linux-gnu/13/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f9ff1.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccN2RriP.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/'
+         /usr/libexec/gcc/x86_64-linux-gnu/13/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_491f0.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/cc7nP5V9.s
         GNU C++17 (Ubuntu 13.3.0-6ubuntu2~24.04) version 13.3.0 (x86_64-linux-gnu)
         	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
         
@@ -261,18 +261,18 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: c81c05345ce537099dafd5580045814a
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/'
-         as -v --64 -o CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccN2RriP.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/'
+         as -v --64 -o CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc7nP5V9.s
         GNU assembler version 2.42 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX static library libcmTC_f9ff1.a
-        /usr/bin/cmake -P CMakeFiles/cmTC_f9ff1.dir/cmake_clean_target.cmake
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9ff1.dir/link.txt --verbose=1
-        /usr/bin/ar qc libcmTC_f9ff1.a CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/ranlib libcmTC_f9ff1.a
-        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX static library libcmTC_491f0.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_491f0.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_491f0.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_491f0.a CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/ranlib libcmTC_491f0.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK'
         
       exitCode: 0
   -
@@ -312,13 +312,13 @@ events:
     message: |
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
-        ignore line: [Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0']
+        ignore line: [Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f9ff1/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_f9ff1.dir/build.make CMakeFiles/cmTC_f9ff1.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0']
-        ignore line: [Building CXX object CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_491f0/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_491f0.dir/build.make CMakeFiles/cmTC_491f0.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK']
+        ignore line: [Building CXX object CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -328,8 +328,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/']
-        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/13/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f9ff1.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccN2RriP.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/']
+        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/13/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_491f0.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/cc7nP5V9.s]
         ignore line: [GNU C++17 (Ubuntu 13.3.0-6ubuntu2~24.04) version 13.3.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 13.3.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version isl-0.26-GMP]
         ignore line: []
@@ -350,18 +350,18 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: c81c05345ce537099dafd5580045814a]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccN2RriP.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc7nP5V9.s]
         ignore line: [GNU assembler version 2.42 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.42]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/13/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/13/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/13/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX static library libcmTC_f9ff1.a]
-        ignore line: [/usr/bin/cmake -P CMakeFiles/cmTC_f9ff1.dir/cmake_clean_target.cmake]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9ff1.dir/link.txt --verbose=1]
-        ignore line: [/usr/bin/ar qc libcmTC_f9ff1.a CMakeFiles/cmTC_f9ff1.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/ranlib libcmTC_f9ff1.a]
-        ignore line: [gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ci0IA0']
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX static library libcmTC_491f0.a]
+        ignore line: [/usr/bin/cmake -P CMakeFiles/cmTC_491f0.dir/cmake_clean_target.cmake]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_491f0.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/ar qc libcmTC_491f0.a CMakeFiles/cmTC_491f0.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/ranlib libcmTC_491f0.a]
+        ignore line: [gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-KR7ksK']
         ignore line: []
         ignore line: []
         implicit libs: []
@@ -370,4 +370,384 @@ events:
         implicit fwks: []
       
       
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:31 (check_include_file)"
+    checks:
+      - "Looking for unistd.h"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_UNISTD_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_a9fa8/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_a9fa8.dir/build.make CMakeFiles/cmTC_a9fa8.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh'
+        Building C object CMakeFiles/cmTC_a9fa8.dir/CheckIncludeFile.c.o
+        /usr/bin/c89-gcc    -o CMakeFiles/cmTC_a9fa8.dir/CheckIncludeFile.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh/CheckIncludeFile.c
+        Linking C static library libcmTC_a9fa8.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_a9fa8.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a9fa8.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_a9fa8.a CMakeFiles/cmTC_a9fa8.dir/CheckIncludeFile.c.o
+        /usr/bin/ranlib libcmTC_a9fa8.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-VPr3rh'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "CMakeLists.txt:34 (check_library_exists)"
+    checks:
+      - "Looking for crc32c_value in crc32c"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_CRC32C"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_4f922/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_4f922.dir/build.make CMakeFiles/cmTC_4f922.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS'
+        Building C object CMakeFiles/cmTC_4f922.dir/CheckFunctionExists.c.o
+        /usr/bin/c89-gcc   -DCHECK_FUNCTION_EXISTS=crc32c_value -o CMakeFiles/cmTC_4f922.dir/CheckFunctionExists.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS/CheckFunctionExists.c
+        Linking C static library libcmTC_4f922.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_4f922.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4f922.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_4f922.a CMakeFiles/cmTC_4f922.dir/CheckFunctionExists.c.o
+        /usr/bin/ranlib libcmTC_4f922.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-unecGS'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "CMakeLists.txt:35 (check_library_exists)"
+    checks:
+      - "Looking for snappy_compress in snappy"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_SNAPPY"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_b88ca/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_b88ca.dir/build.make CMakeFiles/cmTC_b88ca.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj'
+        Building C object CMakeFiles/cmTC_b88ca.dir/CheckFunctionExists.c.o
+        /usr/bin/c89-gcc   -DCHECK_FUNCTION_EXISTS=snappy_compress -o CMakeFiles/cmTC_b88ca.dir/CheckFunctionExists.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj/CheckFunctionExists.c
+        Linking C static library libcmTC_b88ca.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_b88ca.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b88ca.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_b88ca.a CMakeFiles/cmTC_b88ca.dir/CheckFunctionExists.c.o
+        /usr/bin/ranlib libcmTC_b88ca.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-ZVJGFj'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "CMakeLists.txt:36 (check_library_exists)"
+    checks:
+      - "Looking for zstd_compress in zstd"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_ZSTD"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_1ee85/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_1ee85.dir/build.make CMakeFiles/cmTC_1ee85.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd'
+        Building C object CMakeFiles/cmTC_1ee85.dir/CheckFunctionExists.c.o
+        /usr/bin/c89-gcc   -DCHECK_FUNCTION_EXISTS=zstd_compress -o CMakeFiles/cmTC_1ee85.dir/CheckFunctionExists.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd/CheckFunctionExists.c
+        Linking C static library libcmTC_1ee85.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_1ee85.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1ee85.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_1ee85.a CMakeFiles/cmTC_1ee85.dir/CheckFunctionExists.c.o
+        /usr/bin/ranlib libcmTC_1ee85.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-7TYPsd'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "CMakeLists.txt:37 (check_library_exists)"
+    checks:
+      - "Looking for malloc in tcmalloc"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_TCMALLOC"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_96cdc/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_96cdc.dir/build.make CMakeFiles/cmTC_96cdc.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3'
+        Building C object CMakeFiles/cmTC_96cdc.dir/CheckFunctionExists.c.o
+        /usr/bin/c89-gcc   -DCHECK_FUNCTION_EXISTS=malloc -o CMakeFiles/cmTC_96cdc.dir/CheckFunctionExists.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function ‘malloc’; expected ‘void *(long unsigned int)’ [-Wbuiltin-declaration-mismatch]
+        /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3/CheckFunctionExists.c:7:3: note: in expansion of macro ‘CHECK_FUNCTION_EXISTS’
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3/CheckFunctionExists.c:1:1: note: ‘malloc’ is declared in header ‘<stdlib.h>’
+          +++ |+#include <stdlib.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        Linking C static library libcmTC_96cdc.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_96cdc.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_96cdc.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_96cdc.a CMakeFiles/cmTC_96cdc.dir/CheckFunctionExists.c.o
+        /usr/bin/ranlib libcmTC_96cdc.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-R6QPu3'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckSymbolExists.cmake:140 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSymbolExists.cmake:72 (__CHECK_SYMBOL_EXISTS_IMPL)"
+      - "CMakeLists.txt:40 (check_cxx_symbol_exists)"
+    checks:
+      - "Looking for fdatasync"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_FDATASYNC"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_68ebf/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_68ebf.dir/build.make CMakeFiles/cmTC_68ebf.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh'
+        Building CXX object CMakeFiles/cmTC_68ebf.dir/CheckSymbolExists.cxx.o
+        /usr/bin/c++   -std=gnu++17 -o CMakeFiles/cmTC_68ebf.dir/CheckSymbolExists.cxx.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh/CheckSymbolExists.cxx
+        Linking CXX static library libcmTC_68ebf.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_68ebf.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_68ebf.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_68ebf.a CMakeFiles/cmTC_68ebf.dir/CheckSymbolExists.cxx.o
+        /usr/bin/ranlib libcmTC_68ebf.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-72jQTh'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckSymbolExists.cmake:140 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSymbolExists.cmake:72 (__CHECK_SYMBOL_EXISTS_IMPL)"
+      - "CMakeLists.txt:41 (check_cxx_symbol_exists)"
+    checks:
+      - "Looking for F_FULLFSYNC"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_FULLFSYNC"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_ecbf1/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_ecbf1.dir/build.make CMakeFiles/cmTC_ecbf1.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk'
+        Building CXX object CMakeFiles/cmTC_ecbf1.dir/CheckSymbolExists.cxx.o
+        /usr/bin/c++   -std=gnu++17 -o CMakeFiles/cmTC_ecbf1.dir/CheckSymbolExists.cxx.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk/CheckSymbolExists.cxx
+        /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+        /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk/CheckSymbolExists.cxx:8:19: error: ‘F_FULLFSYNC’ was not declared in this scope
+            8 |   return ((int*)(&F_FULLFSYNC))[argc];
+              |                   ^~~~~~~~~~~
+        gmake[1]: *** [CMakeFiles/cmTC_ecbf1.dir/build.make:78: CMakeFiles/cmTC_ecbf1.dir/CheckSymbolExists.cxx.o] Error 1
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-GPFVIk'
+        gmake: *** [Makefile:127: cmTC_ecbf1/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckSymbolExists.cmake:140 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSymbolExists.cmake:72 (__CHECK_SYMBOL_EXISTS_IMPL)"
+      - "CMakeLists.txt:42 (check_cxx_symbol_exists)"
+    checks:
+      - "Looking for O_CLOEXEC"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_O_CLOEXEC"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_d2eb7/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_d2eb7.dir/build.make CMakeFiles/cmTC_d2eb7.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8'
+        Building CXX object CMakeFiles/cmTC_d2eb7.dir/CheckSymbolExists.cxx.o
+        /usr/bin/c++   -std=gnu++17 -o CMakeFiles/cmTC_d2eb7.dir/CheckSymbolExists.cxx.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8/CheckSymbolExists.cxx
+        Linking CXX static library libcmTC_d2eb7.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_d2eb7.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d2eb7.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_d2eb7.a CMakeFiles/cmTC_d2eb7.dir/CheckSymbolExists.cxx.o
+        /usr/bin/ranlib libcmTC_d2eb7.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-H4gog8'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "CMakeLists.txt:45 (check_cxx_compiler_flag)"
+    checks:
+      - "Performing Test HAVE_CLANG_THREAD_SAFETY"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "HAVE_CLANG_THREAD_SAFETY"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_87d65/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_87d65.dir/build.make CMakeFiles/cmTC_87d65.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A'
+        Building CXX object CMakeFiles/cmTC_87d65.dir/src.cxx.o
+        /usr/bin/c++ -DHAVE_CLANG_THREAD_SAFETY  -std=gnu++17   -Wthread-safety -o CMakeFiles/cmTC_87d65.dir/src.cxx.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A/src.cxx
+        c++: error: unrecognized command-line option '-Wthread-safety'
+        gmake[1]: *** [CMakeFiles/cmTC_87d65.dir/build.make:78: CMakeFiles/cmTC_87d65.dir/src.cxx.o] Error 1
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-oYRL2A'
+        gmake: *** [Makefile:127: cmTC_87d65/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "CMakeLists.txt:46 (check_cxx_compiler_flag)"
+    checks:
+      - "Performing Test TAGFILTERDB_HAVE_NO_MISSING_FIELD_INITIALIZERS"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "TAGFILTERDB_HAVE_NO_MISSING_FIELD_INITIALIZERS"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_0154d/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_0154d.dir/build.make CMakeFiles/cmTC_0154d.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ'
+        Building CXX object CMakeFiles/cmTC_0154d.dir/src.cxx.o
+        /usr/bin/c++ -DTAGFILTERDB_HAVE_NO_MISSING_FIELD_INITIALIZERS  -std=gnu++17   -Wno-missing-field-initializers -o CMakeFiles/cmTC_0154d.dir/src.cxx.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ/src.cxx
+        Linking CXX static library libcmTC_0154d.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_0154d.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0154d.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_0154d.a CMakeFiles/cmTC_0154d.dir/src.cxx.o
+        /usr/bin/ranlib libcmTC_0154d.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-404OCQ'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "/usr/share/cmake-3.28/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "third_party/googletest/googletest/cmake/internal_utils.cmake:66 (find_package)"
+      - "third_party/googletest/googletest/CMakeLists.txt:83 (config_compiler_and_linker)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r"
+      binary: "/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g -O0"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_47a62/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_47a62.dir/build.make CMakeFiles/cmTC_47a62.dir/build
+        gmake[1]: Entering directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r'
+        Building C object CMakeFiles/cmTC_47a62.dir/src.c.o
+        /usr/bin/c89-gcc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_47a62.dir/src.c.o -c /home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r/src.c
+        Linking C static library libcmTC_47a62.a
+        /usr/bin/cmake -P CMakeFiles/cmTC_47a62.dir/cmake_clean_target.cmake
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_47a62.dir/link.txt --verbose=1
+        /usr/bin/ar qc libcmTC_47a62.a CMakeFiles/cmTC_47a62.dir/src.c.o
+        /usr/bin/ranlib libcmTC_47a62.a
+        gmake[1]: Leaving directory '/home/tinsiriwid/tagfilterDB/build/CMakeFiles/CMakeScratch/TryCompile-3EHi5r'
+        
+      exitCode: 0
 ...

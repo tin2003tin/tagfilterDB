@@ -1,114 +1,131 @@
-#ifndef TAGFILTERDB_STATUS_H
-#define TAGFILTERDB_STATUS_H
+// Copyright (c) 2025-present, tin2003tin, User
+//   This source code is part of [TagfilterDB]
+//   (https://github.com/tin2003tin/tagfilterDB)
+//
+// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file. See the AUTHORS file for names of contributors.
+//
+// A Status encapsulates the result of an operation.  It may indicate success,
+// or it may indicate an error with an associated error message.
+//
+// Multiple threads can invoke const methods on a Status without
+// external synchronization, but if any of the threads may call a
+// non-const method, all threads accessing the same Status must use
+// external synchronization.
 
-#include <cstdio>
+#ifndef STORAGE_TAGFILTERDB_INCLUDE_STATUS_H_
+#define STORAGE_TAGFILTERDB_INCLUDE_STATUS_H_
+
+#include <algorithm>
 #include <string>
-#include <memory>
-#include <cassert>
-#include <cstring>
+
+#include "tagfilterdb/dataView.h"
+#include "tagfilterdb/export.h"
 
 namespace tagfilterdb {
-    class Status {
-        public:
 
-        Status() noexcept : state_(nullptr) {}
-        ~Status() { delete[] state_; }
-        static Status OK() { return Status(); }
+class TAGFILTERDB_EXPORT Status {
+  public:
+    // Create a success status.
+    Status() noexcept : state_(nullptr) {}
+    ~Status() { delete[] state_; }
 
-        static Status NotFound(const std::string& msg, const std::string& msg2 = std::string()) {
+    Status(const Status &rhs);
+    Status &operator=(const Status &rhs);
+
+    Status(Status &&rhs) noexcept : state_(rhs.state_) { rhs.state_ = nullptr; }
+    Status &operator=(Status &&rhs) noexcept;
+
+    // Return a success status.
+    static Status OK() { return Status(); }
+
+    // Return error status of an appropriate type.
+    static Status NotFound(const DataView &msg,
+                           const DataView &msg2 = DataView()) {
         return Status(kNotFound, msg, msg2);
-        }
-        static Status Corruption(const std::string& msg, const std::string& msg2 = std::string()) {
+    }
+    static Status Corruption(const DataView &msg,
+                             const DataView &msg2 = DataView()) {
         return Status(kCorruption, msg, msg2);
-        }
-        static Status NotSupported(const std::string& msg, const std::string& msg2 = std::string()) {
+    }
+    static Status NotSupported(const DataView &msg,
+                               const DataView &msg2 = DataView()) {
         return Status(kNotSupported, msg, msg2);
-        }
-        static Status InvalidArgument(const std::string& msg, const std::string& msg2 = std::string()) {
+    }
+    static Status InvalidArgument(const DataView &msg,
+                                  const DataView &msg2 = DataView()) {
         return Status(kInvalidArgument, msg, msg2);
-        }
-        static Status IOError(const std::string& msg, const std::string& msg2 = std::string()) {
+    }
+    static Status IOError(const DataView &msg,
+                          const DataView &msg2 = DataView()) {
         return Status(kIOError, msg, msg2);
-        }
+    }
 
-        bool ok() const { return (state_ == nullptr); }
-        bool IsNotFound() const { return code() == kNotFound; }
-        bool IsIOError() const { return code() == kIOError; }
+    // Returns true iff the status indicates success.
+    bool ok() const { return (state_ == nullptr); }
 
-        std::string ToString() const {
-          if (state_ == nullptr) {
-            return "OK";
-          } else {
-            char tmp[30];
-            const char* type;
-            switch (code()) {
-              case kOk:
-                type = "OK";
-                break;
-              case kNotFound:
-                type = "NotFound: ";
-                break;
-              case kCorruption:
-                type = "Corruption: ";
-                break;
-              case kNotSupported:
-                type = "Not implemented: ";
-                break;
-              case kInvalidArgument:
-                type = "Invalid argument: ";
-                break;
-              case kIOError:
-                type = "IO error: ";
-                break;
-              default:
-                std::snprintf(tmp, sizeof(tmp),
-                              "Unknown code(%d): ", static_cast<int>(code()));
-                type = tmp;
-                break;
-            }
-            
-            std::string result(type);
-            uint32_t length;
-            std::memcpy(&length, state_, sizeof(length));
-            result.append(state_ + 5, length);
-            return result;
-          }
-        }
+    // Returns true iff the status indicates a NotFound error.
+    bool IsNotFound() const { return code() == kNotFound; }
 
-        private: 
-        enum Code {
-            kOk = 0,
-            kNotFound = 1,
-            kCorruption = 2,
-            kNotSupported = 3,
-            kInvalidArgument = 4,
-            kIOError = 5
-          };
+    // Returns true iff the status indicates a Corruption error.
+    bool IsCorruption() const { return code() == kCorruption; }
 
-          Code code() const {
-            return (state_ == nullptr) ? kOk : static_cast<Code>(state_[4]);
-          }
+    // Returns true iff the status indicates an IOError.
+    bool IsIOError() const { return code() == kIOError; }
 
-          Status(Code code, const std::string& msg, const std::string& msg2) {
-            assert(code != kOk);
-            const uint32_t len1 = static_cast<uint32_t>(msg.size());
-            const uint32_t len2 = static_cast<uint32_t>(msg2.size());
-            const uint32_t size = len1 + (len2 ? (2 + len2) : 0);
-            char* result = new char[size + 5];
-            std::memcpy(result, &size, sizeof(size));
-            result[4] = static_cast<char>(code);
-            std::memcpy(result + 5, msg.data(), len1);
-            if (len2) {
-              result[5 + len1] = ':';
-              result[6 + len1] = ' ';
-              std::memcpy(result + 7 + len1, msg2.data(), len2);
-            }
-            state_ = result;
-          }
+    // Returns true iff the status indicates a NotSupportedError.
+    bool IsNotSupportedError() const { return code() == kNotSupported; }
 
-        const char* state_;
+    // Returns true iff the status indicates an InvalidArgument.
+    bool IsInvalidArgument() const { return code() == kInvalidArgument; }
+
+    // Return a string representation of this status suitable for printing.
+    // Returns the string "OK" for success.
+    std::string ToString() const;
+
+  private:
+    enum Code {
+        kOk = 0,
+        kNotFound = 1,
+        kCorruption = 2,
+        kNotSupported = 3,
+        kInvalidArgument = 4,
+        kIOError = 5
     };
+
+    Code code() const {
+        return (state_ == nullptr) ? kOk : static_cast<Code>(state_[4]);
+    }
+
+    Status(Code code, const DataView &msg, const DataView &msg2);
+    static const char *CopyState(const char *s);
+
+    // OK status has a null state_.  Otherwise, state_ is a new[] array
+    // of the following form:
+    //    state_[0..3] == length of message
+    //    state_[4]    == code
+    //    state_[5..]  == message
+    const char *state_;
+};
+
+inline Status::Status(const Status &rhs) {
+    state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+}
+inline Status &Status::operator=(const Status &rhs) {
+    // The following condition catches both aliasing (when this == &rhs),
+    // and the common case where both rhs and *this are ok.
+    if (state_ != rhs.state_) {
+        delete[] state_;
+        state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+    }
+    return *this;
+}
+inline Status &Status::operator=(Status &&rhs) noexcept {
+    std::swap(state_, rhs.state_);
+    return *this;
 }
 
+} // namespace tagfilterdb
 
-#endif 
+#endif // STORAGE_TAGFILTERDB_INCLUDE_STATUS_H_
